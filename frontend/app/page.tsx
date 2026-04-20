@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from 'react';
-import { LandingPage } from './landing';
-import { LoginPage } from './login';
-import { SignUpPage } from './sign-up';
+import { LandingPage } from './landing/landing';
+import { LoginPage } from './login/login';
+import { SignUpPage } from './login/sign-up';
+import {OverviewPage} from './user/overview/dash';
 
 export default function Home() {
   const [view, setView] = useState<'landing' | 'login' | 'signup'>('landing');
@@ -14,26 +15,28 @@ export default function Home() {
 
 
   return (
-    <main className="min-h-screen">
-      {view === 'landing' && (
-        <LandingPage 
-          onLoginClick={goToLogin}
-          onSignUpClick={goToSignUp} 
-          onBackToLanding={goToLanding}
-        />
+    // <main className="min-h-screen">
+    //   {view === 'landing' && (
+    //     <LandingPage 
+    //       onLoginClick={goToLogin}
+    //       onSignUpClick={goToSignUp} 
+    //       onBackToLanding={goToLanding}
+    //     />
         
-      )}
-      {view === 'login' && (
-        <LoginPage 
-          onBackToLanding={goToLanding}
-        />
-      )}
-      {view === 'signup' && (
-        <SignUpPage 
-          onBackToLanding={goToLanding}
-        />
-      )}
+    //   )}
+    //   {view === 'login' && (
+    //     <LoginPage 
+    //       onBackToLanding={goToLanding}
+    //     />
+    //   )}
+    //   {view === 'signup' && (
+    //     <SignUpPage 
+    //       onBackToLanding={goToLanding}
+    //     />
+    //   )}
  
-    </main>
+    // </main>
+
+    <OverviewPage/>
   );
 }
