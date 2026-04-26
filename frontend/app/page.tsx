@@ -2,16 +2,13 @@
 
 import { useState } from 'react';
 import { LandingPage } from './landing/landing';
-import { LoginPage } from './login/login';
-import { SignUpPage } from './login/sign-up';
+import { LoginPage } from './authen/login';
+import { SignUpPage } from './authen/sign-up';
 import {OverviewPage} from './user/overview/dash';
+import MyBadgesPage from './user/badges/mybadge';
 
 export default function Home() {
-  const [view, setView] = useState<'landing' | 'login' | 'signup'>('landing');
 
-  const goToLogin = () => setView('login');
-  const goToSignUp = () => setView('signup');
-  const goToLanding = () => setView('landing');
 
 
   return (
@@ -36,7 +33,9 @@ export default function Home() {
     //   )}
  
     // </main>
+    
 
     <OverviewPage/>
+     //<MyBadgesPage/>
   );
 }

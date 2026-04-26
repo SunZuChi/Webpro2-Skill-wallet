@@ -22,6 +22,8 @@ import {
   Globe
 } from 'lucide-react';
 
+import Link from 'next/link';
+
 const additionalStyles = `
   .animate-float {
     animation: float 4s ease-in-out infinite;
@@ -171,7 +173,7 @@ export const LandingPage = ({ onLoginClick, onSignUpClick, onBackToLanding }: { 
             <a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a>
             <a href="#badges" onClick={() => setIsMenuOpen(false)}>Badges</a>
             <a href="#verification" onClick={() => setIsMenuOpen(false)}>Verification</a>
-            <button onClick={onLoginClick} className="bg-black text-white w-full py-3 rounded-full">Login</button>
+            <Link href="/authen/login"><div className="bg-black text-white w-full py-3 rounded-full text-center cursor-pointer">Login</div></Link>
           </div>
         )}
       </header>

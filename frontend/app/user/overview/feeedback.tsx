@@ -25,7 +25,9 @@ export const FeedbackPage = () => {return(
                 <h3 className="text-xl font-bold">Professor Feedback & Activity</h3>
                 <p className="text-xs text-slate-500 mt-1">Track your evaluation history and comments from faculty</p>
               </div>
-              <button className="text-xs font-bold text-[#ff4f40] hover:underline uppercase tracking-widest cursor-pointer transition-all">View All</button>
+              <button className="text-xs font-bold text-[#ff4f40] hover:underline uppercase tracking-widest flex items-center gap-1 group cursor-pointer transition-all">View All
+                <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+              </button>
             </div>
 
             <div className="space-y-8">

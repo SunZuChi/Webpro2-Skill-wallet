@@ -20,7 +20,7 @@ import {
 
 import Link from 'next/link';
 
-export const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
+export const Sidebar3 = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
@@ -50,31 +50,35 @@ export const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onTog
             {/* Navigation Menu */}
             <nav className="flex flex-col w-full px-4 gap-2">
               {/* Overview (Active) */}
-              <Link href="/user/overview"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl bg-white/5 text-white border border-white/10 text-sm font-bold relative overflow-hidden group cursor-pointer transition-all`}>
-                {!isCollapsed && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[#ff4f40] rounded-r-full shadow-[2px_0_10px_rgba(255,79,64,0.5)]"></div>
-                )}
-                <LayoutDashboard size={20} className="text-[#ff4f40] shrink-0" /> 
+              <Link href="/user/overview"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
+                
+                <LayoutDashboard size={20} className="group-hover:text-white transition-colors shrink-0" /> 
                 {!isCollapsed && <span className="truncate">Overview</span>}
               </div></Link>
               
               {/* My Badges */}
               <Link href="/user/badges"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
+              
                 <Medal size={20} className="group-hover:text-white transition-colors shrink-0" /> 
                 {!isCollapsed && <span className="truncate">My Badges</span>}
               </div></Link>
               
               {/* Skill Hub */}
-              <Link href="/user/skill-hub"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
-                <FolderOpen size={20} className="group-hover:text-white transition-colors shrink-0" /> 
+              <Link href="/user/skill-hub"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl bg-white/5 text-white border border-white/10 text-sm font-bold relative overflow-hidden group cursor-pointer transition-all`}>
+                {!isCollapsed && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[#ff4f40] rounded-r-full shadow-[2px_0_10px_rgba(255,79,64,0.5)]"></div>
+                )}
+                <FolderOpen size={20} className="text-[#ff4f40] shrink-0" /> 
                 {!isCollapsed && <span className="truncate">Skill Hub & CV</span>}
-              </div></Link>
+              </div>
+              </Link>
               
               {/* Export Resume */}
-              <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
+              <Link href="/user/ex"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
                 <FileUp size={20} className="group-hover:text-white transition-colors shrink-0" /> 
                 {!isCollapsed && <span className="truncate">Export Resume</span>}
               </div>
+              </Link>
             </nav>
     
             {/* Sidebar Footer: โปรไฟล์มุมซ้ายล่าง (เหลือแค่ Avatar เมื่อหดเมนู) */}
