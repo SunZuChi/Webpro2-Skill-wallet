@@ -1,9 +1,56 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Mail, Lock,Quote,ArrowLeft} from 'lucide-react';
+import { AuthService } from '../../services/auth.service';
 
 
-export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
+export const SignUpPage = ({ onBackToLanding, onSignUpSuccess }: { onBackToLanding: () => void, onSignUpSuccess?: () => void }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const data = await AuthService.loginWithGoogle();
+      if (data.status === 'success' && data.role === 'user') {
+        if (onSignUpSuccess) onSignUpSuccess();
+      } else {
+        setError(data.message || 'Google sign up failed');
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Google sign up error';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    try {
+      const data = await AuthService.register(email, password, name);
+      
+      if (data.status === 'success') {
+        if (onSignUpSuccess) {
+          onSignUpSuccess();
+        }
+      } else {
+        setError(data.message || 'Registration failed');
+      }
+    } catch (err: unknown) {
+      console.error("Sign up Error:", err);
+      const msg = err instanceof Error ? err.message : 'Error connecting to API';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex min-h-screen bg-[#050505] font-lineseed antialiased text-white overflow-hidden">
       
@@ -43,14 +90,21 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           </div>
 
           {/* Social Login */}
-          <button className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98]">
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <svg width="20" height="20" viewBox="0 0 48 48" className="group-hover:scale-110 transition-transform">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
               <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
               <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
             </svg>
-            <span className="font-bold text-sm text-slate-200">Continue with Google</span>
+            <span className="font-bold text-sm text-slate-200">
+              {loading ? 'Connecting...' : 'Continue with Google'}
+            </span>
           </button>
 
           {/* Separator */}
@@ -60,11 +114,20 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
             <div className="h-px flex-1 bg-slate-600"></div>
           </div>
 
+          {/* Error Message */}
+          {error && (
+            <div className="text-red-400 text-xs text-center bg-red-500/10 border border-red-500/20 rounded-xl px-4 py-3 mb-2">
+              {error}
+            </div>
+          )}
+
           {/* Auth Form */}
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleSignUp}>
             <div className="space-y-2">
               <input 
-                type="name" 
+                type="text" 
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your Name"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
@@ -72,6 +135,8 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
             <div className="space-y-2">
               <input 
                 type="email" 
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your Email"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
@@ -80,15 +145,14 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
             <div className="space-y-2 relative">
               <input 
                 type="password" 
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your Password"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
-            
-              
-             
             </div>
 
-            <button className="w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
+            <button type="submit" className="w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
               Continue
             </button>
           </form>
