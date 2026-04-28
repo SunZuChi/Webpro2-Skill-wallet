@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { Mail, Lock,Quote,ArrowLeft} from 'lucide-react';
 import { AuthService } from '../../services/auth.service';
 
-
 export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding: () => void, onLoginSuccess?: () => void }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

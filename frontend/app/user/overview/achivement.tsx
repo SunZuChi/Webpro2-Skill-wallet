@@ -34,14 +34,14 @@ export const Achivement = ({ onViewAll }: { onViewAll: () => void }) => {return 
                   {/* List items */}
                   <div className="space-y-4 flex-1">
                     {/* Pending */}
-                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-[#ff4f40]/20 transition-all cursor-pointer group">
+                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-emerald-500/30 transition-all cursor-pointer group">
                       <div className="flex justify-between items-start">
                         <span className="text-[10px] font-bold text-blue-400 bg-blue-400/5 px-2.5 py-1 rounded-md uppercase border border-blue-400/10">Software / Web</span>
                         <div className="flex items-center gap-1.5 text-yellow-500 text-[10px] font-bold bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">
                            <Clock size={12} /> Pending
                         </div>
                       </div>
-                      <h4 className="font-bold text-lg text-left group-hover:text-[#ff4f40] transition-colors">Simple HTML Profile Page</h4>
+                      <h4 className="font-bold text-lg text-left ">Simple HTML Profile Page</h4>
                       <div className="flex justify-between items-center text-[11px] text-slate-500">
                         <p>Verified by Prof. Wittawin</p>
                         <span className="uppercase font-bold text-slate-600">Submitted 2h ago</span>
@@ -49,7 +49,7 @@ export const Achivement = ({ onViewAll }: { onViewAll: () => void }) => {return 
                     </div>
     
                     {/* Revisions */}
-                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-rose-500/20 transition-all cursor-pointer">
+                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-emerald-500/30 transition-all cursor-pointer">
                       <div className="flex justify-between items-start">
                         <span className="text-[10px] font-bold text-blue-400 bg-blue-400/5 px-2.5 py-1 rounded-md uppercase border border-blue-400/10">Software / Web</span>
                         <div className="flex items-center gap-1.5 text-rose-500 text-[10px] font-bold bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
@@ -64,7 +64,7 @@ export const Achivement = ({ onViewAll }: { onViewAll: () => void }) => {return 
                     </div>
     
                     {/* Approved */}
-                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-emerald-500/20 transition-all cursor-pointer">
+                    <div className="bg-[#050505] border border-white/5 rounded-2xl p-6 flex flex-col gap-4 hover:border-emerald-500/30 transition-all cursor-pointer">
                       <div className="flex justify-between items-start">
                         <span className="text-[10px] font-bold text-emerald-400 bg-emerald-400/5 px-2.5 py-1 rounded-md uppercase border border-emerald-400/10">Game / Graphics</span>
                         <div className="flex items-center gap-1.5 text-emerald-500 text-[10px] font-bold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">

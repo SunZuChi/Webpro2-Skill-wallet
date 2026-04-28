@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { LandingPage } from './landing/landing';
-import { LoginPage } from './login/login';
-import { SignUpPage } from './login/sign-up';
+import { LoginPage } from './authen/login';
+import { SignUpPage } from './authen/sign-up';
 import {OverviewPage} from './user/overview/dash';
 
 export default function Home() {
@@ -39,7 +39,6 @@ export default function Home() {
       {view === 'overview' && (
         <OverviewPage />
       )}
- 
     </main>
   );
 }
