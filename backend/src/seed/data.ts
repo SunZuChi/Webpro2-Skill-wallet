@@ -1,414 +1,279 @@
-// seed/data.ts — ข้อมูลตัวอย่างทั้งหมดสำหรับ seed เข้า Firestore
+// seed/data.ts — ข้อมูลเหรียญรางวัล (Badge Catalog)
 
-// ── Badge Catalog — รายการ Badge ทั้งหมดที่นักศึกษาเลือก request ได้ ──────
 export const badgeCatalog = [
-    // ── SOFTWARE / WEB ─────────────────────────────────────
+    // ==========================================
+    // ── SOFTWARE / WEB (5 Badges) ─────────────
+    // ==========================================
     {
         id: 'cat_html_basic',
         data: {
-            badge_id:    'cat_html_basic',
-            badge_name:  'Simple HTML Profile Page',
-            skill:       'HTML',
-            level:       'Beginner',
-            category:    'SOFTWARE / WEB',
-            description: 'สร้างหน้า Profile ด้วย HTML ล้วน โดยใช้ semantic tags ให้ถูกต้อง',
-            issuer:      'KMUTT',
-            icon:        '🌐',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'Basic HTML Tags Usage',     description: 'ใช้ tag พื้นฐานถูกต้อง เช่น h1, p, img, a' },
-                { name: 'File Linking & Attributes', description: 'ลิงก์ CSS/Image ถูกต้อง, มี alt attribute' },
-                { name: 'Code Formatting',           description: 'โค้ดสะอาด มี indentation ถูกต้อง' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_html_basic', badge_name: 'HTML Fundamentals', skill: 'HTML', level: 'Beginner', category: 'SOFTWARE / WEB',
+            description: 'สร้างหน้าเว็บด้วย HTML ล้วน ใช้ semantic tags อย่างถูกต้อง', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Semantic Tags', max_score: 1 },
+                { name: 'Accessibility', max_score: 1 },
+                { name: 'Document Structure', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_css_basic',
+        data: {
+            badge_id: 'cat_css_basic', badge_name: 'CSS Styling & Layout', skill: 'CSS', level: 'Beginner', category: 'SOFTWARE / WEB',
+            description: 'ตกแต่งเว็บไซต์ด้วย CSS รองรับ Flexbox และ Grid', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Responsive Design', max_score: 1 },
+                { name: 'Modern Layouts', max_score: 1 },
+                { name: 'Styling Accuracy', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_js_basic',
+        data: {
+            badge_id: 'cat_js_basic', badge_name: 'JavaScript Core', skill: 'JavaScript', level: 'Intermediate', category: 'SOFTWARE / WEB',
+            description: 'เขียนลอจิกด้วย JS เข้าใจ DOM manipulation และ ES6+', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'ES6 Features', max_score: 1 },
+                { name: 'DOM Manipulation', max_score: 1 },
+                { name: 'Async Programming', max_score: 1 }
+            ]
         },
     },
     {
         id: 'cat_react_basic',
         data: {
-            badge_id:    'cat_react_basic',
-            badge_name:  'React Developer',
-            skill:       'React',
-            level:       'Intermediate',
-            category:    'SOFTWARE / WEB',
-            description: 'สร้าง Web App ด้วย React รองรับ Component, State, Props',
-            issuer:      'KMUTT',
-            icon:        '⚛️',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'Component Structure',  description: 'แบ่ง component ได้อย่างเหมาะสม' },
-                { name: 'State Management',     description: 'ใช้ useState / useEffect ได้ถูกต้อง' },
-                { name: 'Props & Data Flow',    description: 'ส่ง props ระหว่าง component ได้' },
-                { name: 'Code Quality',         description: 'โค้ดอ่านง่าย ไม่มี error' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_react_basic', badge_name: 'React Developer', skill: 'React', level: 'Intermediate', category: 'SOFTWARE / WEB',
+            description: 'สร้าง Web App ด้วย React จัดการ State และ Component', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Hooks Usage', max_score: 1 },
+                { name: 'Component Design', max_score: 1 },
+                { name: 'Props Handling', max_score: 1 }
+            ]
         },
     },
     {
         id: 'cat_nodejs_basic',
         data: {
-            badge_id:    'cat_nodejs_basic',
-            badge_name:  'Basic Backend (Node.js)',
-            skill:       'Node.js',
-            level:       'Beginner',
-            category:    'SOFTWARE / WEB',
-            description: 'สร้าง REST API ด้วย Node.js หรือ Bun',
-            issuer:      'KMUTT',
-            icon:        '🟢',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'REST API Design',    description: 'ออกแบบ endpoint ถูกต้องตาม REST convention' },
-                { name: 'Middleware Usage',   description: 'ใช้ middleware ได้ เช่น auth, logging' },
-                { name: 'Error Handling',     description: 'มีการ handle error และ return status ที่เหมาะสม' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_nodejs_basic', badge_name: 'Node.js Backend', skill: 'Node.js', level: 'Intermediate', category: 'SOFTWARE / WEB',
+            description: 'สร้าง REST API เบื้องต้นด้วย Node.js/Express', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'API Design', max_score: 1 },
+                { name: 'Error Handling', max_score: 1 },
+                { name: 'Middleware', max_score: 1 }
+            ]
         },
     },
-    // ── DATA / AI ──────────────────────────────────────────
+
+    // ==========================================
+    // ── DATA / AI (5 Badges) ──────────────────
+    // ==========================================
     {
         id: 'cat_sql_basic',
         data: {
-            badge_id:    'cat_sql_basic',
-            badge_name:  'Basic SQL SELECT Queries',
-            skill:       'SQL',
-            level:       'Beginner',
-            category:    'DATA / AI',
-            description: 'เขียน SQL SELECT query ได้ รวมถึง WHERE, JOIN, GROUP BY',
-            issuer:      'KMUTT',
-            icon:        '🗄️',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'Basic SELECT',  description: 'SELECT, WHERE, ORDER BY ถูกต้อง' },
-                { name: 'JOIN',          description: 'ใช้ INNER/LEFT JOIN ได้' },
-                { name: 'Aggregation',   description: 'ใช้ COUNT, SUM, GROUP BY ได้' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_sql_basic', badge_name: 'SQL Fundamentals', skill: 'SQL', level: 'Beginner', category: 'DATA / AI',
+            description: 'เขียนคำสั่ง SELECT, WHERE, JOIN ขั้นพื้นฐาน', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Basic Queries', max_score: 1 },
+                { name: 'Joins', max_score: 1 },
+                { name: 'Data Aggregation', max_score: 1 }
+            ]
         },
     },
-    // ── GAME / GRAPHICS ────────────────────────────────────
+    {
+        id: 'cat_python_data',
+        data: {
+            badge_id: 'cat_python_data', badge_name: 'Python for Data', skill: 'Python', level: 'Beginner', category: 'DATA / AI',
+            description: 'ใช้ Python เขียนสคริปต์จัดการข้อมูลเบื้องต้น', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Data Structures', max_score: 1 },
+                { name: 'Basic Scripts', max_score: 1 },
+                { name: 'File Handling', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_pandas_pro',
+        data: {
+            badge_id: 'cat_pandas_pro', badge_name: 'Data Wrangling', skill: 'Pandas', level: 'Intermediate', category: 'DATA / AI',
+            description: 'ทำความสะอาดและวิเคราะห์ข้อมูลด้วย Pandas', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Data Cleaning', max_score: 1 },
+                { name: 'Aggregation', max_score: 1 },
+                { name: 'Data Merging', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_ml_intro',
+        data: {
+            badge_id: 'cat_ml_intro', badge_name: 'Machine Learning Basics', skill: 'ML', level: 'Intermediate', category: 'DATA / AI',
+            description: 'สร้างโมเดลทำนายพื้นฐาน', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Model Training', max_score: 1 },
+                { name: 'Evaluation', max_score: 1 },
+                { name: 'Algorithm Selection', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_data_viz',
+        data: {
+            badge_id: 'cat_data_viz', badge_name: 'Data Visualization', skill: 'Tableau/PowerBI', level: 'Intermediate', category: 'DATA / AI',
+            description: 'สร้าง Dashboard สื่อสารข้อมูลได้ตรงจุด', issuer: 'KMUTT', 
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/e/ee/Power_BI_Logo.svg', is_active: true,
+            criteria_template: [
+                { name: 'Chart Selection', max_score: 1 },
+                { name: 'Storytelling', max_score: 1 },
+                { name: 'Interactivity', max_score: 1 }
+            ]
+        },
+    },
+
+    // ==========================================
+    // ── GAME / GRAPHICS (5 Badges) ────────────
+    // ==========================================
     {
         id: 'cat_figma_basic',
         data: {
-            badge_id:    'cat_figma_basic',
-            badge_name:  'Basic App Wireframe (Figma)',
-            skill:       'Figma',
-            level:       'Beginner',
-            category:    'GAME / GRAPHICS',
-            description: 'ออกแบบ Wireframe ของ Mobile/Web App ด้วย Figma',
-            issuer:      'KMUTT',
-            icon:        '🎨',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'Layout Structure',       description: 'จัดวาง layout ชัดเจน สมดุล' },
-                { name: 'User Flow Logic',        description: 'การเชื่อมต่อหน้า (flow) สมเหตุสมผล' },
-                { name: 'Component Consistency',  description: 'ใช้ component ซ้ำๆ ได้อย่างสม่ำเสมอ' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_figma_basic', badge_name: 'App Wireframe', skill: 'Figma', level: 'Beginner', category: 'GAME / GRAPHICS',
+            description: 'ออกแบบ Wireframe จัด Layout เบื้องต้น', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Layout Structure', max_score: 1 },
+                { name: 'User Flow', max_score: 1 },
+                { name: 'Component Reusability', max_score: 1 }
+            ]
         },
     },
-    // ── CYBER / NETWORK ────────────────────────────────────
     {
-        id: 'cat_network_basic',
+        id: 'cat_unity_basic',
         data: {
-            badge_id:    'cat_network_basic',
-            badge_name:  'Network Fundamentals',
-            skill:       'Networking',
-            level:       'Beginner',
-            category:    'CYBER / NETWORK',
-            description: 'เข้าใจ OSI Model, TCP/IP, และ basic network troubleshooting',
-            issuer:      'KMUTT',
-            icon:        '🔒',
-            is_active:   true,
-            evaluation_criteria: [
-                { name: 'OSI / TCP-IP Model', description: 'อธิบาย layer และ protocol ได้ถูกต้อง' },
-                { name: 'IP Addressing',      description: 'คำนวณ subnet และ CIDR ได้' },
-                { name: 'Troubleshooting',    description: 'ใช้ ping, traceroute, nslookup ได้' },
-            ],
-            created_at: '2026-01-01T00:00:00Z',
+            badge_id: 'cat_unity_basic', badge_name: 'Unity 3D Intro', skill: 'Unity', level: 'Beginner', category: 'GAME / GRAPHICS',
+            description: 'สร้างฉากและเขียนสคริปต์ควบคุมตัวละครเบื้องต้น', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/unity/unity-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Scene Setup', max_score: 1 },
+                { name: 'C# Scripting', max_score: 1 },
+                { name: 'Physics Engine', max_score: 1 }
+            ]
         },
     },
-];
+    {
+        id: 'cat_blender_3d',
+        data: {
+            badge_id: 'cat_blender_3d', badge_name: '3D Modeling', skill: 'Blender', level: 'Beginner', category: 'GAME / GRAPHICS',
+            description: 'ปั้นโมเดล 3 มิติ และกาง UV Mapping', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/blender/blender-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Modeling', max_score: 1 },
+                { name: 'Texturing', max_score: 1 },
+                { name: 'UV Mapping', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_illustrator',
+        data: {
+            badge_id: 'cat_illustrator', badge_name: 'Vector Graphics', skill: 'Illustrator', level: 'Beginner', category: 'GAME / GRAPHICS',
+            description: 'ออกแบบไอคอนและ Logo ด้วยเวกเตอร์', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/illustrator/illustrator-plain.svg', is_active: true,
+            criteria_template: [
+                { name: 'Pen Tool', max_score: 1 },
+                { name: 'Composition', max_score: 1 },
+                { name: 'Pathfinder', max_score: 1 }
+            ]
+        },
+    },
+    {
+        id: 'cat_video_edit',
+        data: {
+            badge_id: 'cat_video_edit', badge_name: 'Video Editing Pro', skill: 'Premiere Pro', level: 'Intermediate', category: 'GAME / GRAPHICS',
+            description: 'ตัดต่อวิดีโอ ใส่เสียงและ Transitions', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/premierepro/premierepro-plain.svg', is_active: true,
+            criteria_template: [
+                { name: 'Cutting & Pace', max_score: 1 },
+                { name: 'Audio Mixing', max_score: 1 },
+                { name: 'Color Correction', max_score: 1 }
+            ]
+        },
+    },
 
-// ── Types ─────────────────────────────────────────────────
-interface Criteria  { name: string; score: number }
-interface Badge {
-    badge_id: string; badge_name: string; skill: string;
-    level: string; issuer: string; status: string; issued_at: string;
-    verification: {
-        verifier_id: string; verifier_name: string;
-        comment: string; verified_at: string;
-        evaluation: { criteria: Criteria[] };
-    };
-}
-
-// ── Verifier (อาจารย์) ────────────────────────────────────
-export const verifiers = [
+    // ==========================================
+    // ── CYBER / NETWORK (5 Badges) ────────────
+    // ==========================================
     {
-        uid: 'v1',
+        id: 'cat_net_basic',
         data: {
-            auth: { user_id: 'v1', email: 'dr.smith@kmutt.ac.th', role: 'verifier' },
-            profile: {
-                name: 'Dr.Smith',
-                email: 'dr.smith@kmutt.ac.th',
-                position: 'Lecturer',
-                organization: 'KMUTT',
-                expertise: ['React', 'Node.js', 'AI'],
-                avatar_url: '',
-                location: 'Bangkok',
-            },
-            review_history: [],
+            badge_id: 'cat_net_basic', badge_name: 'Network Security', skill: 'Networking', level: 'Beginner', category: 'CYBER / NETWORK',
+            description: 'เข้าใจ OSI Model, TCP/IP และการตั้งค่า IP', issuer: 'KMUTT', 
+            icon: 'https://cdn-icons-png.flaticon.com/512/2885/2885417.png', is_active: true,
+            criteria_template: [
+                { name: 'OSI Model', max_score: 1 },
+                { name: 'IP Subnetting', max_score: 1 },
+                { name: 'Troubleshooting', max_score: 1 }
+            ]
         },
     },
     {
-        uid: 'v2',
+        id: 'cat_linux_admin',
         data: {
-            auth: { user_id: 'v2', email: 'prof.wittawin@kmutt.ac.th', role: 'verifier' },
-            profile: {
-                name: 'Prof. Wittawin',
-                email: 'prof.wittawin@kmutt.ac.th',
-                position: 'Associate Professor',
-                organization: 'KMUTT',
-                expertise: ['Figma', 'UX/UI', 'Game Design'],
-                avatar_url: '',
-                location: 'Bangkok',
-            },
-            review_history: [],
-        },
-    },
-];
-
-// ── Students (นักศึกษา) ───────────────────────────────────
-export const students = [
-    {
-        uid: 'u1',
-        data: {
-            auth: { user_id: 'u1', email: 'yo@example.com', role: 'user' },
-            profile: {
-                name: 'Yosapart Raúl',
-                email: 'yo@example.com',
-                bio: 'Aspiring Full-Stack Developer & UI/UX Enthusiast',
-                about_me: 'Senior Applied Computer Science student with a strong passion for building scalable web applications.',
-                location: 'Bangkok, Thailand',
-                avatar_url: '',
-            },
-            portfolio: {
-                projects: [
-                    {
-                        project_id: 'p1',
-                        title: 'Chat App',
-                        description: 'Real-time chat with Firebase and React',
-                        skills_used: ['React', 'Firebase', 'TypeScript'],
-                        links: { github: 'https://github.com/yo/chat-app', demo: 'https://chatapp.com' },
-                        image_url: '',
-                        created_at: '2026-03-10',
-                        updated_at: '2026-03-18',
-                        is_featured: true,
-                    },
-                    {
-                        project_id: 'p2',
-                        title: 'Skill Wallet',
-                        description: 'Digital credential wallet for students',
-                        skills_used: ['Next.js', 'Elysia', 'Firestore'],
-                        links: { github: 'https://github.com/yo/skill-wallet', demo: '' },
-                        image_url: '',
-                        created_at: '2026-04-01',
-                        updated_at: '2026-04-20',
-                        is_featured: true,
-                    },
-                ],
-            },
-            history: {
-                experience: [
-                    {
-                        company: 'Google',
-                        role: 'Frontend Developer Intern',
-                        description: 'Worked on UI systems and component library',
-                        period: { start: '2024-01', end: '2025-01' },
-                        is_current: false,
-                    },
-                ],
-                education: [
-                    {
-                        school: 'KMUTT',
-                        degree: 'Bachelor of Science',
-                        field: 'Computer Science',
-                        period: { start: '2022', end: '2026' },
-                    },
-                ],
-            },
-            achievements: {
-                badges: [
-                    {
-                        badge_id: 'b1',
-                        badge_name: 'Basic App Wireframe (Figma)',
-                        skill: 'Figma',
-                        level: 'Beginner',
-                        issuer: 'KMUTT',
-                        status: 'approved',
-                        issued_at: '2026-02-02T10:00:00Z',
-                        verification: {
-                            verifier_id: 'v2',
-                            verifier_name: 'Prof. Wittawin',
-                            comment: 'Great attention to detail on the user flows. The wireframes are clean, accessible, and demonstrate a solid understanding of UX principles.',
-                            verified_at: '2026-02-02T10:00:00Z',
-                            evaluation: {
-                                criteria: [
-                                    { name: 'Layout Structure', score: 1 },
-                                    { name: 'User Flow Logic', score: 1 },
-                                    { name: 'Component Consistency', score: 1 },
-                                ],
-                            },
-                        },
-                    } as Badge,
-                    {
-                        badge_id: 'b2',
-                        badge_name: 'Basic Backend (Node.js)',
-                        skill: 'Node.js',
-                        level: 'Beginner',
-                        issuer: 'KMUTT',
-                        status: 'approved',
-                        issued_at: '2026-03-15T10:00:00Z',
-                        verification: {
-                            verifier_id: 'v1',
-                            verifier_name: 'Dr.Smith',
-                            comment: 'Good understanding of REST API design and middleware.',
-                            verified_at: '2026-03-15T10:00:00Z',
-                            evaluation: {
-                                criteria: [
-                                    { name: 'REST API Design', score: 1 },
-                                    { name: 'Middleware Usage', score: 1 },
-                                    { name: 'Error Handling', score: 0 },
-                                ],
-                            },
-                        },
-                    } as Badge,
-                ],
-            },
+            badge_id: 'cat_linux_admin', badge_name: 'Linux Server Admin', skill: 'Linux', level: 'Intermediate', category: 'CYBER / NETWORK',
+            description: 'จัดการ Server ผ่าน Command Line (Bash)', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'File Permissions', max_score: 1 },
+                { name: 'Service Management', max_score: 1 },
+                { name: 'User Management', max_score: 1 }
+            ]
         },
     },
     {
-        uid: 'u2',
+        id: 'cat_wireshark',
         data: {
-            auth: { user_id: 'u2', email: 'manapot@example.com', role: 'user' },
-            profile: {
-                name: 'Manapot Sukawat',
-                email: 'manapot@example.com',
-                bio: 'Data Science Enthusiast',
-                about_me: 'Passionate about machine learning and data visualization.',
-                location: 'Bangkok, Thailand',
-                avatar_url: '',
-            },
-            portfolio: { projects: [] },
-            history: {
-                experience: [],
-                education: [
-                    {
-                        school: 'KMUTT',
-                        degree: 'Bachelor of Science',
-                        field: 'Data Science',
-                        period: { start: '2023', end: '2027' },
-                    },
-                ],
-            },
-            achievements: { badges: [] },
+            badge_id: 'cat_wireshark', badge_name: 'Packet Analysis', skill: 'Wireshark', level: 'Intermediate', category: 'CYBER / NETWORK',
+            description: 'ดักจับและวิเคราะห์ Traffic เครือข่าย', issuer: 'KMUTT', 
+            icon: 'https://upload.wikimedia.org/wikipedia/commons/a/ab/Wireshark_icon.svg', is_active: true,
+            criteria_template: [
+                { name: 'Traffic Capture', max_score: 1 },
+                { name: 'Protocol Analysis', max_score: 1 },
+                { name: 'Filtering', max_score: 1 }
+            ]
         },
     },
     {
-        uid: 'u3',
+        id: 'cat_ethical_hack',
         data: {
-            auth: { user_id: 'u3', email: 'suttinun@example.com', role: 'user' },
-            profile: {
-                name: 'Suttinun Rordorthai',
-                email: 'suttinun@example.com',
-                bio: 'Cybersecurity & Networking Focus',
-                about_me: 'Interested in network security and ethical hacking.',
-                location: 'Chiang Mai, Thailand',
-                avatar_url: '',
-            },
-            portfolio: { projects: [] },
-            history: { experience: [], education: [] },
-            achievements: { badges: [] },
-        },
-    },
-];
-
-// ── Feedback requests (pending / approved / rejected) ──────
-export const feedbacks = [
-    // pending — รอการยืนยัน
-    {
-        id: 'fb_001',
-        data: {
-            feedback_id:      'fb_001',
-            student_id:       'u1',
-            student_name:     'Yosapart Raúl',
-            badge_id:         'b3',
-            badge_name:       'Simple HTML Profile Page',
-            skill:            'HTML',
-            level:            'Beginner',
-            category:         'SOFTWARE / WEB',
-            issuer:           'KMUTT',
-            evidence_url:     'https://github.com/yo/first-html-page.zip',
-            note:             'ผมทำหน้า profile ด้วย HTML ล้วนๆ ครับ ใช้ semantic tags ครบ',
-            status:           'pending',
-            verifier_id:      null,
-            verifier_name:    null,
-            verifier_comment: null,
-            evaluation:       null,
-            created_at:       '2026-04-26T01:00:00Z',
-            updated_at:       '2026-04-26T01:00:00Z',
+            badge_id: 'cat_ethical_hack', badge_name: 'Ethical Hacking 101', skill: 'Security', level: 'Beginner', category: 'CYBER / NETWORK',
+            description: 'เรียนรู้ช่องโหว่พื้นฐานและวิธีป้องกันเบื้องต้น', issuer: 'KMUTT', 
+            icon: 'https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kalilinux/kalilinux-original.svg', is_active: true,
+            criteria_template: [
+                { name: 'Reconnaissance', max_score: 1 },
+                { name: 'Vulnerability Assessment', max_score: 1 },
+                { name: 'Exploit Basics', max_score: 1 }
+            ]
         },
     },
     {
-        id: 'fb_002',
+        id: 'cat_crypto_basic',
         data: {
-            feedback_id:      'fb_002',
-            student_id:       'u2',
-            student_name:     'Manapot Sukawat',
-            badge_id:         'b4',
-            badge_name:       'Basic SQL SELECT Queries',
-            skill:            'SQL',
-            level:            'Beginner',
-            category:         'DATA / AI',
-            issuer:           'KMUTT',
-            evidence_url:     '',
-            note:             'แนบไฟล์ SQL queries ที่เขียนไว้ใน class',
-            status:           'pending',
-            verifier_id:      null,
-            verifier_name:    null,
-            verifier_comment: null,
-            evaluation:       null,
-            created_at:       '2026-04-25T08:00:00Z',
-            updated_at:       '2026-04-25T08:00:00Z',
-        },
-    },
-    // approved — ยืนยันแล้ว
-    {
-        id: 'fb_003',
-        data: {
-            feedback_id:      'fb_003',
-            student_id:       'u1',
-            student_name:     'Yosapart Raúl',
-            badge_id:         'b1',
-            badge_name:       'Basic App Wireframe (Figma)',
-            skill:            'Figma',
-            level:            'Beginner',
-            category:         'GAME / GRAPHICS',
-            issuer:           'KMUTT',
-            evidence_url:     'https://figma.com/yo/wireframe-project',
-            note:             '',
-            status:           'approved',
-            verifier_id:      'v2',
-            verifier_name:    'Prof. Wittawin',
-            verifier_comment: 'Great attention to detail on the user flows.',
-            evaluation: {
-                criteria: [
-                    { name: 'Layout Structure',       score: 1 },
-                    { name: 'User Flow Logic',        score: 1 },
-                    { name: 'Component Consistency',  score: 1 },
-                ],
-            },
-            created_at: '2026-01-20T09:00:00Z',
-            updated_at: '2026-02-02T10:00:00Z',
+            badge_id: 'cat_crypto_basic', badge_name: 'Cryptography Basics', skill: 'Cryptography', level: 'Intermediate', category: 'CYBER / NETWORK',
+            description: 'เข้าใจการเข้ารหัสข้อมูล (Symmetric/Asymmetric)', issuer: 'KMUTT', 
+            icon: 'https://cdn-icons-png.flaticon.com/512/1655/1655160.png', is_active: true,
+            criteria_template: [
+                { name: 'Hashing', max_score: 1 },
+                { name: 'Encryption Logic', max_score: 1 },
+                { name: 'Key Management', max_score: 1 }
+            ]
         },
     },
 ];

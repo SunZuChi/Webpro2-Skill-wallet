@@ -1,15 +1,5 @@
-// api/badgeCatalog.route.ts
 import { Elysia, t } from 'elysia';
 import { BadgeCatalogController } from '../controllers/badgeCatalog.controller';
-
-// ============================================================
-// Badge Catalog Route
-//
-// [Public]    GET  /api/catalog               — ดู badge ทั้งหมดที่มีในระบบ
-// [Public]    GET  /api/catalog/:badge_id     — ดูรายละเอียด badge (pre-fill form)
-// [Admin]     POST /api/catalog               — เพิ่ม badge ใหม่
-// [Admin]     PUT  /api/catalog/:badge_id/deactivate — ปิด badge
-// ============================================================
 
 export const badgeCatalogRoute = new Elysia({ prefix: '/api/catalog' })
 

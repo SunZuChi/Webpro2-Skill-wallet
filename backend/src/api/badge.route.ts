@@ -2,7 +2,7 @@
 import { Elysia, t } from 'elysia';
 import { BadgeController } from '../controllers/badge.controller';
 
-// ── Schema ─────────────────────────────────────────────────
+// Schema
 const CriteriaSchema = t.Object({
     name:  t.String({ description: 'เกณฑ์ เช่น "Basic HTML Tags Usage"' }),
     score: t.Number({ description: '0 = ไม่ผ่าน, 1 = ผ่าน', minimum: 0, maximum: 1 }),
