@@ -1,9 +1,35 @@
 "use client";
-import React from 'react';
-import { Mail, Lock,Quote,ArrowLeft} from 'lucide-react';
-import Link from 'next/link';
+import React, { useState } from 'react';
+import { Quote, ArrowLeft, Loader2 } from 'lucide-react';
+import { AuthService } from '../../services/auth.service';
 
-export const LoginPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
+export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding: () => void, onLoginSuccess: () => void }) => {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      const result = await AuthService.loginWithGoogle();
+      
+      if (result.requireRegistration) {
+        // ถ้ายอมให้คนแปลกหน้าเข้ามาเป็นนักศึกษาอัตโนมัติ 
+        // เราสามารถแอบเรียก register ตรงนี้ได้เลย หรือเด้งไปหน้าให้กรอกข้อมูลเพิ่ม
+        await AuthService.registerStudent(result.idToken, result.name || "Student");
+        localStorage.setItem("token", result.idToken);
+        localStorage.setItem("userRole", "user");
+        onLoginSuccess();
+      } else if (result.success) {
+        onLoginSuccess();
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to login with Google");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-[#050505] font-lineseed antialiased text-white overflow-hidden">
       
@@ -14,7 +40,7 @@ export const LoginPage = ({ onBackToLanding }: { onBackToLanding: () => void }) 
           className="cursor-pointer absolute top-8 left-8 lg:left-12 flex items-center gap-2 text-slate-500 hover:text-white transition-all group focus:outline-none"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <Link></Link><span className="text-xs font-bold uppercase tracking-widest">Back to Home</span>
+          <span className="text-xs font-bold uppercase tracking-widest">Back to Home</span>
         </button>
         <div className="w-full max-w-[400px]">
           
@@ -41,15 +67,32 @@ export const LoginPage = ({ onBackToLanding }: { onBackToLanding: () => void }) 
             <h1 className="text-[42px] font-bold leading-tight tracking-tight text-white">Welcome Back</h1>
           </div>
 
-          {/* Social Login */}
-          <button className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98]">
-            <svg width="20" height="20" viewBox="0 0 48 48" className="group-hover:scale-110 transition-transform">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
-            </svg>
-            <span className="font-bold text-sm text-slate-200">Continue with Google</span>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Social Login (Google Only) */}
+          <button 
+            onClick={handleGoogleLogin}
+            disabled={loading}
+            className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? (
+              <Loader2 className="w-5 h-5 animate-spin text-slate-400" />
+            ) : (
+              <svg width="20" height="20" viewBox="0 0 48 48" className="group-hover:scale-110 transition-transform">
+                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
+                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              </svg>
+            )}
+            <span className="font-bold text-sm text-slate-200">
+              Continue with Google
+            </span>
           </button>
 
           {/* Separator */}

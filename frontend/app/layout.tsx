@@ -29,8 +29,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="th" className={`${lineSeed.variable}`}> 
-      <body className="font-lineseed">{children}</body>
+    <html lang="th" className={`${lineSeed.variable}`} suppressHydrationWarning> 
+      <body className="font-lineseed" suppressHydrationWarning>{children}</body>
     </html>
   )
 }

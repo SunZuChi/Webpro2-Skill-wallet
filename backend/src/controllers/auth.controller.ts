@@ -5,10 +5,18 @@ export const AuthController = {
     // ใช้สำหรับนักศึกษาที่ Register เอง
     async registerStudent(user_id: string, email: string, name: string) {
         await db.collection("users").doc(user_id).set({
-            auth: { user_id, email, role: "user" },
-            profile: { name, email, location: "Bangkok", bio: "" },
-            portfolio: { projects: [] },
-            achievements: { badges: [] }
+            user_id: user_id,
+            email: email,
+            role: "user",
+            profile: { 
+                name: name,
+                bio: "",
+                about_me: "",
+                location: "Bangkok",
+                avatar_url: ""
+            },
+            experience: [],
+            education: []
         });
         return { status: "success", message: "Student registered" };
     },
@@ -16,15 +24,17 @@ export const AuthController = {
     // ใช้สำหรับคุณ (Admin) สร้างให้อาจารย์เท่านั้น
     async createVerifier(user_id: string, email: string, name: string, position: string) {
         await db.collection("users").doc(user_id).set({
-            auth: { user_id, email, role: "verifier" },
-            profile: { 
-                name, 
-                email, 
-                position, // เช่น "Lecturer"
+            user_id: user_id,
+            email: email,
+            role: "verifier",
+            profile: {
+                name: name,
+                position: position,
                 organization: "KMUTT",
-                expertise: [] 
+                expertise: [],
+                avatar_url: ""
             },
-            review_history: [] // อาจารย์ไม่มี Portfolio แต่มีประวัติการตรวจ
+            review_history: []
         });
         return { status: "success", message: "Verifier account created by Admin" };
     },
@@ -46,7 +56,11 @@ export const AuthController = {
             const userDoc = await db.collection("users").doc(user_id).get();
 
             if (!userDoc.exists) {
-                return { status: "error", message: "User not found in Firestore" };
+                return {
+                    status: "not_registered",
+                    message: "User not found in Firestore",
+                    uid: user_id,
+                };
             }
 
             const userData = userDoc.data();
