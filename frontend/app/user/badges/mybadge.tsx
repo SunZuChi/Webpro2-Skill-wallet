@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { 
-  LayoutDashboard, 
-  Medal, 
-  FolderOpen, 
-  FileUp, 
-  Settings, 
-  AlignLeft, 
-  Clock, 
-  RotateCcw, 
-  ShieldCheck, 
-  Quote, 
+import {
+  LayoutDashboard,
+  Medal,
+  FolderOpen,
+  FileUp,
+  Settings,
+  AlignLeft,
+  Clock,
+  RotateCcw,
+  ShieldCheck,
+  Quote,
   ChevronRight,
   Plus,
   ExternalLink,
@@ -68,14 +68,14 @@ export default function MyBadgesPage() {
   }, []);
 
   // Filter Logic
-  
+
 
   const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
-      
-     <Sidebar2 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
+
+      <Sidebar2 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 overflow-y-auto flex flex-col transition-all duration-300 relative">
@@ -85,12 +85,12 @@ export default function MyBadgesPage() {
           <div className={containerClass}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                 <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-white"><Menu size={24} /></button>
-                 <h1 className="text-xl md:text-2xl font-bold tracking-tight">My Badges</h1>
+                <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-white"><Menu size={24} /></button>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight">My Badges</h1>
               </div>
-              
-              
-              
+
+
+
             </div>
           </div>
         </header>
@@ -101,18 +101,18 @@ export default function MyBadgesPage() {
             <p className="text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.2em] font-bold">SHOWCASE YOUR TECHNICAL CAPABILITIES TO FUTURE EMPLOYERS.</p>
           </div>
 
-          
+
 
           <BadgePage />
-          
+
         </div>
 
         <footer className="mt-auto p-10 text-center opacity-30">
-           <p className="text-[10px] uppercase font-bold tracking-[0.4em]">Ip&s IT Portfolio & Skill © 2026</p>
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em]">Ip&s IT Portfolio & Skill © 2026</p>
         </footer>
       </main>
 
-      
+
 
     </div>
   );

@@ -59,29 +59,29 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
-      
+
       <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} userName={userName} userAvatar={userAvatar} />
 
       {/* 2. MAIN CONTENT Area */}
       <main className="flex-1 overflow-y-auto relative flex flex-col transition-all duration-300">
-        
+
         {/* Header Title */}
         <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center">
-        <div className={containerClass}>
-          <div className="flex items-center justify-between">
-           <div className="flex items-center gap-4">
-              {/* ปุ่ม Hamburger สำหรับ Mobile (แสดงเมื่อจอเล็ก) */}
-              <button className="md:hidden p-2 text-slate-400"><AlignLeft size={24} /></button>
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight">Overview</h1>
-           </div>
-           </div>
-           </div>
+          <div className={containerClass}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                {/* ปุ่ม Hamburger สำหรับ Mobile (แสดงเมื่อจอเล็ก) */}
+                <button className="md:hidden p-2 text-slate-400"><AlignLeft size={24} /></button>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight">Overview</h1>
+              </div>
+            </div>
+          </div>
         </header>
 
-        
-          
-          {/* Welcome Text */}
-          <div className={`${containerClass} py-8 sm:py-10 space-y-8 md:space-y-10`}>
+
+
+        {/* Welcome Text */}
+        <div className={`${containerClass} py-8 sm:py-10 space-y-8 md:space-y-10`}>
           <div className="text-left space-y-2">
             <h2 className="text-4xl font-bold tracking-tight">Welcome back, {userName || '...'}!</h2>
             <p className="text-sm text-slate-500 uppercase tracking-[0.12em] font-bold">
@@ -94,14 +94,14 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
             <MatrixPage requests={requests} />
             <Achivement requests={stats.recentRequests} loading={loading} />
           </div>
-          <FeedbackPage requests={stats.approvedRequests} loading={loading} />  
+          <FeedbackPage requests={stats.approvedRequests} loading={loading} />
         </div>
         <footer className="mt-auto p-10 text-center opacity-30">
-           <p className="text-[10px] uppercase font-bold tracking-[0.3em]">Ip&s IT Portfolio &amp; Skill © 2026</p>
+          <p className="text-[10px] uppercase font-bold tracking-[0.3em]">Ip&s IT Portfolio &amp; Skill © 2026</p>
         </footer>
       </main>
-      
+
     </div>
-    
+
   );
 };

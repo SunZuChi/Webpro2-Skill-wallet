@@ -20,9 +20,9 @@ interface SidebarProps {
 }
 
 const navItems = [
-  { href: '/user/overview',   icon: LayoutDashboard, label: 'Overview'      },
-  { href: '/user/badges',     icon: Medal,           label: 'My Badges'     },
-  { href: '/user/skill-hub',  icon: FolderOpen,      label: 'Skill Hub & CV'},
+  { href: '/user/overview', icon: LayoutDashboard, label: 'Overview' },
+  { href: '/user/badges', icon: Medal, label: 'My Badges' },
+  { href: '/user/skill-hub', icon: FolderOpen, label: 'Skill Hub & CV' },
 ];
 
 export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: SidebarProps) => {
@@ -66,11 +66,10 @@ export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: Sidebar
             return (
               <Link key={href} href={href}>
                 <div
-                  className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-sm font-medium cursor-pointer group relative overflow-hidden transition-all ${
-                    isActive
-                      ? 'bg-white/5 text-white border border-white/10 font-bold'
-                      : 'text-slate-400 hover:bg-white/5'
-                  }`}
+                  className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-sm font-medium cursor-pointer group relative overflow-hidden transition-all ${isActive
+                    ? 'bg-white/5 text-white border border-white/10 font-bold'
+                    : 'text-slate-400 hover:bg-white/5'
+                    }`}
                 >
                   {isActive && !isCollapsed && (
                     <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[#ff4f40] rounded-r-full shadow-[2px_0_10px_rgba(255,79,64,0.5)]" />

@@ -12,8 +12,6 @@ import {
 /** * [IP&S SYSTEM] - EXPORT VERIFIED RESUME WITH REAL USER PREVIEW
  * ข้อมูลถูกดึงมาจาก Profile, Badges และ Projects ของผู้ใช้จริง
  */
-import { Sidebar4 } from './sidebar4';
-
 const CONTAINER_CLASS = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 md:px-10";
 
 // --- Custom Inline Icon for Github ---
@@ -65,15 +63,12 @@ export default function Preview() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 relative text-left">
-      
-     <Sidebar4 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-
+    <>
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 h-full overflow-hidden flex flex-col relative transition-all duration-300">
-        
-        {/* HEADER */}
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
+      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ff4f40]/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+      
+      {/* HEADER */}
+      <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
           <div className={CONTAINER_CLASS}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -147,9 +142,7 @@ export default function Preview() {
           </div>
 
         </div>
-      </main>
-
-    </div>
+    </>
   );
 }
 
