@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { Mail, Lock,Quote,ArrowLeft} from 'lucide-react';
-
+import Link from 'next/link';
 
 export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
   return (
@@ -14,10 +14,10 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           className="cursor-pointer absolute top-8 left-8 lg:left-12 flex items-center gap-2 text-slate-500 hover:text-white transition-all group focus:outline-none"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-          <span className="text-xs font-bold uppercase tracking-widest">Back to Home</span>
+          <Link href='/landing'><span className="text-xs font-bold uppercase tracking-widest">Back to Home</span></Link>
         </button>
 
-        <div className="w-full max-w-[400px]">
+        <div className="w-full max-w-100">
           
           {/* Logo Section */}
            <div 
@@ -114,15 +114,15 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
         />
         
         {/* Gradient Overlays based on login.jpg */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#ff4f40]/30 via-transparent to-transparent"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/20 via-[#050505]/40 to-[#050505]"></div>
+        <div className="absolute inset-0 bg-linear-to-br from-[#ff4f40]/30 via-transparent to-transparent"></div>
+        <div className="absolute inset-0 bg-linear-to-b from-[#050505]/20 via-[#050505]/40 to-[#050505]"></div>
 
         {/* Abstract Background Blur Nodes */}
         <div className="absolute top-20 left-20 w-64 h-64 bg-[#ff4f40]/10 rounded-full blur-[100px]"></div>
         <div className="absolute bottom-20 right-20 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
 
         {/* Quote Card (Glassmorphism) */}
-        <div className="relative z-10 w-full max-w-[580px] h-full max-h-[593px] bg-white/[0.02] backdrop-blur-[30px] border border-white/10 rounded-[3rem] p-16 shadow-2xl overflow-hidden group">
+        <div className="relative z-10 w-full max-w-145 h-full max-h-148.25 bg-white/2 backdrop-blur-[30px] border border-white/10 rounded-[3rem] p-16 shadow-2xl overflow-hidden group">
           
           
           
@@ -135,12 +135,12 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
             "This platform bridges the gap between academic theory and industry reality."
           </h2>
           
-          <p className="relative text-[#868686] text-base leading-relaxed mb-10 font-light max-w-[480px]">
+          <p className="relative text-[#868686] text-base leading-relaxed mb-10 font-light max-w-120">
             The verified digital badges have completely transformed how we evaluate upcoming tech talent. 
             It's no longer just about what's on a resume; it's about <span className="text-slate-300 font-medium">verified cryptographic proof of skill</span>.
           </p>
 
-          <div className="relative h-px w-full bg-gradient-to-r from-white/10 via-white/90 to-transparent mb-10"></div>
+          <div className="relative h-px w-full bg-linear-to-r from-white/10 via-white/90 to-transparent mb-10"></div>
 
           {/* Author Info */}
           <div className="relative flex items-center gap-5">
@@ -167,3 +167,4 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
   );
 };
 
+export default SignUpPage;

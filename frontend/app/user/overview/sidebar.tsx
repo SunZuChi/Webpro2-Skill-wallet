@@ -21,13 +21,13 @@ import {
 import Link from 'next/link';
 
 export const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
-
+  const [showLogout, setShowLogout] = useState(false);
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
           
           {/* 1. SIDEBAR (ปรับความกว้างตามสถานะ isCollapsed) */}
           <aside 
-            className={`hidden md:flex ${isCollapsed ? 'w-[80px]' : 'w-[260px]'} h-full bg-[#0a0a0a] border-r border-white/5 flex-col py-8 flex-shrink-0 z-50 transition-all duration-300 ease-in-out`}
+            className={`hidden md:flex ${isCollapsed ? 'w-20' : 'w-65'} h-full bg-[#0a0a0a] border-r border-white/5 flex-col py-8 shrink-0 z-50 transition-all duration-300 ease-in-out`}
           >
             
             {/* Sidebar Header: Hamburger | Logo (ซ่อนโลโก้เมื่อหดเมนู) */}
@@ -71,18 +71,34 @@ export const Sidebar = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onTog
               </div></Link>
               
               {/* Export Resume */}
-              <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
+              <Link href="/user/ex"><div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}>
                 <FileUp size={20} className="group-hover:text-white transition-colors shrink-0" /> 
                 {!isCollapsed && <span className="truncate">Export Resume</span>}
-              </div>
+              </div></Link>
             </nav>
     
             {/* Sidebar Footer: โปรไฟล์มุมซ้ายล่าง (เหลือแค่ Avatar เมื่อหดเมนู) */}
             <div className="mt-auto px-4 flex flex-col gap-4">
-              <div className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-500 hover:text-white transition-all text-sm font-medium cursor-pointer group`}>
-                <Settings size={20} className="group-hover:rotate-90 transition-transform duration-500 shrink-0" /> 
-                {!isCollapsed && <span className="truncate">Setting</span>}
-              </div>
+              <div className="relative">
+                          <button 
+                            onClick={() => setShowLogout(!showLogout)}
+                            className={`flex items-center w-full ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-500 hover:text-white transition-all text-sm font-medium cursor-pointer group`}
+                          >
+                            <Settings size={20} className="group-hover:rotate-90 transition-transform duration-500 shrink-0" /> 
+                            {!isCollapsed && <span className="truncate">Setting</span>}
+                          </button>
+                          
+                          {showLogout && (
+                            <div className={`absolute ${isCollapsed ? 'left-16' : 'left-0'} bottom-full mb-2 w-full min-w-30 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-2 duration-200 z-60`}>
+                              <button 
+                                onClick={() => window.location.reload()}
+                                className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-rose-500 hover:bg-rose-500/10 text-sm font-bold transition-colors"
+                              >
+                                <LogOut size={16} /> Logout
+                              </button>
+                            </div>
+                          )}
+                        </div>
               
               <div className="h-px bg-white/5 mx-2"></div>
               

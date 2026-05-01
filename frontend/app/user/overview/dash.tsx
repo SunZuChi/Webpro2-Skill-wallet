@@ -35,7 +35,7 @@ const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
       <main className="flex-1 overflow-y-auto relative flex flex-col transition-all duration-300">
         
         {/* Header Title */}
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center">
+        <header className="h-17.5 md:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
         <div className={containerClass}>
           <div className="flex items-center justify-between">
            <div className="flex items-center gap-4">

@@ -69,7 +69,7 @@ const filteredBadges = activeFilter === 'all'
             <div className="ml-auto">
              <button 
                 onClick={() => setShowRequestModal(true)}
-                className="x  cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest"
+                className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest"
               >
                 <Plus size={16} /> <span className="hidden sm:inline">Request New Badge</span><span className="sm:hidden">Request</span>
               </button>

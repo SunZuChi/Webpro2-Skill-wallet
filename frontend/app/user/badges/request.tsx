@@ -40,7 +40,7 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-10">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-4 sm:p-6 md:p-10">
       <div className="cursor-pointer absolute inset-0 bg-black/90 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose}></div>
       
       <div className="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-300">
@@ -76,7 +76,7 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
                    </select>
                 </div>
              </div>
-             <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-slate-500 transition-colors shrink-0"><X size={28} /></button>
+             <button onClick={onClose} className="cursor-pointer p-2 hover:bg-white/5 rounded-full text-slate-500 transition-colors shrink-0"><X size={28} /></button>
           </div>
         </div>
 
@@ -91,13 +91,13 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
             <div className="bg-[#0f0f11] storke-[#323232] border border-white/5 rounded-3xl p-6 sm:p-8 space-y-6">
               <textarea 
                 placeholder="เขียนคำบรรยายหรือแนบลิงก์โครงการที่นี่เพื่อให้อาจารย์ตรวจสอบ... (เช่น ลิงก์ GitHub หรือรายละเอียดของงาน)"
-                className="w-full bg-black border border-white/15 rounded-2xl p-6 text-sm min-h-[120px] outline-none focus:border-[#ff4f40]/50 transition-all placeholder:text-slate-700 italic font-light leading-relaxed"
+                className="w-full bg-black border border-white/15 rounded-2xl p-6 text-sm min-h-30 outline-none focus:border-[#ff4f40]/50 transition-all placeholder:text-slate-700 italic font-light leading-relaxed"
                 value={requestData.evidence}
                 onChange={(e) => setRequestData({...requestData, evidence: e.target.value})}
               />
               
               {/* File Upload Area */}
-              <div className="border-2 border-dashed border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:bg-white/[0.02] hover:border-[#ff4f40]/20 transition-all cursor-pointer group">
+              <div className="border-2 border-dashed border-white/5 rounded-2xl p-8 flex flex-col items-center justify-center gap-4 hover:bg-white/2 hover:border-[#ff4f40]/20 transition-all cursor-pointer group">
                 <div className="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-500 group-hover:text-[#ff4f40] transition-colors">
                   <Upload size={24} />
                 </div>

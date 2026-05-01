@@ -14,8 +14,8 @@ import {
  */
 import { Sidebar4 } from './sidebar4';
 
-const CONTAINER_CLASS = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 md:px-10";
-
+const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
+                        
 // --- Custom Inline Icon for Github ---
 const GithubIcon = ({ size = 18, className = "" }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -65,22 +65,22 @@ export default function Preview() {
   };
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 relative text-left">
+    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
       
      <Sidebar4 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 h-full overflow-hidden flex flex-col relative transition-all duration-300">
         
-        {/* HEADER */}
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
-          <div className={CONTAINER_CLASS}>
+        {/* HEADER (Aligned with containerClass) */}
+        <header className="h-17.5 md:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
+          <div className={containerClass}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400"><Menu size={24} /></button>
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white leading-none">Export Verified Resume</h1>
+                <h1 className="text-xl md:text-2xl font-bold tracking-tight">Export Verified Resume</h1>
               </div>
-              <button className="bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[11px] font-black px-8 py-3 rounded-2xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest">
+              <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest">
                 <Download size={16} /> Export PDF
               </button>
             </div>
@@ -88,10 +88,10 @@ export default function Preview() {
         </header>
 
         {/* WORKSPACE */}
-        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden bg-[#050505]">
-          
+      
+          <div className={`${containerClass} flex flex-col lg:flex-row flex-1 overflow-hidden px-0 md:px-0 lg:px-10`}>
           {/* CONFIG PANEL */}
-          <div className="w-full lg:w-[420px] bg-[#0a0a0a] border-r border-white/5 overflow-y-auto custom-scrollbar p-6 md:p-8 space-y-10">
+          <div className="w-full lg:w-100 bg-[#0a0a0a] lg:bg-transparent border-r border-white/5 overflow-y-auto custom-scrollbar p-6 md:p-8 space-y-10 text-left shrink-0">
             
             {/* Template Selection */}
             <div className="space-y-6">
@@ -101,12 +101,12 @@ export default function Preview() {
               </div>
               <div className="grid grid-cols-3 gap-4">
                 {[1, 2, 3].map((i) => (
-                  <button key={i} onClick={() => setSelectedTemplate(i)} className={`aspect-[3/4] bg-[#121214] rounded-2xl border-2 transition-all p-3 relative ${selectedTemplate === i ? 'border-[#ff4f40]' : 'border-white/5 hover:border-white/10'}`}>
+                  <button key={i} onClick={() => setSelectedTemplate(i)} className={`cursor-pointer aspect-3/4 bg-[#121214] rounded-2xl border-2 transition-all p-3 relative ${selectedTemplate === i ? 'border-[#ff4f40]' : 'border-white/5 hover:border-white/10'}`}>
                     <div className="w-full h-1 bg-white/10 rounded mb-1"></div>
                     <div className="w-2/3 h-3 bg-white/5 rounded mb-4"></div>
                     <div className="space-y-1">
-                       <div className="w-full h-1 bg-white/[0.03] rounded"></div>
-                       <div className="w-full h-1 bg-white/[0.03] rounded"></div>
+                       <div className="w-full h-1 bg-white/3 rounded"></div>
+                       <div className="w-full h-1 bg-white/3 rounded"></div>
                     </div>
                     {selectedTemplate === i && <div className="absolute top-2 right-2"><CheckCircle2 size={12} className="text-[#ff4f40]" /></div>}
                   </button>
@@ -120,7 +120,9 @@ export default function Preview() {
                 <FolderOpen className="text-[#ff4f40]" size={18} />
                 <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Content Included</h3>
               </div>
+              
               <div className="space-y-3">
+                
                  <ConfigToggle label="Profile Photo" sub="Include your avatar image" active={config.profilePhoto} onClick={() => toggleConfig('profilePhoto')} />
                  <ConfigToggle label="About Me Section" sub="Shows career objective" active={config.descriptionProfile} onClick={() => toggleConfig('descriptionProfile')} />
                  <ConfigToggle label="Verified Badges" sub="Shows university credentials" active={config.verifiedBadges} onClick={() => toggleConfig('verifiedBadges')} />
@@ -129,8 +131,9 @@ export default function Preview() {
                  <ConfigToggle label="Technical Skills" sub="Verified skills overview" active={config.technicalSkills} onClick={() => toggleConfig('technicalSkills')} />
               </div>
             </div>
+            
 
-            <div className="p-6 rounded-[2rem] bg-emerald-500/5 border border-emerald-500/10 space-y-4">
+            <div className="p-6 rounded-4xl bg-emerald-500/5 border border-emerald-500/10 space-y-4">
                <div className="flex items-center gap-3 text-emerald-500">
                   <ShieldCheck size={18} />
                   <span className="text-[10px] font-black uppercase tracking-widest leading-none">Security Verified</span>
@@ -140,13 +143,14 @@ export default function Preview() {
           </div>
 
           {/* LIVE PREVIEW AREA (The Paper) */}
-          <div className="flex-1 overflow-y-auto p-6 md:p-12 lg:p-20 flex justify-center items-start custom-scrollbar">
-             <div className="w-full max-w-[840px] shadow-2xl animate-in fade-in zoom-in duration-700 origin-top">
+          <div className="flex-1 bg-[#050505] overflow-y-auto p-6 md:p-12 lg:p-20 flex justify-center items-start custom-scrollbar">
+               <div className="w-full max-w-210 shadow-2xl animate-in fade-in zoom-in duration-700 origin-top">
                 <ResumePaper template={selectedTemplate} config={config} />
              </div>
           </div>
 
         </div>
+        
       </main>
 
     </div>
@@ -171,7 +175,7 @@ const ResumePaper = ({ template, config }: { template: number, config: any }) =>
       <header className={`flex items-start justify-between border-b-2 border-slate-900 pb-8 mb-10 ${template === 2 ? 'flex-col sm:flex-row gap-6' : ''}`}>
         <div className="space-y-4">
            <h1 className="text-4xl font-black tracking-tighter text-slate-950 uppercase">{data.name}</h1>
-           <div className="space-y-1 text-slate-500 text-[11px] font-bold uppercase tracking-[0.1em]">
+           <div className="space-y-1 text-slate-500 text-[11px] font-bold uppercase tracking-widest">
               <p className="flex items-center gap-2"><MapPin size={12}/> {data.address}</p>
               <div className="flex flex-wrap gap-4">
                 <p className="flex items-center gap-2"><Phone size={12}/> {data.phone}</p>
@@ -180,7 +184,7 @@ const ResumePaper = ({ template, config }: { template: number, config: any }) =>
            </div>
         </div>
         {config.profilePhoto && (
-          <div className="w-24 h-24 bg-slate-100 rounded-3xl overflow-hidden border-2 border-slate-900 shrink-0 shadow-lg">
+          <div className="w-24 h-24 bg-slate-100 rounded-3xl overflow-hidden  shrink-0 shadow-lg">
              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover" alt="Profile" />
           </div>
         )}
@@ -309,16 +313,10 @@ const ResumePaper = ({ template, config }: { template: number, config: any }) =>
 };
 
 // --- Helpers ---
-const NavItem = ({ icon, label, active = false, isCollapsed = false, onClick }: any) => (
-  <button onClick={onClick} className={`flex items-center rounded-xl transition-all cursor-pointer group relative w-full ${isCollapsed ? 'justify-center h-12' : 'gap-4 px-4 py-3.5 h-[52px]'} ${active ? 'bg-white/5 text-white border border-white/10 shadow-lg' : 'text-slate-500 hover:bg-white/5 hover:text-white'}`}>
-    <div className={`shrink-0 ${active ? 'text-[#ff4f40]' : 'group-hover:text-white transition-colors'}`}>{icon}</div>
-    {!isCollapsed && <span className="text-sm font-bold truncate">{label}</span>}
-    {active && !isCollapsed && <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[#ff4f40] rounded-r-full shadow-[2px_0_10px_#ff4f40]"></div>}
-  </button>
-);
+
 
 const ConfigToggle = ({ label, sub, active, onClick }: any) => (
-  <div className="flex items-center justify-between p-4 rounded-2xl bg-white/[0.02] border border-white/5 hover:border-white/10 transition-all group">
+  <div className="flex items-center justify-between p-4 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-all group">
      <div className="text-left space-y-0.5">
         <p className="text-sm font-bold text-white group-hover:text-[#ff4f40] transition-colors leading-none">{label}</p>
         <p className="text-[10px] text-slate-500 font-medium mt-1.5 leading-none">{sub}</p>

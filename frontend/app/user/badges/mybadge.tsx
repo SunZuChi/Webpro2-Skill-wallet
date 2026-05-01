@@ -79,9 +79,9 @@ export default function MyBadgesPage() {
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 overflow-y-auto flex flex-col transition-all duration-300 relative">
-        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ff4f40]/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
+        <div className="absolute top-0 right-0 w-150 h-150 bg-[#ff4f40]/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center">
+        <header className="h-17.5 md:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
           <div className={containerClass}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">

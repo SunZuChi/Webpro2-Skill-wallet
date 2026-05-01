@@ -20,7 +20,7 @@ import {
 
 export const Achivement = ({ onViewAll }: { onViewAll: () => void }) => {return (
     
-                <div className="xl:col-span-5 bg-[#0f0f11] border border-white/5 rounded-[2.5rem] p-10 flex flex-col min-h-[480px] shadow-2xl">
+                <div className="xl:col-span-5 bg-[#0f0f11] border border-white/5 rounded-[2.5rem] p-10 flex flex-col min-h-120 shadow-2xl">
                   <div className="flex items-center justify-between mb-8">
                     <div className="text-left">
                       <h3 className="text-xl font-bold">Recent Achievements</h3>

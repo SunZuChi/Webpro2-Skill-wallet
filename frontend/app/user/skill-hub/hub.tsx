@@ -93,7 +93,7 @@ export default function App() {
 
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 overflow-y-auto flex flex-col relative transition-all duration-300">
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center transition-all">
+        <header className="h-17.5 md:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
           <div className={CONTAINER_CLASS}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
