@@ -95,13 +95,21 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             );
           })}
 
-          {/* Export Resume (ยังไม่มีหน้า) */}
-          <div
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}
-          >
-            <FileUp size={20} className="text-slate-400 group-hover:text-white transition-colors shrink-0" />
-            {!isCollapsed && <span className="truncate">Export Resume</span>}
-          </div>
+          {/* Export Resume */}
+          <Link href="/user/ex">
+            <div
+              className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-sm cursor-pointer group relative overflow-hidden transition-colors duration-300 border ${pathname === '/user/ex'
+                ? 'bg-white/5 text-white border-white/10 font-bold'
+                : 'text-slate-400 hover:bg-white/5 font-medium border-transparent'
+                }`}
+            >
+              {pathname === '/user/ex' && !isCollapsed && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-5 bg-[#ff4f40] rounded-r-full shadow-[2px_0_10px_rgba(255,79,64,0.5)]" />
+              )}
+              <FileUp size={20} className={`shrink-0 transition-colors ${pathname === '/user/ex' ? 'text-[#ff4f40]' : 'text-slate-400 group-hover:text-white'}`} />
+              {!isCollapsed && <span className="truncate">Export Resume</span>}
+            </div>
+          </Link>
         </nav>
 
         {/* Sidebar Footer */}
