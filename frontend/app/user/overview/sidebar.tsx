@@ -8,10 +8,13 @@ import {
   FileUp,
   Settings,
   AlignLeft,
+  LogOut,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { OverviewService, UserProfile } from '../../../services/overview.service';
+import { AuthService } from '../../../services/auth.service';
+import { auth } from '../../../config/firebase';
 
 interface SidebarProps {
   isCollapsed: boolean;
@@ -27,6 +30,7 @@ const navItems = [
 export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   const pathname = usePathname();
   const [profile, setProfile] = React.useState<UserProfile | null>(null);
+  const [showLogout, setShowLogout] = React.useState(false);
 
   React.useEffect(() => {
     const fetchProfile = async () => {
@@ -46,6 +50,16 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
       .slice(0, 2)
       .join('')
       .toUpperCase();
+  };
+
+  const handleSignOut = async () => {
+    try {
+      await AuthService.logout();
+      // Redirect to landing page
+      window.location.href = "/";
+    } catch (error) {
+      console.error("Logout error in sidebar:", error);
+    }
   };
 
   return (
@@ -114,11 +128,25 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
 
         {/* Sidebar Footer */}
         <div className="mt-auto px-4 flex flex-col gap-4">
-          <div
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}
-          >
-            <Settings size={20} className="text-slate-400 group-hover:text-white group-hover:rotate-90 transition-all duration-500 shrink-0" />
-            {!isCollapsed && <span className="truncate">Setting</span>}
+          <div className="relative">
+            <div
+              onClick={() => setShowLogout(!showLogout)}
+              className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}
+            >
+              <Settings size={20} className="text-slate-400 group-hover:text-white group-hover:rotate-90 transition-all duration-500 shrink-0" />
+              {!isCollapsed && <span className="truncate">Setting</span>}
+            </div>
+
+            {showLogout && (
+              <div className={`absolute ${isCollapsed ? 'left-16' : 'left-0'} bottom-full mb-2 w-full min-w-30 bg-[#1a1a1a] border border-white/10 rounded-xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-2 duration-200 z-60`}>
+                <button
+                  onClick={handleSignOut}
+                  className="cursor-pointer w-full flex items-center gap-3 px-4 py-3 text-rose-500 hover:bg-rose-500/10 text-sm font-bold transition-colors"
+                >
+                  <LogOut size={16} /> Logout
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="h-px bg-white/5 mx-2" />

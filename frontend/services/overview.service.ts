@@ -104,7 +104,7 @@ export const OverviewService = {
       totalVerified: approved.length,
       totalPending: pending.length,
       totalRevision: revision.length,
-      recentRequests: requests.slice(0, 5),
+      recentRequests: requests.slice(0, 3),
       approvedRequests: approved,
     };
   },

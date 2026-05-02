@@ -52,9 +52,14 @@ export const AuthService = {
   },
 
   // ออกจากระบบ
-  logout() {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userRole");
-    return auth.signOut();
+  async logout() {
+    try {
+      localStorage.removeItem("token");
+      localStorage.removeItem("userRole");
+      await auth.signOut();
+    } catch (error) {
+      console.error("Logout error in AuthService:", error);
+      throw error;
+    }
   }
 };

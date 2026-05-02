@@ -139,7 +139,7 @@ export const BadgePage = () => {
                       </div>
                       <div className="flex flex-col">
                         <div className="flex items-center gap-1 text-amber-500 text-[9px] font-extrabold uppercase tracking-tighter"><Clock size={10} /> Pending</div>
-                        <p className="text-[11px] text-slate-500 font-medium italic">Awaiting review</p>
+                        <p className="text-[11px] text-slate-500 font-medium italic">Awaiting Verification</p>
                       </div>
                     </>
                   )}
