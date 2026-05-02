@@ -97,7 +97,7 @@ const LinkedinIcon = () => (
 
 
 
-export const LandingPage = () => {
+export const LandingPage = ({ onLoginClick, onSignUpClick, onBackToLanding }: { onLoginClick?: () => void, onSignUpClick?: () => void, onBackToLanding?: () => void }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -157,9 +157,9 @@ export const LandingPage = () => {
               <a href="#badges" className="hover:text-[#ff4f40] transition-colors">Badges</a>
               <a href="#verification" className="hover:text-[#ff4f40] transition-colors">Verification</a>
             </div>
-            <Link href="./login"><div  className="cursor-pointer bg-black text-white px-8 py-2.5 rounded-full font-bold hover:bg-slate-800 transition-all shadow-md active:scale-95">
+            <div onClick={onLoginClick} className="cursor-pointer bg-black text-white px-8 py-2.5 rounded-full font-bold hover:bg-slate-800 transition-all shadow-md active:scale-95">
               Login
-            </div></Link>
+            </div>
           </nav>
 
           <button className="md:hidden text-slate-800" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -173,7 +173,7 @@ export const LandingPage = () => {
             <a href="#features" onClick={() => setIsMenuOpen(false)}>Features</a>
             <a href="#badges" onClick={() => setIsMenuOpen(false)}>Badges</a>
             <a href="#verification" onClick={() => setIsMenuOpen(false)}>Verification</a>
-            <Link href="/authen/login"><div className="bg-black text-white w-full py-3 rounded-full text-center cursor-pointer">Login</div></Link>
+            <div onClick={() => { setIsMenuOpen(false); onLoginClick?.(); }} className="bg-black text-white w-full py-3 rounded-full text-center cursor-pointer">Login</div>
           </div>
         )}
       </header>
@@ -197,9 +197,9 @@ export const LandingPage = () => {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-              <Link href="./sign-up"><div  className="cursor-pointer bg-[#ff4f40] text-white font-bold px-6 sm:px-10 py-3 sm:py-4 rounded-full hover:bg-[#e53e30] transition-all shadow-xl shadow-rose-200 flex items-center justify-center gap-2 group text-sm sm:text-base">
+              <div onClick={onSignUpClick} className="cursor-pointer bg-[#ff4f40] text-white font-bold px-6 sm:px-10 py-3 sm:py-4 rounded-full hover:bg-[#e53e30] transition-all shadow-xl shadow-rose-200 flex items-center justify-center gap-2 group text-sm sm:text-base">
                 Get Started For Free <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-              </div></Link>
+              </div>
               <button className="bg-white text-slate-500 font-bold px-6 sm:px-10 py-3 sm:py-4 rounded-full border-2 border-slate-100 hover:bg-slate-50 transition-colors text-sm sm:text-base">
                 Learn More
               </button>
