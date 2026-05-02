@@ -30,7 +30,6 @@ import {
 } from 'lucide-react';
 
 
-import { Sidebar2 } from './sidebar2';
 import { RequestModal } from './request';
 import { BadgePage } from './badge';
 /**
@@ -53,19 +52,9 @@ const CATEGORIES = [
 // MAIN PAGE COMPONENT
 // ==========================================
 export default function MyBadgesPage() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [showRequestModal, setShowRequestModal] = useState(false);
-
-  // Responsive: Close sidebar on mobile/tablet resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) setIsCollapsed(true);
-    };
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   // Filter Logic
 
@@ -73,15 +62,12 @@ export default function MyBadgesPage() {
   const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
-
-      <Sidebar2 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-
+    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full">
       {/* 2. MAIN CONTENT AREA */}
       <main className="flex-1 overflow-y-auto flex flex-col transition-all duration-300 relative">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ff4f40]/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
-        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center">
+        <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
           <div className={containerClass}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">

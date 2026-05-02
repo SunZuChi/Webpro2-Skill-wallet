@@ -5,7 +5,7 @@ import { auth } from '../config/firebase-admin';
 export const authMiddleware = new Elysia({ name: 'auth-middleware' })
     .derive(async ({ headers, request }) => {
         const authHeader = headers['authorization'] || request.headers.get('authorization');
-        
+
         if (!authHeader || typeof authHeader !== 'string' || !authHeader.startsWith('Bearer ')) {
             return { user: null as { uid: string; email?: string } | null, authError: `No Token. Received: ${authHeader}` };
         }
@@ -23,9 +23,9 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
         }
     })
     // macro สำหรับ Elysia v1: guard route ที่ต้องการ login
-    .macro(() => ({
+    .macro({
         isSignIn(enabled: boolean) {
-            if (!enabled) return;
+            if (!enabled) return {};
             return {
                 beforeHandle({ user, authError, set }: any) {
                     if (!user) {
@@ -35,4 +35,5 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
                 }
             };
         }
-    }));
+    })
+    .as('global');

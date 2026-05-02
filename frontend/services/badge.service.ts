@@ -43,7 +43,7 @@ export const BadgeService = {
         headers: { "Authorization": `Bearer ${token}` },
         body: formData
       });
-      
+
       const responseData = await response.json();
       if (!response.ok) {
         console.error("Backend upload error:", response.status, responseData);

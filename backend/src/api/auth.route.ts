@@ -1,8 +1,11 @@
 import { Elysia, t } from 'elysia';
 import { AuthController } from '../controllers/auth.controller';
 import { auth, db } from '../config/firebase-admin';
+import { authMiddleware } from '../middleware/auth.middleware';
+
 // backend/src/routes/auth.route.ts
 export const authRoute = new Elysia({ prefix: '/api/auth' })
+    .use(authMiddleware)
 
     .post('/login-check', async ({ body }) => {
         return await AuthController.loginCheck(body.idToken);
@@ -20,26 +23,20 @@ export const authRoute = new Elysia({ prefix: '/api/auth' })
     })
 
     // GET /api/auth/me — ดึงข้อมูล user profile ของผู้ที่ login อยู่
-    .get('/me', async ({ headers, request, set }: any) => {
-        const authHeader = headers['authorization'] || request?.headers?.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            set.status = 401;
-            return { status: 'error', message: 'Unauthorized' };
-        }
+    .get('/me', async ({ user, set }: any) => {
         try {
-            const idToken = authHeader.split(' ')[1];
-            const decodedToken = await auth.verifyIdToken(idToken);
-            const userDoc = await db.collection('users').doc(decodedToken.uid).get();
+            const userDoc = await db.collection('users').doc(user.uid).get();
             if (!userDoc.exists) {
                 set.status = 404;
                 return { status: 'error', message: 'User not found' };
             }
             return { status: 'success', data: { id: userDoc.id, ...userDoc.data() } };
         } catch (error: any) {
-            set.status = 401;
-            return { status: 'error', message: 'Invalid token' };
+            set.status = 500;
+            return { status: 'error', message: error.message };
         }
     }, {
+        isSignIn: true,
         detail: { tags: ['Auth'], summary: 'ดึงข้อมูลผู้ใช้ที่ Login อยู่ปัจจุบัน' }
     })
 

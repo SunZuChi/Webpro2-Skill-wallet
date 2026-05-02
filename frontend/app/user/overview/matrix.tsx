@@ -29,14 +29,14 @@ export const MatrixPage = ({ requests }: { requests: BadgeRequest[] }) => {
 
   return (
 
-    <div className="xl:col-span-7 bg-[#0f0f11] border border-white/5 rounded-[2.5rem] p-18 flex flex-col items-center justify-center relative min-h-[520px] shadow-2xl shadow-black/50">
+    <div className="xl:col-span-7 bg-[#0f0f11] border border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center relative min-h-[520px] shadow-2xl shadow-black/50">
       <div className="absolute top-10 left-10 text-left">
         <h3 className="text-xl font-bold">Skill Matrix Analytics</h3>
         <p className="text-xs text-slate-500 mt-1">Proficiency based on completed tracks</p>
       </div>
 
       {/* Radar Chart SVG */}
-      <div className="relative mt-23">
+      <div className="relative mt-12">
         {/* Grid วงกลม */}
         <svg width="340" height="340" viewBox="0 0 100 100" className="opacity-20 animate-pulse">
           {[0.2, 0.4, 0.6, 0.8, 1].map((r, i) => (

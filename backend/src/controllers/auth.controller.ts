@@ -8,7 +8,7 @@ export const AuthController = {
             user_id: user_id,
             email: email,
             role: "user",
-            profile: { 
+            profile: {
                 name: name,
                 bio: "",
                 about_me: "",

@@ -3,20 +3,12 @@ import { BadgeRequestController } from '../controllers/badge_request.controller'
 import { authMiddleware } from '../middleware/auth.middleware';
 
 export const badgeRequestRoute = new Elysia({ prefix: '/api/badge-requests' })
+    .use(authMiddleware)
     // POST /api/badge-requests/upload — upload file ผ่าน backend (ไม่มีปัญหา CORS)
-    .post('/upload', async ({ body, headers, request, set }: any) => {
+    .post('/upload', async ({ body, user, set }: any) => {
         console.log("Upload endpoint hit!");
-        const authHeader = headers['authorization'] || request?.headers?.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            console.log("No auth header");
-            set.status = 401;
-            return { status: "error", message: "Unauthorized. Please login." };
-        }
         try {
-            const idToken = authHeader.split(' ')[1];
-            const { auth } = await import('../config/firebase-admin');
-            const decodedToken = await auth.verifyIdToken(idToken);
-            console.log("User verified:", decodedToken.uid);
+            console.log("User verified:", user.uid);
 
             const file: File = body?.file;
             if (!file) {
@@ -34,8 +26,8 @@ export const badgeRequestRoute = new Elysia({ prefix: '/api/badge-requests' })
             // Cloudinary upload using stream
             const uploadPromise = new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
-                    { 
-                        folder: `badge_evidence/${decodedToken.uid}`,
+                    {
+                        folder: `badge_evidence/${user.uid}`,
                         resource_type: "auto"
                     },
                     (error, result) => {
@@ -59,49 +51,36 @@ export const badgeRequestRoute = new Elysia({ prefix: '/api/badge-requests' })
             return { status: "error", message: `Upload failed: ${errorMsg}` };
         }
     }, {
+        isSignIn: true,
         body: t.Object({ file: t.File() }),
         detail: {
             tags: ['Badge Requests'],
             summary: 'Upload หลักฐานไฟล์ผ่าน Backend ไปยัง Firebase Storage'
         }
     })
-    .post('/', async ({ body, headers, request, set }: any) => {
-        const authHeader = headers['authorization'] || request?.headers?.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            set.status = 401;
-            return { status: "error", message: "Unauthorized. Please login." };
-        }
+    .post('/', async ({ body, user, set }: any) => {
         try {
-            const idToken = authHeader.split(' ')[1];
-            const { auth } = await import('../config/firebase-admin');
-            const decodedToken = await auth.verifyIdToken(idToken);
-            return await BadgeRequestController.createRequest(decodedToken.uid, body);
+            return await BadgeRequestController.createRequest(user.uid, body);
         } catch (error: any) {
-            set.status = 401;
-            return { status: "error", message: "Unauthorized token." };
+            set.status = 500;
+            return { status: "error", message: error.message };
         }
     }, {
+        isSignIn: true,
         detail: {
             tags: ['Badge Requests'],
             summary: 'สร้างคำขอ Badge ใหม่ลงใน Collection badge_requests'
         }
     })
-    .get('/my-requests', async ({ headers, request, set }: any) => {
-        const authHeader = headers['authorization'] || request?.headers?.get('authorization');
-        if (!authHeader || !authHeader.startsWith('Bearer ')) {
-            set.status = 401;
-            return { status: "error", message: "Unauthorized. Please login." };
-        }
+    .get('/my-requests', async ({ user, set }: any) => {
         try {
-            const idToken = authHeader.split(' ')[1];
-            const { auth } = await import('../config/firebase-admin');
-            const decodedToken = await auth.verifyIdToken(idToken);
-            return await BadgeRequestController.getMyRequests(decodedToken.uid);
+            return await BadgeRequestController.getMyRequests(user.uid);
         } catch (error: any) {
-            set.status = 401;
-            return { status: "error", message: "Unauthorized token." };
+            set.status = 500;
+            return { status: "error", message: error.message };
         }
     }, {
+        isSignIn: true,
         detail: {
             tags: ['Badge Requests'],
             summary: 'ดึงข้อมูลคำขอ Badge ของผู้ใช้งานปัจจุบัน'

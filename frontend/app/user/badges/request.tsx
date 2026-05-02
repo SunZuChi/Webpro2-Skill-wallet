@@ -78,9 +78,9 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
       const uploadRes = await BadgeService.uploadEvidence(requestData.file);
       if (uploadRes.status === "success" && uploadRes.url) {
         evidence_link = uploadRes.url;
-        console.log("✅ File uploaded via backend:", evidence_link);
+        console.log("File uploaded via backend:", evidence_link);
       } else {
-        console.warn("⚠️ File upload failed, submitting without file.", uploadRes);
+        console.warn("File upload failed, submitting without file.", uploadRes);
       }
     }
 

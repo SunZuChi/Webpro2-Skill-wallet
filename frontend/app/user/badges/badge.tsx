@@ -39,6 +39,13 @@ const CATEGORIES = [
   { id: 'GAME / GRAPHICS', label: 'GAME / GRAPHICS', color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' },
 ];
 
+const categoryColorClass: Record<string, string> = {
+  'SOFTWARE / WEB': 'text-blue-500 bg-blue-500/10 border-blue-500/20',
+  'DATA / AI': 'text-rose-500 bg-rose-500/10 border-rose-500/20',
+  'CYBER / NETWORK': 'text-yellow-500 bg-yellow-500/10 border-yellow-500/20',
+  'GAME / GRAPHICS': 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
+};
+
 const getCategoryDefaults = (category: string) => {
   if (category === 'SOFTWARE / WEB') return { profImage: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80", icon: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg', professor: "Prof. Wittawin" };
   if (category === 'DATA / AI') return { profImage: "https://i.pravatar.cc/100?u=2", icon: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg', professor: "Prof. Prapatsorn" };
@@ -52,7 +59,6 @@ export const BadgePage = () => {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [myRequests, setMyRequests] = useState<any[]>([]);
 
-  // โหลดข้อมูลเมื่อหน้าเว็บเปิด หรือเมื่อ showRequestModal ถูกปิด (หมายถึงอาจจะส่งคำขอใหม่สำเร็จ)
   useEffect(() => {
     if (!showRequestModal) {
       BadgeService.getMyRequests().then(res => {
@@ -63,15 +69,13 @@ export const BadgePage = () => {
     }
   }, [showRequestModal]);
 
-  const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
-
   const filteredBadges = activeFilter === 'all'
     ? myRequests
     : myRequests.filter(b => b.category === activeFilter);
+
   return (
     <div>
       <div className="flex items-center gap-3 overflow-x-auto pb-4 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0">
-
         {CATEGORIES.map((cat) => (
           <button
             key={cat.id}
@@ -84,18 +88,18 @@ export const BadgePage = () => {
         <div className="ml-auto">
           <button
             onClick={() => setShowRequestModal(true)}
-            className="x  cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest"
+            className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest"
           >
             <Plus size={16} /> <span className="hidden sm:inline">Request New Badge</span><span className="sm:hidden">Request</span>
           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 min-h-[400px]">
         {filteredBadges.map((badge) => {
           const defaults = getCategoryDefaults(badge.category);
           return (
-            <div key={badge.id} className="bg-[#0f0f11] border border-white/5 rounded-[1.8rem] p-8 flex flex-col min-h-[340px] hover:border-[#ff4f40]/30 transition-all cursor-pointer group relative overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+            <div key={badge.id} className="bg-[#0f0f11] border border-white/5 rounded-[1.8rem] p-8 flex flex-col min-h-[340px] hover:border-[#ff4f40]/30 transition-all cursor-pointer group relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex justify-between items-start mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center p-3 shadow-inner group-hover:scale-110 transition-transform duration-500">
                   <img src={defaults.icon} className="w-10 h-10 object-contain" alt={badge.badge_name} />
@@ -104,11 +108,13 @@ export const BadgePage = () => {
               </div>
               <div className="flex-1">
                 <h3 className="text-xl font-bold text-white mb-6 group-hover:text-[#ff4f40] transition-colors leading-tight">{badge.badge_name}</h3>
-                <span className="inline-block px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-white/10 bg-white/5 text-slate-400">{badge.category}</span>
+                <span className="inline-block px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest bg-white/5 border border-white/10 text-slate-400">
+                  {badge.category}
+                </span>
               </div>
               <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                   {badge.status === 'approved' ? (
+                  {badge.status === 'approved' ? (
                     <>
                       <img src={defaults.profImage} className="w-8 h-8 rounded-full border border-white/10" alt="Prof" />
                       <div className="flex flex-col">
@@ -141,7 +147,7 @@ export const BadgePage = () => {
                 <ExternalLink size={14} className="text-slate-600 group-hover:text-white transition-colors" />
               </div>
             </div>
-          )
+          );
         })}
 
         <div
@@ -156,6 +162,5 @@ export const BadgePage = () => {
       </div>
       <RequestModal isOpen={showRequestModal} onClose={() => setShowRequestModal(false)} />
     </div>
-
   );
-}
+};

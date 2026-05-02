@@ -10,7 +10,6 @@ import {
   Globe, Cpu, Layers
 } from 'lucide-react';
 
-import { Sidebar3 } from './sidebar3';
 /** * [IP&S SYSTEM] - INTEGRATED SKILL HUB PRO (FIXED VERSION)
  * Features: 
  * - Fixed Github Import Error (Using Inline SVG)
@@ -48,7 +47,6 @@ const MOCK_PROJECTS = [
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('skillhub');
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Modal States
@@ -87,12 +85,9 @@ export default function App() {
 
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 relative">
-
-      <Sidebar3 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-
+    <>
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto flex flex-col relative transition-all duration-300">
+      <main className="flex-1 overflow-y-auto flex flex-col relative transition-all duration-300 w-full">
         <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center transition-all">
           <div className={CONTAINER_CLASS}>
             <div className="flex items-center justify-between">
@@ -116,7 +111,7 @@ export default function App() {
       <ProfileEditModal isOpen={activeModal === 'profile'} onClose={() => setActiveModal(null)} />
       <TimelineEditModal isOpen={activeModal === 'experience' || activeModal === 'education'} onClose={() => setActiveModal(null)} type={activeModal === 'experience' ? 'experience' : 'education'} initialData={editingData} />
 
-    </div>
+    </>
   );
 }
 

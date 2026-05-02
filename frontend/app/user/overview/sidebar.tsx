@@ -11,12 +11,11 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { OverviewService, UserProfile } from '../../../services/overview.service';
 
 interface SidebarProps {
   isCollapsed: boolean;
   onToggle: () => void;
-  userName?: string;
-  userAvatar?: string;
 }
 
 const navItems = [
@@ -25,8 +24,20 @@ const navItems = [
   { href: '/user/skill-hub', icon: FolderOpen, label: 'Skill Hub & CV' },
 ];
 
-export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: SidebarProps) => {
+export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   const pathname = usePathname();
+  const [profile, setProfile] = React.useState<UserProfile | null>(null);
+
+  React.useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await OverviewService.getMyProfile();
+      if (data) setProfile(data);
+    };
+    fetchProfile();
+  }, []);
+
+  const userName = profile?.profile?.name;
+  const userAvatar = profile?.profile?.avatar_url;
 
   const getInitials = (name: string) => {
     return name
@@ -66,9 +77,9 @@ export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: Sidebar
             return (
               <Link key={href} href={href}>
                 <div
-                  className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-sm font-medium cursor-pointer group relative overflow-hidden transition-all ${isActive
-                    ? 'bg-white/5 text-white border border-white/10 font-bold'
-                    : 'text-slate-400 hover:bg-white/5'
+                  className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-sm cursor-pointer group relative overflow-hidden transition-colors duration-300 border ${isActive
+                    ? 'bg-white/5 text-white border-white/10 font-bold'
+                    : 'text-slate-400 hover:bg-white/5 font-medium border-transparent'
                     }`}
                 >
                   {isActive && !isCollapsed && (
@@ -76,7 +87,7 @@ export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: Sidebar
                   )}
                   <Icon
                     size={20}
-                    className={`shrink-0 transition-colors ${isActive ? 'text-[#ff4f40]' : 'group-hover:text-white'}`}
+                    className={`shrink-0 transition-colors ${isActive ? 'text-[#ff4f40]' : 'text-slate-400 group-hover:text-white'}`}
                   />
                   {!isCollapsed && <span className="truncate">{label}</span>}
                 </div>
@@ -88,7 +99,7 @@ export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: Sidebar
           <div
             className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}
           >
-            <FileUp size={20} className="group-hover:text-white transition-colors shrink-0" />
+            <FileUp size={20} className="text-slate-400 group-hover:text-white transition-colors shrink-0" />
             {!isCollapsed && <span className="truncate">Export Resume</span>}
           </div>
         </nav>
@@ -96,9 +107,9 @@ export const Sidebar = ({ isCollapsed, onToggle, userName, userAvatar }: Sidebar
         {/* Sidebar Footer */}
         <div className="mt-auto px-4 flex flex-col gap-4">
           <div
-            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-500 hover:text-white transition-all text-sm font-medium cursor-pointer group`}
+            className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-4'} px-4 py-3.5 rounded-xl text-slate-400 hover:bg-white/5 transition-all text-sm font-medium cursor-pointer group`}
           >
-            <Settings size={20} className="group-hover:rotate-90 transition-transform duration-500 shrink-0" />
+            <Settings size={20} className="text-slate-400 group-hover:text-white group-hover:rotate-90 transition-all duration-500 shrink-0" />
             {!isCollapsed && <span className="truncate">Setting</span>}
           </div>
 
