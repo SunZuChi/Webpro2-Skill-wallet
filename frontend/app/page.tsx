@@ -4,9 +4,9 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '../config/firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { LandingPage } from './landing/landing';
-import { LoginPage } from './authen/login';
-import { SignUpPage } from './authen/sign-up';
+import { LandingPage } from './landing/page';
+import { LoginPage } from './login/page';
+import { SignUpPage } from './sign-up/page';
 
 export default function Home() {
   const [view, setView] = useState<'landing' | 'login' | 'signup'>('landing');
