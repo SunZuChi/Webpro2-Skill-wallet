@@ -12,8 +12,9 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { OverviewService, UserProfile } from '../../../services/overview.service';
-import { AuthService } from '../../../services/auth.service';
+import { OverviewService } from '../../../services/overview.service';
+import { SkillHubService, UserProfile } from '../../../services/skill-hub.service';
+import { AuthService, DEFAULT_AVATAR } from '../../../services/auth.service';
 import { auth } from '../../../config/firebase';
 
 interface SidebarProps {
@@ -34,7 +35,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
 
   React.useEffect(() => {
     const fetchProfile = async () => {
-      const data = await OverviewService.getMyProfile();
+      const data = await SkillHubService.getMyProfile();
       if (data) setProfile(data);
     };
     fetchProfile();
@@ -155,13 +156,11 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
           <div className={`px-2 pb-2 flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} group cursor-pointer`}>
             <div className="relative shrink-0">
               <div className="w-12 h-12 rounded-full border-2 border-white/5 group-hover:border-[#ff4f40] transition-all overflow-hidden bg-slate-800 shadow-xl flex items-center justify-center">
-                {userAvatar ? (
-                  <img src={userAvatar} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  <span className="text-sm font-bold text-slate-300">
-                    {userName ? getInitials(userName) : 'U'}
-                  </span>
-                )}
+                <img 
+                  src={userAvatar || DEFAULT_AVATAR} 
+                  alt="Avatar" 
+                  className="w-full h-full object-cover" 
+                />
               </div>
               <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-[#0a0a0a]" />
             </div>

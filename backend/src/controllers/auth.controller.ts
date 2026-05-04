@@ -10,8 +10,8 @@ export const AuthController = {
             role: "user",
             profile: {
                 name: name,
+                headline: "",
                 bio: "",
-                about_me: "",
                 location: "Bangkok",
                 avatar_url: ""
             },
@@ -66,7 +66,7 @@ export const AuthController = {
             const userData = userDoc.data();
             return {
                 status: "success",
-                role: userData?.auth?.role,
+                role: userData?.role,
                 data: userData
             };
         } catch (error) {

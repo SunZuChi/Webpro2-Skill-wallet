@@ -19,14 +19,29 @@ import {
 } from 'lucide-react';
 
 import Link from 'next/link';
-import { OverviewService } from '../../../services/overview.service';
+import { usePathname } from 'next/navigation';
+import { SkillHubService, UserProfile } from '../../../services/skill-hub.service';
 
 const getInitials = (name: string) =>
   name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase();
 
 export const Sidebar3 = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onToggle: () => void }) => {
+  const pathname = usePathname();
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [userName, setUserName] = useState('');
   const [userAvatar, setUserAvatar] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const data = await SkillHubService.getMyProfile();
+      if (data) {
+        setProfile(data);
+        if (data.profile?.name) setUserName(data.profile.name);
+        if (data.profile?.avatar_url) setUserAvatar(data.profile.avatar_url);
+      }
+    };
+    fetchProfile();
+  }, []);
 
   useEffect(() => {
     import('../../../config/firebase').then(({ auth }) => {
@@ -34,22 +49,15 @@ export const Sidebar3 = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onTo
         if (user) {
           // ใช้ Firebase displayName/email ก่อน
           const firebaseName = user.displayName || user.email?.split('@')[0] || 'Student';
-          setUserName(firebaseName);
-          setUserAvatar(user.photoURL || '');
+          if (!userName) setUserName(firebaseName);
+          if (!userAvatar) setUserAvatar(user.photoURL || '');
         }
       });
       return () => unsubscribe();
     });
   }, []);
 
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const profile = await OverviewService.getMyProfile();
-      if (profile?.profile?.name) setUserName(profile.profile.name);
-      if (profile?.profile?.avatar_url) setUserAvatar(profile.profile.avatar_url);
-    };
-    fetchProfile();
-  }, []);
+
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">

@@ -2,7 +2,7 @@ import { Elysia, t } from 'elysia';
 import { BadgeController } from '../controllers/badge.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
-export const badgeRoute = new Elysia({ prefix: '/api/badges' })
+export const badgeRoute = new Elysia({ prefix: '/badges' })
     .use(authMiddleware)
     // เรียกใช้ Middleware เพื่อให้แน่ใจว่าคนที่จะดึงข้อมูล Badge ต้อง Login แล้ว
     .get('/', async ({ user, set }: any) => {

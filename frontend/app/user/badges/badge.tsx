@@ -46,26 +46,31 @@ const categoryColorClass: Record<string, string> = {
   'GAME / GRAPHICS': 'text-emerald-500 bg-emerald-500/10 border-emerald-500/20',
 };
 
-const getCategoryDefaults = (category: string) => {
-  if (category === 'SOFTWARE / WEB') return { profImage: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80", icon: 'https://upload.wikimedia.org/wikipedia/commons/d/d9/Node.js_logo.svg', professor: "Prof. Wittawin" };
-  if (category === 'DATA / AI') return { profImage: "https://i.pravatar.cc/100?u=2", icon: 'https://upload.wikimedia.org/wikipedia/commons/2/2d/Tensorflow_logo.svg', professor: "Prof. Prapatsorn" };
-  if (category === 'CYBER / NETWORK') return { profImage: "https://i.pravatar.cc/100?u=3", icon: 'https://www.svgrepo.com/show/303251/mysql-logo.svg', professor: "Prof. Somchai" };
-  if (category === 'GAME / GRAPHICS') return { profImage: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=100&q=80", icon: 'https://upload.wikimedia.org/wikipedia/commons/3/33/Figma-logo.svg', professor: "Prof. Wittawin" };
-  return { profImage: "https://i.pravatar.cc/100?u=4", icon: 'https://www.svgrepo.com/show/511054/code.svg', professor: "Professor" };
-};
+// ใช้ getCategoryDefaults จาก BadgeService แทน
 
 export const BadgePage = () => {
   const [activeFilter, setActiveFilter] = useState('all');
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [myRequests, setMyRequests] = useState<any[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   useEffect(() => {
-    if (!showRequestModal) {
-      BadgeService.getMyRequests().then(res => {
+    const fetchData = async () => {
+      setIsDataLoading(true);
+      try {
+        const res = await BadgeService.getMyEnrichedRequests();
         if (res.status === 'success') {
           setMyRequests(res.data);
         }
-      });
+      } catch (error) {
+        console.error("Error fetching badge data:", error);
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+
+    if (!showRequestModal) {
+      fetchData();
     }
   }, [showRequestModal]);
 
@@ -97,12 +102,11 @@ export const BadgePage = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 min-h-[400px]">
         {filteredBadges.map((badge) => {
-          const defaults = getCategoryDefaults(badge.category);
           return (
             <div key={badge.id} className="bg-[#0f0f11] border border-white/5 rounded-[1.8rem] p-8 flex flex-col min-h-[340px] hover:border-[#ff4f40]/30 transition-all cursor-pointer group relative overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
               <div className="flex justify-between items-start mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center p-3 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                  <img src={defaults.icon} className="w-10 h-10 object-contain" alt={badge.badge_name} />
+                  <img src={badge.icon} className="w-10 h-10 object-contain" alt={badge.badge_name} />
                 </div>
                 <MoreVertical size={16} className="text-slate-700" />
               </div>
@@ -116,10 +120,10 @@ export const BadgePage = () => {
                 <div className="flex items-center gap-2">
                   {badge.status === 'approved' ? (
                     <>
-                      <img src={defaults.profImage} className="w-8 h-8 rounded-full border border-white/10" alt="Prof" />
+                      <img src={badge.profImg} className="w-8 h-8 rounded-full border border-white/10" alt="Prof" />
                       <div className="flex flex-col">
                         <div className="flex items-center gap-1 text-emerald-500 text-[9px] font-extrabold uppercase tracking-tighter"><ShieldCheck size={10} /> Verified</div>
-                        <p className="text-[11px] text-slate-400 font-medium">{defaults.professor}</p>
+                        <p className="text-[11px] text-slate-400 font-medium">{badge.professor}</p>
                       </div>
                     </>
                   ) : badge.status === 'revision' ? (

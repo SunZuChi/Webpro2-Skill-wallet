@@ -4,7 +4,7 @@ import { auth, db } from '../config/firebase-admin';
 import { authMiddleware } from '../middleware/auth.middleware';
 
 // backend/src/routes/auth.route.ts
-export const authRoute = new Elysia({ prefix: '/api/auth' })
+export const authRoute = new Elysia({ prefix: '/auth' })
     .use(authMiddleware)
 
     .post('/login-check', async ({ body }) => {

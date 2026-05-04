@@ -1,6 +1,8 @@
 import { signInWithPopup, setPersistence, browserSessionPersistence } from "firebase/auth";
 import { auth, googleProvider } from "../config/firebase";
 
+export const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
 export const AuthService = {
   // ล็อกอินด้วย Google (Frontend)
   async loginWithGoogle() {
@@ -45,7 +47,7 @@ export const AuthService = {
     const response = await fetch("http://localhost:3001/api/auth/register/student", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ idToken, name }),
+      body: JSON.stringify({ idToken, name, avatar_url: DEFAULT_AVATAR }),
     });
     const data = await response.json();
     return data;

@@ -2,7 +2,7 @@ import { Elysia, t } from 'elysia';
 import { BadgeRequestController } from '../controllers/badge_request.controller';
 import { authMiddleware } from '../middleware/auth.middleware';
 
-export const badgeRequestRoute = new Elysia({ prefix: '/api/badge-requests' })
+export const badgeRequestRoute = new Elysia({ prefix: '/badge-requests' })
     .use(authMiddleware)
     // POST /api/badge-requests/upload — upload file ผ่าน backend (ไม่มีปัญหา CORS)
     .post('/upload', async ({ body, user, set }: any) => {

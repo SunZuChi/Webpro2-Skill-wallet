@@ -7,6 +7,7 @@ import { FeedbackPage } from './feeedback';
 import { MatrixPage } from './matrix';
 import { auth } from '../../../config/firebase';
 import { OverviewService, BadgeRequest, OverviewStats } from '../../../services/overview.service';
+import { SkillHubService } from '../../../services/skill-hub.service';
 
 export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; onViewAll?: () => void }) => {
   const [userName, setUserName] = useState('');
@@ -36,7 +37,7 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
         try {
           const [data, profile] = await Promise.all([
             OverviewService.getMyRequests(),
-            OverviewService.getMyProfile(),
+            SkillHubService.getMyProfile(),
           ]);
           setRequests(data);
           setStats(OverviewService.computeStats(data));

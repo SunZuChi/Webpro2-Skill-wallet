@@ -1,4 +1,5 @@
 import { auth } from '../config/firebase';
+import { UserProfile } from './skill-hub.service';
 
 const API_BASE = 'http://localhost:3001';
 
@@ -9,18 +10,6 @@ const getFreshToken = async (): Promise<string | null> => {
   }
   return localStorage.getItem('token');
 };
-
-export interface UserProfile {
-  id: string;
-  email: string;
-  role: string;
-  profile: {
-    name: string;
-    bio?: string;
-    avatar_url?: string;
-    location?: string;
-  };
-}
 
 export interface BadgeRequest {
   id: string;
@@ -49,28 +38,6 @@ export interface OverviewStats {
 }
 
 export const OverviewService = {
-  async getMyProfile(): Promise<UserProfile | null> {
-    try {
-      const token = await getFreshToken();
-      if (!token) return null;
-
-      const response = await fetch(`${API_BASE}/api/auth/me`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      });
-
-      const data = await response.json();
-      if (data.status === 'success') return data.data as UserProfile;
-      return null;
-    } catch (error) {
-      console.error('Failed to fetch profile:', error);
-      return null;
-    }
-  },
-
   async getMyRequests(): Promise<BadgeRequest[]> {
     try {
       const token = await getFreshToken();
