@@ -15,21 +15,13 @@ import {
   ChevronRight,
   Plus,
   ExternalLink,
-  X,
-  FileIcon,
-  Download,
-  CheckCircle2,
-  Menu,
-  Bell,
-  User,
   MoreVertical,
-  MessageSquare,
-  Upload,
-  Link as LinkIcon
+  User,
 } from 'lucide-react';
 
 import { BadgeService } from '../../../services/badge.service';
 import { RequestModal } from './request';
+import { DEFAULT_AVATAR } from '../../../services/auth.service';
 
 const CATEGORIES = [
   { id: 'all', label: 'All', color: 'bg-white text-black' },
@@ -120,10 +112,10 @@ export const BadgePage = () => {
                 <div className="flex items-center gap-2">
                   {badge.status === 'approved' ? (
                     <>
-                      <img src={badge.profImg} className="w-8 h-8 rounded-full border border-white/10" alt="Prof" />
+                      <img src={badge.verifier_avatar || DEFAULT_AVATAR} className="w-8 h-8 rounded-full border border-white/10 object-cover" alt="Prof" />
                       <div className="flex flex-col">
                         <div className="flex items-center gap-1 text-emerald-500 text-[9px] font-extrabold uppercase tracking-tighter"><ShieldCheck size={10} /> Verified</div>
-                        <p className="text-[11px] text-slate-400 font-medium">{badge.professor}</p>
+                        <p className="text-[11px] text-slate-400 font-medium">{badge.verifier_name || 'Prof. Verified'}</p>
                       </div>
                     </>
                   ) : badge.status === 'revision' ? (

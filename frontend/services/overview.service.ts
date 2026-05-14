@@ -18,7 +18,7 @@ export interface BadgeRequest {
   category: string;
   description: string;
   evidence_link: string;
-  status: 'pending' | 'approved' | 'revision' | 'rejected';
+  status: 'pending' | 'approved' | 'revision' | 'revisions' | 'rejected';
   verifier_id: string | null;
   comment: string;
   created_at: string;
@@ -27,6 +27,8 @@ export interface BadgeRequest {
   total_score: number;
   max_score: number;
   result: any[];
+  verifier_name?: string;
+  verifier_avatar?: string;
 }
 
 export interface OverviewStats {
@@ -65,32 +67,37 @@ export const OverviewService = {
   computeStats(requests: BadgeRequest[]): OverviewStats {
     const approved = requests.filter((r) => r.status === 'approved');
     const pending = requests.filter((r) => r.status === 'pending');
-    const revision = requests.filter((r) => r.status === 'revision');
+    const revision = requests.filter((r) => r.status === 'revision' || r.status === 'revisions');
+    const withFeedback = requests.filter((r) => r.status === 'approved' || r.status === 'revision' || r.status === 'revisions');
 
     return {
       totalVerified: approved.length,
       totalPending: pending.length,
       totalRevision: revision.length,
       recentRequests: requests.slice(0, 3),
-      approvedRequests: approved,
+      approvedRequests: withFeedback,
     };
   },
 
   // คำนวณ Skill Matrix จาก approved badges ตาม category
   computeSkillMatrix(requests: BadgeRequest[]) {
     const categories: Record<string, { total: number; count: number }> = {
-      'Software / Web': { total: 0, count: 0 },
-      'Data / AI': { total: 0, count: 0 },
-      'Game / Graphics': { total: 0, count: 0 },
-      'Cyber / Network': { total: 0, count: 0 },
+      'SOFTWARE / WEB': { total: 0, count: 0 },
+      'DATA / AI': { total: 0, count: 0 },
+      'GAME / GRAPHICS': { total: 0, count: 0 },
+      'CYBER / NETWORK': { total: 0, count: 0 },
     };
 
     const approved = requests.filter((r) => r.status === 'approved');
 
     for (const req of approved) {
-      const cat = req.category;
+      const cat = (req.category || '').toUpperCase().trim();
       if (categories[cat]) {
-        const score = req.max_score > 0 ? req.total_score / req.max_score : 0.5;
+        // คำนวณ max_score จาก result array ถ้า field หลักเป็น 0
+        const actualMax = req.max_score > 0
+          ? req.max_score
+          : (req.result || []).reduce((sum: number, r: any) => sum + (r.max_score || 0), 0);
+        const score = actualMax > 0 ? req.total_score / actualMax : 0;
         categories[cat].total += score;
         categories[cat].count += 1;
       }
@@ -98,7 +105,9 @@ export const OverviewService = {
 
     return Object.entries(categories).map(([name, { total, count }]) => ({
       name,
-      score: count > 0 ? total / count : 0,
+      // ให้ 1 badge ที่ได้คะแนนเต็มมีค่าเท่ากับ 1 วง (20% หรือ 0.2 ของกราฟทั้งหมด) 
+      // โดยมี max อยู่ที่ 5 badge (เต็มขอบวงกลมสุดท้าย)
+      score: total / 5,
     }));
   },
 };

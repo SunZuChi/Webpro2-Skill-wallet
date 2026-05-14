@@ -61,7 +61,6 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
 
     return () => unsubscribe();
   }, []);
-
   return (
     <div className="flex-1 bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full">
       {/* Header Title */}

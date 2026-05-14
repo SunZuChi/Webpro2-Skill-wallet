@@ -18,10 +18,16 @@ export default function Home() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user && loading) {
         const token = localStorage.getItem("token");
+        const role = localStorage.getItem("userRole");
         if (!token) {
           await auth.signOut();
         } else {
-          router.push('/user/overview');
+          // แยกหน้าตาม Role
+          if (role === 'verifier') {
+            router.push('/professor/request');
+          } else {
+            router.push('/user/overview');
+          }
         }
       } else if (!user) {
         localStorage.removeItem("token");
@@ -66,4 +72,27 @@ export default function Home() {
       )}
     </main>
   );
-}
+}
+// "use client";
+
+// import { useState } from 'react';
+// import LandingPage from './landing/page';
+// import { LoginPage } from './login/page';
+// import { SignUpPage } from './sign-up/page';
+// import {OverviewPage} from './user/overview/dash';
+// import MyBadgesPage from './user/badges/mybadge';
+// import Request_Professor from './professor/request/page';
+
+// export default function Home() {
+
+
+
+//   return (
+    
+    
+//     // <LandingPage />
+//      <OverviewPage/>
+//      //<MyBadgesPage/>
+//      //<Request_Professor />
+//   );
+// }

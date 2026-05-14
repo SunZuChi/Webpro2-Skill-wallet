@@ -76,6 +76,8 @@ export default function App() {
     }
   };
 
+
+
   const fetchProjects = async () => {
     try {
       setIsProjectsLoading(true);
@@ -97,7 +99,7 @@ export default function App() {
     try {
       setIsBadgesLoading(true);
       const res = await BadgeService.getMyEnrichedRequests();
-      
+
       if (res.status === "success") {
         setUserBadges(res.data);
         if (res.catalog) setAllBadgesCatalog(res.catalog);
@@ -118,8 +120,8 @@ export default function App() {
   const togglePin = async (id: string) => {
     const newPinned = pinnedBadgeIds.includes(id)
       ? pinnedBadgeIds.filter(bid => bid !== id)
-      : pinnedBadgeIds.length < 4 
-        ? [...pinnedBadgeIds, id] 
+      : pinnedBadgeIds.length < 4
+        ? [...pinnedBadgeIds, id]
         : pinnedBadgeIds;
 
     if (newPinned !== pinnedBadgeIds) {
@@ -175,12 +177,12 @@ export default function App() {
       </main>
 
       {/* ⚡️ MODALS SYSTEM */}
-      <BadgeSelectModal 
-        isOpen={activeModal === 'badge-select'} 
-        onClose={() => setActiveModal(null)} 
-        pinnedIds={pinnedBadgeIds} 
-        togglePin={togglePin} 
-        badges={userBadges} 
+      <BadgeSelectModal
+        isOpen={activeModal === 'badge-select'}
+        onClose={() => setActiveModal(null)}
+        pinnedBadgeIds={pinnedBadgeIds}
+        togglePin={togglePin}
+        badges={userBadges}
       />
       <SubmissionModal
         isOpen={activeModal === 'project-submit'}
@@ -202,11 +204,11 @@ export default function App() {
         profile={profile}
         onRefresh={fetchProfile}
       />
-      <TimelineEditModal 
-        isOpen={activeModal === 'experience' || activeModal === 'education'} 
-        onClose={() => setActiveModal(null)} 
-        type={activeModal === 'experience' ? 'experience' : 'education'} 
-        initialData={editingData} 
+      <TimelineEditModal
+        isOpen={activeModal === 'experience' || activeModal === 'education'}
+        onClose={() => setActiveModal(null)}
+        type={activeModal === 'experience' ? 'experience' : 'education'}
+        initialData={editingData}
         onRefresh={fetchProfile}
       />
 
@@ -308,7 +310,7 @@ const SkillHubView = ({ profile, onOpenBadgeModal, onAddProject, onPreviewProjec
       <section className="space-y-8">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3"><Medal className="text-[#ff4f40]" size={24} /><h3 className="text-2xl font-bold tracking-tight text-white">My Badges</h3></div>
-          <button onClick={onOpenBadgeModal} className="text-xs font-black text-[#ff4f40] hover:underline uppercase tracking-widest flex items-center gap-1 group transition-all">VIEW ALL <ChevronRight size={14} className="group-hover:translate-x-1 transition-transform" /></button>
+          <button onClick={onOpenBadgeModal} className="cursor-pointer text-xs font-black text-[#ff4f40] hover:underline uppercase tracking-widest flex items-center gap-1 group transition-all">VIEW ALL <ChevronRight size={14} className="cursor-pointer group-hover:translate-x-1 transition-transform" /></button>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {isBadgesLoading ? (
@@ -317,34 +319,20 @@ const SkillHubView = ({ profile, onOpenBadgeModal, onAddProject, onPreviewProjec
             ))
           ) : displayBadges.length > 0 ? displayBadges.map((badge: any) => (
             <div key={badge.id} className="bg-[#0f0f11] border border-white/5 shadow-2xl rounded-[2.2rem] p-8 flex flex-col min-h-[340px] group transition-all hover:border-[#ff4f40]/40 relative animate-in zoom-in-95 duration-500">
+              <button onClick={(e) => { e.stopPropagation(); togglePin(badge.id); }} className="absolute top-6 right-6 p-2 rounded-xl bg-[#ff4f40] text-white hover:bg-rose-600 transition-all z-10 shadow-lg"><PinOff size={16} /></button>
               <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 shadow-inner group-hover:scale-110 transition-transform duration-500 overflow-hidden">
-                {badge.icon ? (
-                  <img src={badge.icon} className="w-10 h-10 object-contain" alt="badge icon" />
-                ) : (
-                  <Medal className="text-slate-700" size={32} />
-                )}
+                <img src={badge.icon} className="w-10 h-10 object-contain" alt="badge icon" />
               </div>
               <div className="flex-1 text-left">
-                <h4 className="text-xl font-bold text-white mb-4 group-hover:text-[#ff4f40] transition-colors leading-tight">{badge.badge_name || badge.title}</h4>
-                <div className="flex flex-wrap gap-2 mb-6">
-                  <span className="inline-block px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-white/10 bg-white/5 text-slate-400">{badge.category}</span>
-                  <span className={`inline-block px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-white/10 ${badge.status === 'verified' ? 'bg-emerald-500/10 text-emerald-500' : badge.status === 'rejected' ? 'bg-rose-500/10 text-rose-500' : 'bg-amber-500/10 text-amber-500'}`}>
-                    {badge.status || 'pending'}
-                  </span>
-                </div>
+                <h4 className="text-xl font-bold text-white mb-6 group-hover:text-[#ff4f40] transition-colors leading-tight">{badge.badge_name || badge.title}</h4>
+                <span className="inline-block px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-widest border border-white/10 bg-white/5 text-slate-400">{badge.category}</span>
               </div>
               <div className="mt-8 pt-6 border-t border-white/5 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full border border-white/10 bg-white/5 flex items-center justify-center overflow-hidden">
-                    {badge.profImg ? <img src={badge.profImg} className="w-full h-full object-cover" alt="Prof" /> : <User size={14} className="text-slate-600" />}
-                  </div>
+                  <img src={badge.verifier_avatar || DEFAULT_AVATAR} onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_AVATAR; }} className="w-8 h-8 rounded-full border border-white/10 object-cover" alt="Prof" />
                   <div className="flex flex-col text-left">
-                    {badge.status === 'verified' ? (
-                      <div className="flex items-center gap-1 text-emerald-500 text-[9px] font-extrabold uppercase tracking-tighter leading-none"><ShieldCheck size={10} /> Verified</div>
-                    ) : (
-                      <div className="flex items-center gap-1 text-slate-500 text-[9px] font-extrabold uppercase tracking-tighter leading-none"><Clock size={10} /> {badge.status || 'Pending'}</div>
-                    )}
-                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">{badge.prof || 'Professor'}</p>
+                    <div className="flex items-center gap-1 text-emerald-500 text-[9px] font-extrabold uppercase tracking-tighter leading-none"><ShieldCheck size={10} /> Verified</div>
+                    <p className="text-[11px] text-slate-500 font-medium mt-0.5">{badge.verifier_name || badge.prof || 'Professor'}</p>
                   </div>
                 </div>
                 <ExternalLink size={14} className="text-slate-600 group-hover:text-white transition-colors cursor-pointer" />
@@ -352,9 +340,7 @@ const SkillHubView = ({ profile, onOpenBadgeModal, onAddProject, onPreviewProjec
             </div>
           )) : (
             <div onClick={onOpenBadgeModal} className="col-span-full bg-[#050505] border-2 border-dashed border-white/5 rounded-[2.2rem] p-12 flex flex-col items-center justify-center text-center cursor-pointer hover:border-white/20 transition-all shadow-inner min-h-[200px]">
-              <Pin size={32} className="text-slate-600 mb-4" />
-              <h4 className="font-bold text-slate-400 uppercase tracking-widest text-xs">No Badges Selected</h4>
-              <p className="text-[10px] text-slate-600 mt-2">Click "View All" to select badges to showcase on your profile</p>
+              <PinOff size={32} className="text-slate-600 mb-4" /><h4 className="font-bold text-slate-400 uppercase tracking-widest text-xs">No Badges Pinned (Max 4)</h4><p className="text-[10px] text-slate-600 mt-2">Select badges to showcase on your profile</p>
             </div>
           )}
         </div>
@@ -694,64 +680,31 @@ const SubmissionModal = ({ isOpen, onClose, type, initialData, onRefresh }: any)
 const BadgeSelectModal = ({ isOpen, onClose, pinnedBadgeIds, togglePin, badges }: any) => {
   if (!isOpen) return null;
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose}></div>
       <div className="relative w-full max-w-5xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] shadow-2xl flex flex-col max-h-[85vh] overflow-hidden animate-in zoom-in-95 duration-300 text-left">
-        <div className="p-8 border-b border-white/5 flex items-center justify-between bg-[#0f0f11]">
-          <div>
-            <h2 className="text-2xl font-bold text-white">Select Featured Badges</h2>
-            <p className="text-sm text-slate-500 mt-1">Pin up to <span className="text-white font-bold">4 badges</span></p>
-          </div>
-          <button onClick={onClose} className="p-3 hover:bg-white/5 rounded-full text-slate-400"><X size={28} /></button>
+        <div className="p-6 md:p-8 border-b border-white/5 flex items-center justify-between bg-[#0f0f11]">
+          <div><h2 className="text-xl md:text-2xl font-bold text-white">Select Featured Badges</h2><p className="text-sm text-slate-500 mt-1">Pin up to <span className="text-white font-bold">4 badges</span></p></div>
+          <button onClick={onClose} className="cursor-pointer p-3 hover:bg-white/5 rounded-full text-slate-400"><X size={28} /></button>
         </div>
-        <div className="flex-1 overflow-y-auto p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {badges.map((badge: any) => {
+        <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {badges.filter((badge: any) => badge.status === 'approved').map((badge: any) => {
             const isPinned = pinnedBadgeIds.includes(badge.id);
             const isFull = pinnedBadgeIds.length >= 4 && !isPinned;
             return (
-              <div 
-                key={badge.id} 
-                onClick={() => !isFull && togglePin(badge.id)} 
-                className={`p-8 rounded-[2.5rem] border transition-all relative group cursor-pointer ${isPinned ? 'bg-[#ff4f40]/5 border-[#ff4f40]/40 shadow-2xl' : isFull ? 'opacity-30 grayscale cursor-not-allowed border-white/5' : 'bg-[#121214] border-white/5 hover:border-white/10'}`}
-              >
-                <div className="flex justify-between items-start mb-8">
-                  <div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden ${isPinned ? 'bg-[#ff4f40]/20' : 'bg-white/5'}`}>
-                    {badge.icon ? (
-                      <img src={badge.icon} className="w-10 h-10 object-contain" />
-                    ) : (
-                      <Medal className="text-slate-700" size={24} />
-                    )}
-                  </div>
-                  <div className={`p-2 rounded-xl transition-all ${isPinned ? 'bg-[#ff4f40] text-white scale-110 shadow-lg' : 'bg-white/5 text-slate-600'}`}>
-                    {isPinned ? <Pin size={16} fill="currentColor" /> : <Plus size={16} />}
-                  </div>
-                </div>
-                <h4 className="font-bold text-xl mb-2 text-white">{badge.badge_name || badge.title}</h4>
-                <p className={`text-[10px] font-black uppercase tracking-widest mb-6 ${isPinned ? 'text-[#ff4f40]' : 'text-slate-500'}`}>
-                  {badge.category}
-                </p>
-                <div className="pt-5 border-t border-white/5 flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-full bg-white/5 flex items-center justify-center overflow-hidden border border-white/10">
-                    {badge.profImg ? <img src={badge.profImg} className="w-full h-full object-cover" /> : <User size={12} className="text-slate-600" />}
-                  </div>
-                  <span className="text-[10px] text-slate-500 font-medium">{badge.prof || 'Professor'}</span>
-                </div>
-                {isPinned && (
-                  <div className="absolute bottom-0 right-0 p-4 bg-[#ff4f40] rounded-tl-[1.5rem] rounded-br-[2.5rem] shadow-xl">
-                    <Check size={14} strokeWidth={4} className="text-white" />
-                  </div>
-                )}
+              <div key={badge.id} onClick={() => !isFull && togglePin(badge.id)} className={`p-6 md:p-8 rounded-[2.5rem] border transition-all relative group cursor-pointer ${isPinned ? 'bg-[#ff4f40]/5 border-[#ff4f40]/40 shadow-2xl' : isFull ? 'opacity-30 grayscale cursor-not-allowed border-white/5' : 'bg-[#121214] border-white/5 hover:border-white/10'}`}>
+                <div className="flex justify-between items-start mb-6 md:mb-8"><div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden ${isPinned ? 'bg-[#ff4f40]/20' : 'bg-white/5'}`}><img src={badge.icon} className="w-10 h-10 object-contain" /></div><div className={`p-2 rounded-xl transition-all ${isPinned ? 'bg-[#ff4f40] text-white scale-110 shadow-lg' : 'bg-white/5 text-slate-600'}`}>{isPinned ? <Pin size={16} fill="currentColor" /> : <Plus size={16} />}</div></div>
+                <h4 className="font-bold text-lg md:text-xl mb-2 text-white">{badge.badge_name || badge.title}</h4>
+                <p className={`text-[10px] font-black uppercase tracking-widest mb-6 ${isPinned ? 'text-[#ff4f40]' : 'text-slate-500'}`}>{badge.category}</p>
+                <div className="pt-5 border-t border-white/5 flex items-center gap-3"><img src={badge.verifier_avatar || DEFAULT_AVATAR} onError={(e) => { (e.target as HTMLImageElement).src = DEFAULT_AVATAR; }} className="w-7 h-7 rounded-full object-cover" /><span className="text-[10px] text-slate-500 font-medium">{badge.verifier_name || badge.prof || 'Professor'}</span></div>
+                {isPinned && <div className="absolute -bottom-1 -right-1 p-4 bg-[#ff4f40] rounded-tl-3xl shadow-xl"><Check size={14} strokeWidth={4} className="text-white" /></div>}
               </div>
             );
           })}
         </div>
-        <div className="p-8 border-t border-white/5 bg-[#0f0f11] flex justify-between items-center">
-          <span className="text-sm font-medium text-slate-500">
-            <span className="text-white font-bold">{pinnedBadgeIds.length}/4</span> Selected
-          </span>
-          <button onClick={onClose} className="bg-white text-black font-extrabold px-12 py-4 rounded-[1.5rem] hover:bg-slate-200 transition-all uppercase tracking-widest text-xs shadow-xl transform active:scale-95">
-            Save Selection
-          </button>
+        <div className="p-6 md:p-8 border-t border-white/5 bg-[#0f0f11] flex justify-between items-center">
+          <span className="text-sm font-medium text-slate-500"><span className="text-white font-bold">{pinnedBadgeIds.length}/4</span> Selected</span>
+          <button onClick={onClose} className="bg-white text-black font-extrabold px-8 md:px-12 py-4 rounded-3xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs shadow-xl transform active:scale-95">Save Selection</button>
         </div>
       </div>
     </div>
@@ -821,31 +774,31 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
       <div className="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] shadow-2xl p-10 space-y-8 animate-in zoom-in-95 text-left">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold flex items-center gap-3 capitalize text-white">
-            {isEdu ? <GraduationCap className="text-[#ff4f40]" /> : <Briefcase className="text-[#ff4f40]" />} 
+            {isEdu ? <GraduationCap className="text-[#ff4f40]" /> : <Briefcase className="text-[#ff4f40]" />}
             {initialData ? 'Edit' : 'Add'} {type}
           </h2>
           <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-slate-500"><X size={20} /></button>
         </div>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{isEdu ? "University / School" : "Company / Organization"}</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={formData.organization}
-              onChange={(e) => setFormData({...formData, organization: e.target.value})}
-              placeholder={isEdu ? "e.g. KMUTT" : "e.g. Google Thailand"} 
-              className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner" 
+              onChange={(e) => setFormData({ ...formData, organization: e.target.value })}
+              placeholder={isEdu ? "e.g. KMUTT" : "e.g. Google Thailand"}
+              className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner"
             />
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">{isEdu ? "Degree / Major" : "Job Title / Position"}</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
-              placeholder={isEdu ? "e.g. B.Sc. Applied Computer Science" : "e.g. Software Engineer Intern"} 
-              className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner" 
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder={isEdu ? "e.g. B.Sc. Applied Computer Science" : "e.g. Software Engineer Intern"}
+              className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner"
             />
           </div>
           <div className="grid grid-cols-2 gap-4 pt-2">
@@ -853,15 +806,15 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center block">Start Year</label>
               <div className="relative">
                 <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={14} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={formData.start_year}
                   onChange={(e) => {
                     const val = e.target.value.replace(/[^0-9]/g, '');
-                    setFormData({...formData, start_year: val});
+                    setFormData({ ...formData, start_year: val });
                   }}
-                  placeholder="2021" 
-                  className="w-full bg-black border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-center text-white" 
+                  placeholder="2021"
+                  className="w-full bg-black border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-center text-white"
                 />
               </div>
             </div>
@@ -869,24 +822,24 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center block">End Year</label>
               <div className="relative">
                 <Target className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={14} />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   value={formData.end_year === 'Present' ? '' : formData.end_year}
                   onChange={(e) => {
                     const val = e.target.value.replace(/[^0-9]/g, '');
-                    setFormData({...formData, end_year: val});
+                    setFormData({ ...formData, end_year: val });
                   }}
-                  placeholder="Present" 
-                  className="w-full bg-black border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-center text-white" 
+                  placeholder="Present"
+                  className="w-full bg-black border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-center text-white"
                 />
               </div>
             </div>
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Description (Optional)</label>
-            <textarea 
+            <textarea
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               placeholder={isEdu ? "Briefly describe your focus..." : "Briefly describe your role and achievements..."}
               className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner h-32 resize-none"
             />
@@ -903,8 +856,8 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
           </div>
           <div className="flex gap-4">
             <button onClick={onClose} className="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors">Cancel</button>
-            <button 
-              onClick={handleSubmit} 
+            <button
+              onClick={handleSubmit}
               disabled={loading}
               className="bg-white text-black font-extrabold px-10 py-4 rounded-[1.5rem] shadow-xl uppercase tracking-widest text-[10px] disabled:opacity-50"
             >
@@ -926,6 +879,9 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
     avatar_url: ''
   });
   const [loading, setLoading] = useState(false);
+  const [avatarPreview, setAvatarPreview] = useState<string>(DEFAULT_AVATAR);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (profile) {
@@ -936,13 +892,42 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
         location: profile.profile?.location || '',
         avatar_url: profile.profile?.avatar_url || ''
       });
+      setAvatarPreview(profile.profile?.avatar_url || DEFAULT_AVATAR);
     }
   }, [profile, isOpen]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setSelectedFile(file);
+    const reader = new FileReader();
+    reader.onload = () => setAvatarPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   const handleSave = async () => {
     setLoading(true);
-    const success = await SkillHubService.updateProfile(formData);
+    let updatedAvatarUrl = formData.avatar_url;
+
+    if (selectedFile) {
+      try {
+        updatedAvatarUrl = await ProjectService.uploadImage(selectedFile);
+      } catch (error) {
+        console.error("Error uploading avatar:", error);
+        alert("Failed to upload image. Please try again.");
+        setLoading(false);
+        return;
+      }
+    }
+
+    const payload = {
+      ...formData,
+      avatar_url: updatedAvatarUrl
+    };
+
+    const success = await SkillHubService.updateProfile(payload);
     setLoading(false);
+
     if (success) {
       if (onRefresh) onRefresh();
       onClose();
@@ -952,12 +937,46 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
   };
 
   if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-[200] flex items-center justify-center p-6 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose}></div>
-      <div className="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] shadow-2xl p-10 space-y-8 animate-in zoom-in-95 text-left">
-        <h2 className="text-2xl font-bold text-white">Edit Profile</h2>
+    <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
+      <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose} />
+      <div className="relative w-full max-w-xl bg-[#0a0a0a] border border-white/10 rounded-[3rem] shadow-2xl p-8 md:p-10 space-y-8 animate-in zoom-in-95 text-left max-h-[90vh] overflow-y-auto custom-scrollbar">
+
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl md:text-2xl font-bold text-white">Edit Profile</h2>
+          <button onClick={onClose} className="cursor-pointer p-2 hover:bg-white/5 rounded-full text-slate-500 transition-colors"><X size={20} /></button>
+        </div>
+
+        {/* ── Photo Upload ── */}
+        <div className="flex flex-col items-center gap-4">
+          <div className="relative group cursor-pointer" onClick={() => fileInputRef.current?.click()}>
+            <div className="w-28 h-28 rounded-3xl overflow-hidden border-2 border-white/10 group-hover:border-[#ff4f40]/60 transition-all shadow-2xl">
+              <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+            </div>
+            {/* Overlay */}
+            <div className="absolute inset-0 rounded-3xl bg-black/60 opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center">
+              <div className="flex flex-col items-center gap-1 text-white">
+                <Upload size={22} />
+                <span className="text-[9px] font-black uppercase tracking-widest">Change</span>
+              </div>
+            </div>
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="text-[10px] font-black text-slate-500 hover:text-[#ff4f40] uppercase tracking-widest transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Upload size={12} /> Upload New Photo
+          </button>
+        </div>
+
+        {/* Fields */}
         <div className="space-y-5">
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
@@ -982,25 +1001,17 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
             <textarea
               value={formData.bio}
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              className="w-full bg-black border border-white/5 rounded-2xl p-6 text-sm min-h-[120px] focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Location</label>
-            <input
-              type="text"
-              value={formData.location}
-              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-              className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
+              className="w-full bg-black border border-white/5 rounded-2xl p-6 text-sm min-h-[120px] focus:border-[#ff4f40]/50 outline-none text-white shadow-inner custom-scrollbar"
             />
           </div>
         </div>
-        <div className="flex justify-end gap-6 pt-6 border-t border-white/5">
-          <button onClick={onClose} className="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors">Cancel</button>
+
+        <div className="flex justify-end gap-4 md:gap-6 pt-6 border-t border-white/5">
+          <button onClick={onClose} className="cursor-pointer px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors">Cancel</button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="bg-white text-black font-extrabold px-10 py-4 rounded-[1.5rem] shadow-xl uppercase tracking-widest text-[10px] disabled:opacity-50"
+            className="cursor-pointer bg-white text-black font-extrabold px-8 md:px-10 py-4 rounded-3xl shadow-xl uppercase tracking-widest text-[10px] disabled:opacity-50"
           >
             {loading ? 'Updating...' : 'Update Profile'}
           </button>
@@ -1009,4 +1020,3 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
     </div>
   );
 };
-

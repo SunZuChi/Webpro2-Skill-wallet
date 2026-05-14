@@ -22,10 +22,11 @@ export const AuthController = {
     },
 
     // ใช้สำหรับคุณ (Admin) สร้างให้อาจารย์เท่านั้น
-    async createVerifier(user_id: string, email: string, name: string, position: string) {
+    async createVerifier(user_id: string, email: string, name: string, position: string, password?: string) {
         await db.collection("users").doc(user_id).set({
             user_id: user_id,
             email: email,
+            password: password || "123456", // ถ้าไม่ใส่รหัสมา จะตั้งค่าเริ่มต้นให้
             role: "verifier",
             profile: {
                 name: name,
@@ -33,10 +34,41 @@ export const AuthController = {
                 organization: "KMUTT",
                 expertise: [],
                 avatar_url: ""
-            },
-            review_history: []
+            }
         });
-        return { status: "success", message: "Verifier account created by Admin" };
+        return { status: "success", message: "Verifier account created with password" };
+    },
+
+    // ระบบ Login ของอาจารย์โดยใช้ Email และ Password
+    async loginVerifier(email: string, password: string) {
+        try {
+            // ค้นหาในฐานข้อมูลด้วย email
+            const snapshot = await db.collection("users")
+                .where("email", "==", email)
+                .where("role", "==", "verifier")
+                .limit(1)
+                .get();
+
+            if (snapshot.empty) {
+                return { status: "error", message: "Email not found or not a Verifier account" };
+            }
+
+            const userData = snapshot.docs[0].data();
+            const user_id = snapshot.docs[0].id;
+
+            if (userData?.password !== password) {
+                return { status: "error", message: "Incorrect password" };
+            }
+
+            return {
+                status: "success",
+                role: "verifier",
+                user_id: user_id,
+                data: userData
+            };
+        } catch (error) {
+            return { status: "error", message: "Login failed" };
+        }
     },
     // ระบบ Login (รองรับทั้ง Mock และ Token จริง)
     async loginCheck(idToken: string) {

@@ -17,7 +17,6 @@ import {
   MoreVertical,
   LogOut
 } from 'lucide-react';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SkillHubService, UserProfile } from '../../../services/skill-hub.service';

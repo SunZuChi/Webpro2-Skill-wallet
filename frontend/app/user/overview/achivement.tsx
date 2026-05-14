@@ -81,7 +81,7 @@ export const Achivement = ({ requests, loading, onViewAll }: { requests: BadgeRe
                       <Clock size={12} /> Pending
                     </div>
                   )}
-                  {req.status === 'revision' && (
+                  {(req.status === 'revision' || req.status === 'revisions') && (
                     <div className="flex items-center gap-1.5 text-rose-500 text-[10px] font-bold bg-rose-500/10 px-3 py-1 rounded-full border border-rose-500/20">
                       <RotateCcw size={12} /> Revisions
                     </div>
@@ -100,7 +100,9 @@ export const Achivement = ({ requests, loading, onViewAll }: { requests: BadgeRe
                 <h4 className="font-bold text-lg text-left">{req.badge_name}</h4>
                 <div className="flex justify-between items-center text-[11px] text-slate-500">
                   <p>{req.verifier_id ? 'Verified by Prof.' : 'Awaiting Verification'}</p>
-                  <span className="uppercase font-bold text-slate-600">{formatDate(req.created_at)}</span>
+                  <span className="uppercase font-bold text-slate-600">
+                    {formatDate(req.verified_at || req.created_at)}
+                  </span>
                 </div>
               </div>
             );

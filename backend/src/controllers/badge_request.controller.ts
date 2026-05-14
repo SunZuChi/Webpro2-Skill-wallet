@@ -40,18 +40,50 @@ export const BadgeRequestController = {
             const requests = snapshot.docs.map(doc => ({
                 id: doc.id,
                 ...doc.data()
-            }));
+            })) as any[];
             
-            // Sort requests by created_at (newest first)
-            requests.sort((a: any, b: any) => {
-                const timeA = new Date(a.created_at || 0).getTime();
-                const timeB = new Date(b.created_at || 0).getTime();
+            // ดึงข้อมูลอาจารย์มาทำการ Enrich Profile
+            const uniqueVerifierIds = Array.from(
+                new Set(requests.map(r => r.verifier_id).filter(id => !!id))
+            ) as string[];
+
+            const verifierProfiles: Record<string, { name: string; avatar_url: string }> = {};
+
+            if (uniqueVerifierIds.length > 0) {
+                const usersSnapshot = await db.collection("users")
+                    .where("__name__", "in", uniqueVerifierIds)
+                    .get();
+
+                usersSnapshot.docs.forEach(doc => {
+                    const data = doc.data() || {};
+                    verifierProfiles[doc.id] = {
+                        name: data.profile?.name || data.name || "Professor",
+                        avatar_url: data.profile?.avatar_url || data.avatar_url || ""
+                    };
+                });
+            }
+
+            // แปะข้อมูลลงในแต่ละ request
+            const enrichedRequests = requests.map(r => {
+                if (r.verifier_id && verifierProfiles[r.verifier_id]) {
+                    return {
+                        ...r,
+                        verifier_name: verifierProfiles[r.verifier_id].name,
+                        verifier_avatar: verifierProfiles[r.verifier_id].avatar_url
+                    };
+                }
+                return r;
+            });
+
+            enrichedRequests.sort((a: any, b: any) => {
+                const timeA = new Date(a.verified_at || a.updated_at || a.created_at || 0).getTime();
+                const timeB = new Date(b.verified_at || b.updated_at || b.created_at || 0).getTime();
                 return timeB - timeA;
             });
             
-            return { status: "success", data: requests };
+            return { status: "success", data: enrichedRequests };
         } catch (error: any) {
             return { status: "error", message: "Failed to fetch requests", detail: error.message };
         }
-    }
+    },
 };

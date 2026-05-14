@@ -7,6 +7,8 @@ import { userRoute } from './api/user.route';
 import { badgeRoute } from './api/badge.route';
 import { badgeRequestRoute } from './api/badge_request.route';
 import { projectRoute } from './api/project.route';
+import { professorRoute } from './api/professor.route';
+import { feetbackRoute } from './api/feetback.route';
 
 const app = new Elysia({ serve: { maxRequestBodySize: 50 * 1024 * 1024 } }) // 50MB limit
     .use(swagger({
@@ -35,13 +37,15 @@ const app = new Elysia({ serve: { maxRequestBodySize: 50 * 1024 * 1024 } }) // 5
             code: code
         };
     })
-    .group('/api', app => 
+    .group('/api', app =>
         app
             .use(authRoute)
             .use(userRoute)
             .use(badgeRoute)
             .use(badgeRequestRoute)
             .use(projectRoute)
+            .use(professorRoute)
+            .use(feetbackRoute)
     )
     .listen(3001);
 

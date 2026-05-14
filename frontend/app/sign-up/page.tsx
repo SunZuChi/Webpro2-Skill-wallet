@@ -1,15 +1,15 @@
 "use client";
 import React from 'react';
-import { Mail, Lock,Quote,ArrowLeft} from 'lucide-react';
+import { Mail, Lock, Quote, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
   return (
     <div className="flex min-h-screen bg-[#050505] font-lineseed antialiased text-white overflow-hidden">
-      
+
       {/* LEFT PANEL*/}
       <div className="w-full lg:w-[45%] flex flex-col items-center justify-center p-8 md:p-16 relative z-10">
-        <button 
+        <button
           onClick={onBackToLanding}
           className="cursor-pointer absolute top-8 left-8 lg:left-12 flex items-center gap-2 text-slate-500 hover:text-white transition-all group focus:outline-none"
         >
@@ -18,23 +18,23 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
         </button>
 
         <div className="w-full max-w-100">
-          
+
           {/* Logo Section */}
-           <div 
-            onClick={onBackToLanding} 
+          <div
+            onClick={onBackToLanding}
             className="flex items-center justify-center cursor-pointer group"
           >
-          <div className="flex items-center gap-2 mb-16 justify-center lg:text-center">
-            <div className="flex items-baseline">
-               <span className="text-2xl font-bold tracking-tighter text-[#ff4f40]">Ip</span>
-               <span className="text-2xl font-bold tracking-tighter text-white">&s</span>
+            <div className="flex items-center gap-2 mb-16 justify-center lg:text-center">
+              <div className="flex items-baseline">
+                <span className="text-2xl font-bold tracking-tighter text-[#ff4f40]">Ip</span>
+                <span className="text-2xl font-bold tracking-tighter text-white">&s</span>
+              </div>
+              <div className="flex flex-col ml-1">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none">
+                  <span className="text-[#ff4f40]">IT portfolio&</span> skill
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col ml-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none">
-                 <span className="text-[#ff4f40]">IT portfolio&</span> skill
-              </span>
-            </div>
-          </div>
           </div>
 
           {/* Heading */}
@@ -43,12 +43,12 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           </div>
 
           {/* Social Login */}
-          <button className="w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98]">
+          <button className="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98]">
             <svg width="20" height="20" viewBox="0 0 48 48" className="group-hover:scale-110 transition-transform">
-              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
-              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
-              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z"/>
-              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.56 10.78l7.97-6.19z" />
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
             </svg>
             <span className="font-bold text-sm text-slate-200">Continue with Google</span>
           </button>
@@ -63,32 +63,32 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           {/* Auth Form */}
           <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
             <div className="space-y-2">
-              <input 
-                type="name" 
+              <input
+                type="name"
                 placeholder="Enter your Name"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
             </div>
             <div className="space-y-2">
-              <input 
-                type="email" 
+              <input
+                type="email"
                 placeholder="Enter your Email"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
             </div>
-            
+
             <div className="space-y-2 relative">
-              <input 
-                type="password" 
+              <input
+                type="password"
                 placeholder="Enter your Password"
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
-            
-              
-             
+
+
+
             </div>
 
-            <button className="w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
+            <button className="cursor-pointer w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
               Continue
             </button>
           </form>
@@ -105,14 +105,14 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
 
       {/*RIGHT PANEL*/}
       <div className="hidden lg:flex w-[55%] relative items-center justify-center overflow-hidden">
-        
+
         {/* Mock Background Image*/}
-        <img 
-          src="picture/bg-login.avif" 
-          alt="Technical Drawing" 
+        <img
+          src="picture/bg-login.avif"
+          alt="Technical Drawing"
           className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity scale-110"
         />
-        
+
         {/* Gradient Overlays based on login.jpg */}
         <div className="absolute inset-0 bg-linear-to-br from-[#ff4f40]/30 via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-linear-to-b from-[#050505]/20 via-[#050505]/40 to-[#050505]"></div>
@@ -123,20 +123,20 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
 
         {/* Quote Card (Glassmorphism) */}
         <div className="relative z-10 w-full max-w-145 h-full max-h-148.25 bg-white/2 backdrop-blur-[30px] border border-white/10 rounded-[3rem] p-16 shadow-2xl overflow-hidden group">
-          
-          
-          
+
+
+
           {/* Quote Icon */}
           <div className="relative">
             <div className="text-[#ff4f40] mb-6"><Quote size={27} /></div>
           </div>
-          
+
           <h2 className="relative text-[2.2rem] font-bold leading-[1.15] text-white mb-6 tracking-tight">
             "This platform bridges the gap between academic theory and industry reality."
           </h2>
-          
+
           <p className="relative text-[#868686] text-base leading-relaxed mb-10 font-light max-w-120">
-            The verified digital badges have completely transformed how we evaluate upcoming tech talent. 
+            The verified digital badges have completely transformed how we evaluate upcoming tech talent.
             It's no longer just about what's on a resume; it's about <span className="text-slate-300 font-medium">verified cryptographic proof of skill</span>.
           </p>
 
@@ -146,9 +146,9 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           <div className="relative flex items-center gap-5">
             <div className="relative">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl relative z-10">
-                <img 
-                  src="picture/dr.png" 
-                  alt="Dr. Wittawin" 
+                <img
+                  src="picture/dr.png"
+                  alt="Dr. Wittawin"
                   className="w-full h-full object-cover"
                 />
               </div>

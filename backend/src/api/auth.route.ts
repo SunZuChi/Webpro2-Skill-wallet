@@ -40,15 +40,27 @@ export const authRoute = new Elysia({ prefix: '/auth' })
         detail: { tags: ['Auth'], summary: 'ดึงข้อมูลผู้ใช้ที่ Login อยู่ปัจจุบัน' }
     })
 
+    // เส้นทางสำหรับอาจารย์ล็อกอินด้วย Email และ Password
+    .post('/login/verifier', async ({ body }) => {
+        return await AuthController.loginVerifier(body.email, body.password);
+    }, {
+        body: t.Object({
+            email: t.String(),
+            password: t.String()
+        }),
+        detail: { tags: ['Auth'], summary: 'Login สำหรับอาจารย์ (ใช้ Email + Password)' }
+    })
+
     // เส้นนี้ "คุณ" เอาไว้ใช้สร้างบัญชีให้อาจารย์ผ่าน Swagger เท่านั้น (ไม่ต้องทำหน้าบ้าน)
     .post('/admin/create-verifier', async ({ body }) => {
-        return await AuthController.createVerifier(body.user_id, body.email, body.name, body.position);
+        return await AuthController.createVerifier(body.user_id, body.email, body.name, body.position, body.password);
     }, {
         body: t.Object({
             user_id: t.String(),
             email: t.String(),
             name: t.String(),
-            position: t.String()
+            position: t.String(),
+            password: t.Optional(t.String())
         }),
         detail: { tags: ['Admin Only'], summary: 'สร้างบัญชีอาจารย์ (Verifier)' }
     });

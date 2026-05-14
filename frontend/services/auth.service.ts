@@ -29,15 +29,46 @@ export const AuthService = {
       }
 
       if (data.status === "success") {
-        // เก็บ Token ไว้ใน localStorage เผื่อหน้าอื่นใช้ (หรือใช้ cookie ก็ได้)
+        // เก็บ Token และ Role ไว้ใน localStorage และ Cookies เพื่อให้ Middleware เช็คได้
         localStorage.setItem("token", idToken);
         localStorage.setItem("userRole", data.role);
+        document.cookie = `token=${idToken}; path=/; max-age=86400`;
+        document.cookie = `userRole=${data.role}; path=/; max-age=86400`;
+        
         return { success: true, role: data.role, user: data.data };
       }
 
       throw new Error(data.message || "Login failed");
     } catch (error: any) {
       console.error("Login Error:", error);
+      throw error;
+    }
+  },
+
+  // ล็อกอินด้วย Email + Password อาจารย์
+  async loginWithVerifierId(email: string, password?: string) {
+    try {
+      const response = await fetch("http://localhost:3001/api/auth/login/verifier", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: email, password: password || "" }),
+      });
+
+      const data = await response.json();
+
+      if (data.status === "success") {
+        const tokenKey = `test-${data.user_id}`;
+        localStorage.setItem("token", tokenKey);
+        localStorage.setItem("userRole", data.role);
+        document.cookie = `token=${tokenKey}; path=/; max-age=86400`;
+        document.cookie = `userRole=${data.role}; path=/; max-age=86400`;
+
+        return { success: true, role: data.role, user: data.data };
+      }
+
+      throw new Error(data.message || "Invalid Email or Password");
+    } catch (error: any) {
+      console.error("Verifier Login Error:", error);
       throw error;
     }
   },
@@ -58,6 +89,8 @@ export const AuthService = {
     try {
       localStorage.removeItem("token");
       localStorage.removeItem("userRole");
+      document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+      document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
       await auth.signOut();
     } catch (error) {
       console.error("Logout error in AuthService:", error);

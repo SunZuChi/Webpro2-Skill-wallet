@@ -3,18 +3,18 @@ import React from 'react';
 import { BadgeRequest } from '../../../services/overview.service';
 import { OverviewService } from '../../../services/overview.service';
 
-// แปลง score (0-1) เป็น SVG point บน radar (center 50,50, radius 32)
+// แปลง score (0-1) เป็น SVG point บน radar (center 50,50, radius 45)
 function scoreToPoint(score: number, angle: number) {
-  const r = Math.max(score, 0.05) * 32;
+  const r = score * 45;
   const rad = (angle - 90) * (Math.PI / 180);
   return { x: 50 + r * Math.cos(rad), y: 50 + r * Math.sin(rad) };
 }
 
 const AXES = [
-  { name: 'Software / Web', angle: 0 },
-  { name: 'Data / AI', angle: 90 },
-  { name: 'Game / Graphics', angle: 180 },
-  { name: 'Cyber / Network', angle: 270 },
+  { name: 'SOFTWARE / WEB', angle: 0 },
+  { name: 'DATA / AI', angle: 90 },
+  { name: 'GAME / GRAPHICS', angle: 180 },
+  { name: 'CYBER / NETWORK', angle: 270 },
 ];
 
 export const MatrixPage = ({ requests }: { requests: BadgeRequest[] }) => {

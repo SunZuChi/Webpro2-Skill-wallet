@@ -1,5 +1,4 @@
-"use client";
-
+"use client"
 import React, { useState, useEffect } from 'react';
 import {
   LayoutDashboard,
@@ -17,7 +16,6 @@ import {
   MoreVertical,
   LogOut
 } from 'lucide-react';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { OverviewService } from '../../../services/overview.service';
@@ -140,6 +138,7 @@ export const Sidebar2 = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onTo
             {!isCollapsed && (
               <div className="flex flex-col min-w-0 flex-1 animate-in slide-in-from-left-2 duration-300">
                 <p className="text-sm font-bold text-white truncate">{userName || 'Student'}</p>
+
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Student View</p>
               </div>
             )}
@@ -149,3 +148,4 @@ export const Sidebar2 = ({ isCollapsed, onToggle }: { isCollapsed: boolean; onTo
     </div>
   );
 }
+

@@ -28,7 +28,10 @@ export const badgeRequestRoute = new Elysia({ prefix: '/badge-requests' })
                 const stream = cloudinary.uploader.upload_stream(
                     {
                         folder: `badge_evidence/${user.uid}`,
-                        resource_type: "auto"
+                        resource_type: "auto",
+                        public_id: file.name,
+                        use_filename: true,
+                        unique_filename: true
                     },
                     (error, result) => {
                         if (error) {
@@ -81,9 +84,8 @@ export const badgeRequestRoute = new Elysia({ prefix: '/badge-requests' })
         }
     }, {
         isSignIn: true,
-        detail: {
-            tags: ['Badge Requests'],
-            summary: 'ดึงข้อมูลคำขอ Badge ของผู้ใช้งานปัจจุบัน'
-        }
-    });
+        detail: { tags: ['Badge Requests'], summary: 'ดึงข้อมูลคำขอ Badge ของผู้ใช้งานปัจจุบัน' }
+    })
+    // The /all route has been moved to professor.route.ts
+    ;
 

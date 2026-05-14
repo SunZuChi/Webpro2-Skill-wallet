@@ -62,7 +62,6 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
       console.error("Logout error in sidebar:", error);
     }
   };
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
       <aside
@@ -166,6 +165,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             </div>
             {!isCollapsed && (
               <div className="flex flex-col min-w-0 flex-1 animate-in slide-in-from-left-2 duration-300">
+
                 <p className="text-sm font-bold text-white truncate">{userName || 'Student'}</p>
                 <p className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Student View</p>
               </div>

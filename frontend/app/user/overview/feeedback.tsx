@@ -1,7 +1,8 @@
 'use client';
 import React from 'react';
-import { ShieldCheck, ChevronRight, Quote, MessageSquare } from 'lucide-react';
+import { ShieldCheck, ChevronRight, Quote, MessageSquare, RotateCcw } from 'lucide-react';
 import { BadgeRequest } from '../../../services/overview.service';
+import { DEFAULT_AVATAR } from '../../../services/auth.service';
 
 function formatDate(dateStr: string): string {
   if (!dateStr) return '';
@@ -10,10 +11,10 @@ function formatDate(dateStr: string): string {
 }
 
 const categoryColor: Record<string, string> = {
-  'Software / Web': 'text-blue-400 bg-blue-400/5 border-blue-400/10',
-  'Data / AI': 'text-rose-400 bg-rose-400/5 border-rose-400/10',
-  'Game / Graphics': 'text-emerald-400 bg-emerald-400/5 border-emerald-400/10',
-  'Cyber / Network': 'text-yellow-400 bg-yellow-400/5 border-yellow-400/10',
+  'SOFTWARE / WEB': 'text-blue-400 bg-blue-400/5 border-blue-400/10',
+  'DATA / AI': 'text-rose-400 bg-rose-400/5 border-rose-400/10',
+  'GAME / GRAPHICS': 'text-emerald-400 bg-emerald-400/5 border-emerald-400/10',
+  'CYBER / NETWORK': 'text-yellow-400 bg-yellow-400/5 border-yellow-400/10',
 };
 
 export const FeedbackPage = ({
@@ -23,10 +24,8 @@ export const FeedbackPage = ({
   requests: BadgeRequest[];
   loading: boolean;
 }) => {
-  // แสดงเฉพาะ approved ที่มี comment
-  const withFeedback = requests.filter((r) => r.status === 'approved' && r.comment);
-  // ถ้าไม่มี comment ก็แสดง approved ทั้งหมด
-  const display = withFeedback.length > 0 ? withFeedback : requests.filter((r) => r.status === 'approved');
+  // แสดงเฉพาะ 3 รายการล่าสุด
+  const display = requests.slice(0, 3);
 
   return (
     <div className="bg-[#0f0f11] border border-white/5 rounded-[2.5rem] p-10 flex flex-col space-y-8 shadow-2xl shadow-rose-500/5">
@@ -76,13 +75,22 @@ export const FeedbackPage = ({
       ) : (
         <div className="space-y-8">
           {display.map((req) => {
-            const catColor = categoryColor[req.category] || 'text-slate-400 bg-slate-400/5 border-slate-400/10';
+            const catKey = (req.category || '').toUpperCase().trim();
+            const catColor = categoryColor[catKey] || 'text-slate-400 bg-slate-400/5 border-slate-400/10';
+            const isApproved = req.status === 'approved';
+
             return (
               <div key={req.id} className="flex flex-col gap-4 items-start">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-extrabold bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20 uppercase tracking-widest">
-                    <ShieldCheck size={14} /> Approved
-                  </div>
+                  {isApproved ? (
+                    <div className="flex items-center gap-2 text-emerald-500 text-[10px] font-extrabold bg-emerald-500/10 px-4 py-1.5 rounded-full border border-emerald-500/20 uppercase tracking-widest">
+                      <ShieldCheck size={14} /> Approved
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-amber-500 text-[10px] font-extrabold bg-amber-500/10 px-4 py-1.5 rounded-full border border-amber-500/20 uppercase tracking-widest">
+                      <RotateCcw size={14} /> Revisions
+                    </div>
+                  )}
                   <span className="text-[11px] text-slate-600 font-bold tracking-widest">
                     {formatDate(req.verified_at || req.updated_at)}
                   </span>
@@ -92,33 +100,49 @@ export const FeedbackPage = ({
                 </div>
 
                 <div className="text-left">
-                  <h4 className="text-xl font-bold">Credential Issued: {req.badge_name}</h4>
-                  {req.comment ? (
+                  <h4 className="text-xl font-bold">{isApproved ? 'Credential Issued' : 'Credential Under Revision'}: {req.badge_name}</h4>
+                  {isApproved ? (
                     <p className="text-sm text-slate-400 mt-1 leading-relaxed max-w-2xl">
-                      Verified and issued to your wallet.
+                      Prof. {req.verifier_name || 'Professor'} verified your submission and issued the credential to your wallet.
                     </p>
                   ) : (
                     <p className="text-sm text-slate-400 mt-1 leading-relaxed max-w-2xl">
-                      Your submission was verified and the credential has been issued to your wallet.
+                      Prof. {req.verifier_name || 'Professor'} requested revisions. Please review the comments below and resubmit your evidence.
                     </p>
                   )}
                 </div>
 
-                {req.comment && (
-                  <div className="bg-[#050505] rounded-[2rem] p-8 border border-white/5 relative group w-full text-left overflow-hidden">
-                    <div className="absolute top-6 right-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
-                      <Quote size={80} />
-                    </div>
-                    <div className="flex gap-6 items-start relative z-10">
-                      <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/10 shrink-0 shadow-2xl bg-slate-800 flex items-center justify-center">
-                        <span className="text-lg font-bold text-slate-400">P</span>
+                {(() => {
+                  const commentText = req.comment || (
+                    isApproved 
+                      ? "No additional feedback provided. Verification completed successfully."
+                      : "No additional feedback provided. Please review the criteria requirements and resubmit."
+                  );
+
+                  return (
+                    <div className="bg-[#050505] rounded-[2rem] p-8 border border-white/5 relative group w-full text-left overflow-hidden">
+                      <div className="absolute top-6 right-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                        <Quote size={80} />
                       </div>
-                      <p className="text-base text-slate-300 italic font-light leading-relaxed max-w-5xl">
-                        &ldquo;{req.comment}&rdquo;
-                      </p>
+                      <div className="flex gap-6 items-start relative z-10">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/10 shrink-0 shadow-2xl bg-slate-800 flex items-center justify-center">
+                          {req.verifier_avatar ? (
+                            <img src={req.verifier_avatar} alt={req.verifier_name} className="w-full h-full object-cover" />
+                          ) : (
+                            <img 
+                              src={DEFAULT_AVATAR} 
+                              alt="Default Professor" 
+                              className="w-full h-full object-cover" 
+                            />
+                          )}
+                        </div>
+                        <p className="text-base text-slate-300 italic font-light leading-relaxed max-w-5xl">
+                          &ldquo;{commentText}&rdquo;
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
             );
           })}

@@ -1,11 +1,51 @@
 "use client";
 import React, { useState } from 'react';
 import { Quote, ArrowLeft, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { AuthService } from '../../services/auth.service';
 
-export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding: () => void, onLoginSuccess: () => void }) => {
+export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding?: () => void, onLoginSuccess?: () => void }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [emailInput, setEmailInput] = useState("");
+  const [passwordInput, setPasswordInput] = useState("");
+  const router = useRouter();
+
+  const handleBackToLanding = () => {
+    if (onBackToLanding) onBackToLanding();
+    else router.push('/');
+  };
+
+  const handleLoginSuccess = (role?: string) => {
+    if (onLoginSuccess) {
+      onLoginSuccess();
+    } else {
+      if (role === 'verifier') {
+        router.push('/professor/request');
+      } else {
+        router.push('/user/overview');
+      }
+    }
+  };
+
+  const handleManualLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!emailInput || !passwordInput) return;
+    
+    try {
+      setLoading(true);
+      setError("");
+      // ล็อกอินด้วยไอดีและรหัสผ่านอาจารย์
+      const result = await AuthService.loginWithVerifierId(emailInput, passwordInput);
+      if (result.success) {
+        handleLoginSuccess(result.role);
+      }
+    } catch (err: any) {
+      setError(err.message || "Invalid ID or Password.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleGoogleLogin = async () => {
     try {
@@ -19,9 +59,9 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
         await AuthService.registerStudent(result.idToken, result.name || "Student");
         localStorage.setItem("token", result.idToken);
         localStorage.setItem("userRole", "user");
-        onLoginSuccess();
+        handleLoginSuccess();
       } else if (result.success) {
-        onLoginSuccess();
+        handleLoginSuccess();
       }
     } catch (err: any) {
       setError(err.message || "Failed to login with Google");
@@ -29,44 +69,41 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
       setLoading(false);
     }
   };
-
   return (
     <div className="flex min-h-screen bg-[#050505] font-lineseed antialiased text-white overflow-hidden">
-      
+
       {/* LEFT PANEL*/}
       <div className="w-full lg:w-[45%] flex flex-col items-center justify-center p-8 md:p-16 relative z-10">
-        <button 
-          onClick={onBackToLanding}
+        <button
+          onClick={handleBackToLanding}
           className="cursor-pointer absolute top-8 left-8 lg:left-12 flex items-center gap-2 text-slate-500 hover:text-white transition-all group focus:outline-none"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           <span className="text-xs font-bold uppercase tracking-widest">Back to Home</span>
         </button>
         <div className="w-full max-w-[400px]">
-          
           {/* Logo Section */}
-           <div 
-            onClick={onBackToLanding} 
+          <div
+            onClick={onBackToLanding}
             className="flex items-center justify-center cursor-pointer group"
           >
-          <div className="flex items-center gap-2 mb-16 justify-center lg:text-center">
-            <div className="flex items-baseline">
-               <span className="text-2xl font-bold tracking-tighter text-[#ff4f40]">Ip</span>
-               <span className="text-2xl font-bold tracking-tighter text-white">&s</span>
+            <div className="flex items-center gap-2 mb-16 justify-center lg:text-center">
+              <div className="flex items-baseline">
+                <span className="text-2xl font-bold tracking-tighter text-[#ff4f40]">Ip</span>
+                <span className="text-2xl font-bold tracking-tighter text-white">&s</span>
+              </div>
+              <div className="flex flex-col ml-1">
+                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none">
+                  <span className="text-[#ff4f40]">IT portfolio&</span> skill
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col ml-1">
-              <span className="text-[10px] text-slate-500 font-bold uppercase tracking-[0.2em] leading-none">
-                 <span className="text-[#ff4f40]">IT portfolio&</span> skill
-              </span>
-            </div>
-          </div>
           </div>
 
           {/* Heading */}
           <div className="text-center lg:text-center mb-12">
             <h1 className="text-[42px] font-bold leading-tight tracking-tight text-white">Welcome Back</h1>
           </div>
-
           {/* Error Message */}
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center">
@@ -103,19 +140,23 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
           </div>
 
           {/* Auth Form */}
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleManualLogin}>
             <div className="space-y-2">
-              <input 
-                type="email" 
-                placeholder="Enter your Email"
+              <input
+                type="text"
+                placeholder="Enter your Professor Email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
             </div>
-            
+
             <div className="space-y-2 relative">
-              <input 
-                type="password" 
+              <input
+                type="password"
                 placeholder="Enter your Password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
               <div className="flex justify-end mt-2">
@@ -123,8 +164,12 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
               </div>
             </div>
 
-            <button className="w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
-              Continue
+            <button 
+              type="submit"
+              disabled={loading}
+              className="cursor-pointer w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl disabled:opacity-50"
+            >
+              {loading ? "Logging in..." : "Continue"}
             </button>
           </form>
 
@@ -140,14 +185,14 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
 
       {/*RIGHT PANEL*/}
       <div className="hidden lg:flex w-[55%] relative items-center justify-center overflow-hidden">
-        
+
         {/* Mock Background Image*/}
-        <img 
-          src="picture/bg-login.avif" 
-          alt="Technical Drawing" 
+        <img
+          src="picture/bg-login.avif"
+          alt="Technical Drawing"
           className="absolute inset-0 w-full h-full object-cover opacity-30 mix-blend-luminosity scale-110"
         />
-        
+
         {/* Gradient Overlays based on login.jpg */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#ff4f40]/30 via-transparent to-transparent"></div>
         <div className="absolute inset-0 bg-gradient-to-b from-[#050505]/20 via-[#050505]/40 to-[#050505]"></div>
@@ -158,14 +203,11 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
 
         {/* Quote Card (Glassmorphism) */}
         <div className="relative z-10 w-full max-w-[580px] h-full max-h-[593px] bg-white/[0.02] backdrop-blur-[30px] border border-white/10 rounded-[3rem] p-16 shadow-2xl overflow-hidden group">
-          
-          
-          
           {/* Quote Icon */}
           <div className="relative">
             <div className="text-[#ff4f40] mb-6"><Quote size={27} /></div>
           </div>
-          
+
           <h2 className="relative text-[2.2rem] font-bold leading-[1.15] text-white mb-6 tracking-tight">
             "This platform bridges the gap between academic theory and industry reality."
           </h2>
@@ -181,9 +223,9 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
           <div className="relative flex items-center gap-5">
             <div className="relative">
               <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/20 shadow-2xl relative z-10">
-                <img 
-                  src="picture/dr.png" 
-                  alt="Dr. Wittawin" 
+                <img
+                  src="picture/dr.png"
+                  alt="Dr. Wittawin"
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -202,3 +244,4 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
   );
 };
 
+export default LoginPage;

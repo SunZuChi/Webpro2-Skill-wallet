@@ -32,10 +32,6 @@ import {
 
 import { RequestModal } from './request';
 import { BadgePage } from './badge';
-/**
- * [QUERY]: ข้อมูล Badge จำลอง
- */
-
 
 const CATEGORIES = [
   { id: 'all', label: 'All', color: 'bg-white text-black' },
@@ -45,18 +41,12 @@ const CATEGORIES = [
   { id: 'game', label: 'GAME / GRAPHICS', color: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-500' },
 ];
 
-
-
-
-// ==========================================
-// MAIN PAGE COMPONENT
-// ==========================================
 export default function MyBadgesPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeFilter, setActiveFilter] = useState('all');
   const [showRequestModal, setShowRequestModal] = useState(false);
-
   // Filter Logic
+
 
 
   const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
@@ -75,18 +65,17 @@ export default function MyBadgesPage() {
                 <h1 className="text-xl md:text-2xl font-bold tracking-tight">My Badges</h1>
               </div>
 
-
-
             </div>
           </div>
         </header>
 
-        <div className={`${containerClass} py-8 sm:py-10 space-y-8 md:space-y-10`}>
-          <div className="text-left space-y-2">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight">Your Verified Credentials</h2>
-            <p className="text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.2em] font-bold">SHOWCASE YOUR TECHNICAL CAPABILITIES TO FUTURE EMPLOYERS.</p>
+        <div className={`${containerClass} py-6 sm:py-8 md:py-10 space-y-6 sm:space-y-8 md:space-y-10`}>
+          <div className="text-left space-y-1.5 sm:space-y-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight">Your Verified Credentials</h2>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-slate-500 uppercase tracking-[0.2em] font-bold">
+              SHOWCASE YOUR TECHNICAL CAPABILITIES TO FUTURE EMPLOYERS.
+            </p>
           </div>
-
 
 
           <BadgePage />
@@ -94,13 +83,10 @@ export default function MyBadgesPage() {
         </div>
 
         <footer className="mt-auto p-10 text-center opacity-30">
+
           <p className="text-[10px] uppercase font-bold tracking-[0.4em]">Ip&s IT Portfolio & Skill © 2026</p>
         </footer>
       </main>
-
-
-
     </div>
   );
 }
-
