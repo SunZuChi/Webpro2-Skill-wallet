@@ -19,13 +19,14 @@ export const UserController = {
     // อัปเดตข้อมูล Profile
     async updateProfile(userId: string, data: any) {
         try {
-            const { name, headline, bio, location, avatar_url } = data;
+            const { name, headline, bio, location, phone, avatar_url } = data;
             
             await db.collection("users").doc(userId).update({
                 "profile.name": name,
                 "profile.headline": headline,
                 "profile.bio": bio,
                 "profile.location": location,
+                "profile.phone": phone,
                 "profile.avatar_url": avatar_url,
                 updated_at: new Date().toISOString()
             });

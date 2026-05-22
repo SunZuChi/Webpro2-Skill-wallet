@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   LayoutDashboard, Medal, FolderOpen, FileUp, Settings, AlignLeft,
   Clock, RotateCcw, ShieldCheck, Quote, ChevronRight, ExternalLink,
-  LogOut, X, Bell, Menu, User, Plus, Edit3, MapPin, Mail,
+  LogOut, X, Bell, Menu, User, Plus, Edit3, MapPin, Mail, Phone,
   Briefcase, GraduationCap, Share2, Pin, PinOff, MoreVertical,
   Check, Upload, Link as LinkIcon, Trash2, Calendar, BookOpen, Target, Image as ImageIcon,
   Globe, Cpu, Layers
@@ -118,17 +118,20 @@ export default function App() {
   }, []);
 
   const togglePin = async (id: string) => {
-    const newPinned = pinnedBadgeIds.includes(id)
-      ? pinnedBadgeIds.filter(bid => bid !== id)
-      : pinnedBadgeIds.length < 4
-        ? [...pinnedBadgeIds, id]
-        : pinnedBadgeIds;
+    // Clean up any ghost or unapproved pins from the count
+    const validPinned = pinnedBadgeIds.filter(bid => userBadges.some((b: any) => b.id === bid && b.status === 'approved'));
 
-    if (newPinned !== pinnedBadgeIds) {
-      setPinnedBadgeIds(newPinned);
-      // บันทึกลง Database ทันที
-      await SkillHubService.updatePinnedBadges(newPinned);
+    let newPinned;
+    if (pinnedBadgeIds.includes(id)) {
+      newPinned = pinnedBadgeIds.filter(bid => bid !== id);
+    } else if (validPinned.length < 4) {
+      newPinned = [...validPinned, id]; // Automatically cleans up ghost pins when adding a new one
+    } else {
+      return; // Max reached
     }
+
+    setPinnedBadgeIds(newPinned);
+    await SkillHubService.updatePinnedBadges(newPinned);
   };
 
   const renderContent = () => {
@@ -159,14 +162,11 @@ export default function App() {
   return (
     <>
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto flex flex-col relative transition-all duration-300 w-full">
+      <main className="flex-1 overflow-y-auto flex flex-col relative transition-all duration-300 w-full pt-14 md:pt-0">
         <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center transition-all">
           <div className={CONTAINER_CLASS}>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 transition-colors"><Menu size={24} /></button>
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white">Skill Hub</h1>
-              </div>
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white">Skill Hub</h1>
               <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest">
                 <Share2 size={16} /> <span className="hidden sm:inline">Export Portfolio</span><span className="sm:hidden">Export</span>
               </button>
@@ -255,6 +255,9 @@ const SkillHubView = ({ profile, onOpenBadgeModal, onAddProject, onPreviewProjec
                   </span>
                   <span className={`flex items-center gap-2 underline decoration-white/10 ${!profile?.email && 'opacity-40 italic'}`}>
                     <Mail size={14} /> {profile?.email || 'Not specified'}
+                  </span>
+                  <span className={`flex items-center gap-2 ${!profile?.profile?.phone && 'opacity-40 italic'}`}>
+                    <Phone size={14} /> {profile?.profile?.phone || 'Not specified'}
                   </span>
                 </div>
               </div>
@@ -392,6 +395,7 @@ const SkillHubView = ({ profile, onOpenBadgeModal, onAddProject, onPreviewProjec
                     <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest">{edu.start_year} - {edu.end_year || 'Present'}</span>
                   </div>
                   <p className="text-[#ff4f40] font-bold text-sm">{edu.title}</p>
+                  {edu.gpax && <p className="text-white font-bold text-xs uppercase tracking-widest mt-1 bg-white/5 inline-block px-3 py-1 rounded-md">GPAX: <span className="text-[#ff4f40]">{edu.gpax}</span></p>}
                   {edu.description && <p className="text-slate-500 text-sm font-light leading-relaxed">{edu.description}</p>}
                 </div>
                 <div className="pt-6 border-t border-white/5 text-right">
@@ -679,6 +683,9 @@ const SubmissionModal = ({ isOpen, onClose, type, initialData, onRefresh }: any)
 
 const BadgeSelectModal = ({ isOpen, onClose, pinnedBadgeIds, togglePin, badges }: any) => {
   if (!isOpen) return null;
+
+  const validPinnedCount = badges.filter((b: any) => b.status === 'approved' && pinnedBadgeIds.includes(b.id)).length;
+
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-black/95 backdrop-blur-md" onClick={onClose}></div>
@@ -690,7 +697,7 @@ const BadgeSelectModal = ({ isOpen, onClose, pinnedBadgeIds, togglePin, badges }
         <div className="flex-1 overflow-y-auto p-6 md:p-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {badges.filter((badge: any) => badge.status === 'approved').map((badge: any) => {
             const isPinned = pinnedBadgeIds.includes(badge.id);
-            const isFull = pinnedBadgeIds.length >= 4 && !isPinned;
+            const isFull = validPinnedCount >= 4 && !isPinned;
             return (
               <div key={badge.id} onClick={() => !isFull && togglePin(badge.id)} className={`p-6 md:p-8 rounded-[2.5rem] border transition-all relative group cursor-pointer ${isPinned ? 'bg-[#ff4f40]/5 border-[#ff4f40]/40 shadow-2xl' : isFull ? 'opacity-30 grayscale cursor-not-allowed border-white/5' : 'bg-[#121214] border-white/5 hover:border-white/10'}`}>
                 <div className="flex justify-between items-start mb-6 md:mb-8"><div className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden ${isPinned ? 'bg-[#ff4f40]/20' : 'bg-white/5'}`}><img src={badge.icon} className="w-10 h-10 object-contain" /></div><div className={`p-2 rounded-xl transition-all ${isPinned ? 'bg-[#ff4f40] text-white scale-110 shadow-lg' : 'bg-white/5 text-slate-600'}`}>{isPinned ? <Pin size={16} fill="currentColor" /> : <Plus size={16} />}</div></div>
@@ -703,7 +710,7 @@ const BadgeSelectModal = ({ isOpen, onClose, pinnedBadgeIds, togglePin, badges }
           })}
         </div>
         <div className="p-6 md:p-8 border-t border-white/5 bg-[#0f0f11] flex justify-between items-center">
-          <span className="text-sm font-medium text-slate-500"><span className="text-white font-bold">{pinnedBadgeIds.length}/4</span> Selected</span>
+          <span className="text-sm font-medium text-slate-500"><span className="text-white font-bold">{validPinnedCount}/4</span> Selected</span>
           <button onClick={onClose} className="bg-white text-black font-extrabold px-8 md:px-12 py-4 rounded-3xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs shadow-xl transform active:scale-95">Save Selection</button>
         </div>
       </div>
@@ -717,7 +724,8 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
     title: '',
     start_year: '',
     end_year: '',
-    description: ''
+    description: '',
+    gpax: ''
   });
   const [loading, setLoading] = useState(false);
 
@@ -728,10 +736,11 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
         title: initialData.title || '',
         start_year: initialData.start_year || '',
         end_year: initialData.end_year || '',
-        description: initialData.description || ''
+        description: initialData.description || '',
+        gpax: initialData.gpax || ''
       });
     } else {
-      setFormData({ organization: '', title: '', start_year: '', end_year: '', description: '' });
+      setFormData({ organization: '', title: '', start_year: '', end_year: '', description: '', gpax: '' });
     }
   }, [initialData, isOpen]);
 
@@ -801,7 +810,7 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
               className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white transition-all shadow-inner"
             />
           </div>
-          <div className="grid grid-cols-2 gap-4 pt-2">
+          <div className={`grid ${isEdu ? 'grid-cols-3' : 'grid-cols-2'} gap-4 pt-2`}>
             <div className="space-y-2">
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center block">Start Year</label>
               <div className="relative">
@@ -834,6 +843,21 @@ const TimelineEditModal = ({ isOpen, onClose, type, initialData, onRefresh }: an
                 />
               </div>
             </div>
+            {isEdu && (
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1 text-center block">GPAX</label>
+                <div className="relative">
+                  <BookOpen className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-700" size={14} />
+                  <input
+                    type="text"
+                    value={formData.gpax}
+                    onChange={(e) => setFormData({ ...formData, gpax: e.target.value })}
+                    placeholder="3.50"
+                    className="w-full bg-black border border-white/5 rounded-2xl pl-12 pr-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-center text-white"
+                  />
+                </div>
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Description (Optional)</label>
@@ -876,6 +900,7 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
     headline: '',
     bio: '',
     location: '',
+    phone: '',
     avatar_url: ''
   });
   const [loading, setLoading] = useState(false);
@@ -890,6 +915,7 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
         headline: profile.profile?.headline || '',
         bio: profile.profile?.bio || '',
         location: profile.profile?.location || '',
+        phone: profile.profile?.phone || '',
         avatar_url: profile.profile?.avatar_url || ''
       });
       setAvatarPreview(profile.profile?.avatar_url || DEFAULT_AVATAR);
@@ -995,6 +1021,26 @@ const ProfileEditModal = ({ isOpen, onClose, profile, onRefresh }: any) => {
               onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
               className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
             />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Location</label>
+              <input
+                type="text"
+                value={formData.location}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Phone</label>
+              <input
+                type="tel"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full bg-black border border-white/5 rounded-2xl px-6 py-4 text-sm focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
+              />
+            </div>
           </div>
           <div className="space-y-2">
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Bio</label>

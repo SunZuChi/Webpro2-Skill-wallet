@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { AuthService } from '../../services/auth.service';
 
 const DEFAULT_AVATAR = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -27,7 +28,7 @@ export default function ProfessorLayout({ children }: { children: React.ReactNod
     useEffect(() => {
         const fetchProfile = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = await AuthService.getFreshToken();
                 if (!token) return;
                 const res = await fetch("http://localhost:3001/api/auth/me", {
                     headers: { Authorization: `Bearer ${token}` }

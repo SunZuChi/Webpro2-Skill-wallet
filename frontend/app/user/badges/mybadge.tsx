@@ -52,19 +52,15 @@ export default function MyBadgesPage() {
   const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
 
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full">
+    <div className="flex h-full overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full">
       {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 overflow-y-auto flex flex-col transition-all duration-300 relative">
+      <main className="flex-1 overflow-y-auto flex flex-col transition-all duration-300 relative pt-14 md:pt-0">
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ff4f40]/5 rounded-full blur-[120px] pointer-events-none -z-10"></div>
 
         <header className="h-[70px] md:h-[90px] border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
           <div className={containerClass}>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <button onClick={() => setIsMobileMenuOpen(true)} className="lg:hidden p-2 text-slate-400 hover:text-white"><Menu size={24} /></button>
-                <h1 className="text-xl md:text-2xl font-bold tracking-tight">My Badges</h1>
-              </div>
-
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight">My Badges</h1>
             </div>
           </div>
         </header>

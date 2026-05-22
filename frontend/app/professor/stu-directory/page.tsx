@@ -11,67 +11,51 @@ import {
     TrendingUp,
     ArrowLeft,
 } from 'lucide-react';
-
-const STUDENTS_DATA = [
-    {
-        id: "000001", name: "Yosapart Raúl", focus: "SOFTWARE / WEB",
-        avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80",
-        badgesCount: 12,
-        summary: "Passionate about scalable frontend architectures and modern web technologies. Currently focusing on React and Next.js ecosystems.",
-        matrix: { sw: 90, da: 30, gg: 45, cn: 20 },
-        latestVerifications: [
-            { title: "Advanced React Hooks", date: "2 Feb 2026", status: "approved" },
-            { title: "Tailwind CSS Layouts", date: "15 Jan 2026", status: "approved" }
-        ]
-    },
-    {
-        id: "000002", name: "Monpat Suksawat", focus: "DATA / AI",
-        avatar: "https://i.pravatar.cc/100?u=monpat",
-        badgesCount: 5,
-        summary: "Specializing in big data processing and machine learning models. Keen on SQL optimization.",
-        matrix: { sw: 20, da: 85, gg: 15, cn: 40 },
-        latestVerifications: [{ title: "SQL Complex Joins", date: "10 Feb 2026", status: "pending" }]
-    },
-    {
-        id: "000003", name: "Suttinun Rordorthai", focus: "CYBER / NETWORK",
-        avatar: "https://i.pravatar.cc/100?u=suttinun",
-        badgesCount: 15,
-        summary: "Security researcher focusing on penetration testing and cloud infrastructure protection.",
-        matrix: { sw: 35, da: 20, gg: 10, cn: 95 },
-        latestVerifications: []
-    },
-    {
-        id: "000004", name: "Sunday Konneua", focus: "CYBER / NETWORK",
-        avatar: "https://i.pravatar.cc/100?u=sunday",
-        badgesCount: 3, matrix: { sw: 10, da: 10, gg: 10, cn: 60 }, latestVerifications: []
-    },
-    {
-        id: "000005", name: "Thanakorn Kaboom", focus: "GAME / GRAPHICS",
-        avatar: "https://i.pravatar.cc/100?u=thanakorn",
-        badgesCount: 8, matrix: { sw: 40, da: 20, gg: 80, cn: 10 }, latestVerifications: []
-    },
-    {
-        id: "000006", name: "Apichet Pubgmaii", focus: "GAME / GRAPHICS",
-        avatar: "https://i.pravatar.cc/100?u=apichet",
-        badgesCount: 6, matrix: { sw: 30, da: 20, gg: 70, cn: 20 }, latestVerifications: []
-    }
-];
+import { AuthService } from '../../../services/auth.service';
 
 export default function DirectoryPage() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [filterTrack, setFilterTrack] = useState('all');
     const [mobileView, setMobileView] = useState<'list' | 'detail'>('list');
+    
+    // Data state
+    const [studentsData, setStudentsData] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    React.useEffect(() => {
+        const fetchStudents = async () => {
+            try {
+                const token = await AuthService.getFreshToken();
+                if (!token) return;
+                
+                const res = await fetch("http://localhost:3001/api/professor/students", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                if (data.status === "success") {
+                    setStudentsData(data.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch students data:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchStudents();
+    }, []);
 
     const processedStudents = useMemo(() => {
-        return STUDENTS_DATA.filter(s => {
+        return studentsData.filter(s => {
             const matchSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) || s.id.includes(searchQuery);
             const matchFilter = filterTrack === 'all' || s.focus === filterTrack;
             return matchSearch && matchFilter;
         });
-    }, [searchQuery, filterTrack]);
+    }, [searchQuery, filterTrack, studentsData]);
 
-    const selectedStudent = STUDENTS_DATA.find(s => s.id === selectedId);
+    const selectedStudent = studentsData.find(s => s.id === selectedId);
 
     const handleSelectStudent = (id: string) => {
         setSelectedId(id);
@@ -141,7 +125,12 @@ export default function DirectoryPage() {
                 </div>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-1">
-                    {processedStudents.length > 0 ? processedStudents.map(student => (
+                    {isLoading ? (
+                        <div className="py-20 text-center space-y-3 opacity-20">
+                            <Clock size={40} className="mx-auto animate-spin" />
+                            <p className="text-sm font-bold uppercase tracking-widest">Loading Directory...</p>
+                        </div>
+                    ) : processedStudents.length > 0 ? processedStudents.map(student => (
                         <div key={student.id} onClick={() => handleSelectStudent(student.id)}
                             className={`flex items-center justify-between p-4 rounded-2xl transition-all cursor-pointer group relative overflow-hidden ${selectedId === student.id ? 'bg-[#121214] border border-white/10 shadow-2xl' : 'hover:bg-white/5 border border-transparent'}`}
                         >
@@ -254,7 +243,7 @@ export default function DirectoryPage() {
                             <div className="bg-[#0f0f11] border border-white/5 rounded-4xl overflow-hidden shadow-2xl text-left">
                                 {selectedStudent.latestVerifications && selectedStudent.latestVerifications.length > 0 ? (
                                     <div className="divide-y divide-white/5">
-                                        {selectedStudent.latestVerifications.map((v, idx) => (
+                                        {selectedStudent.latestVerifications.map((v: any, idx: number) => (
                                             <div key={idx} className="p-5 md:p-7 flex items-center justify-between hover:bg-white/1 transition-all cursor-pointer group">
                                                 <div className="flex items-center gap-4 md:gap-6">
                                                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform shrink-0">

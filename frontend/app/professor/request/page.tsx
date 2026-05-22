@@ -18,6 +18,7 @@ import {
     ArrowLeft,
 } from 'lucide-react';
 import { FeetbackService } from '../../../services/feetback.service';
+import { AuthService } from '../../../services/auth.service';
 
 const MASTER_CRITERIA: Record<string, any[]> = {
     "SOFTWARE / WEB": [
@@ -142,7 +143,7 @@ export default function Request_Professor() {
     React.useEffect(() => {
         const fetchRequests = async () => {
             try {
-                const token = localStorage.getItem("token");
+                const token = await AuthService.getFreshToken();
                 if (!token) return;
                 
                 const res = await fetch("http://localhost:3001/api/professor/badge-requests", {
@@ -410,8 +411,8 @@ export default function Request_Professor() {
                                 </h3>
                                 <div className="bg-[#0f0f11] border border-white/5 rounded-3xl overflow-hidden shadow-2xl">
                                     {displayCriteria.map((c: any, i: number) => (
-                                        <div key={c.id} onClick={() => toggleCriteria(c.id)}
-                                            className={`p-6 md:p-8 flex items-start gap-5 md:gap-6 group hover:bg-white/1 transition-colors cursor-pointer ${i !== displayCriteria.length - 1 ? 'border-b border-white/5' : ''}`}>
+                                        <div key={c.id} onClick={() => { if (selectedRequest.status === 'pending') toggleCriteria(c.id); }}
+                                            className={`p-6 md:p-8 flex items-start gap-5 md:gap-6 group transition-colors ${selectedRequest.status === 'pending' ? 'hover:bg-white/1 cursor-pointer' : 'cursor-not-allowed'} ${i !== displayCriteria.length - 1 ? 'border-b border-white/5' : ''}`}>
                                             <button className={`mt-1 shrink-0 transition-all transform active:scale-90 ${criteriaStates[c.id] ? 'text-emerald-500' : 'text-slate-800 group-hover:text-slate-600'}`}>
                                                 {criteriaStates[c.id] ? <CheckSquare size={24} /> : <Square size={24} />}
                                             </button>
@@ -433,7 +434,7 @@ export default function Request_Professor() {
                             <textarea
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || selectedRequest.status !== 'pending'}
                                 placeholder="Write constructive feedback for the student..."
                                 className="w-full bg-[#0f0f11] border border-white/5 rounded-3xl font-semibold p-6 md:p-10 text-base min-h-40 md:min-h-50 outline-none focus:border-[#ff4f40]/50 transition-all leading-relaxed placeholder:text-slate-500 text-white shadow-inner disabled:opacity-50"
                             />
@@ -443,15 +444,15 @@ export default function Request_Professor() {
                         <div className="sticky bottom-0 pt-8 pb-6 mt-10 bg-linear-to-t from-[#050505] to-transparent z-20 flex justify-end gap-3 md:gap-4">
                             <button 
                                 onClick={() => handleSubmitFeedback('revisions')}
-                                disabled={isSubmitting}
-                                className="cursor-pointer uppercase bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-xl disabled:opacity-50"
+                                disabled={isSubmitting || selectedRequest.status !== 'pending'}
+                                className="cursor-pointer uppercase bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <RotateCcw size={15} /> Revisions
                             </button>
                             <button 
                                 onClick={() => handleSubmitFeedback('approved')}
-                                disabled={isSubmitting}
-                                className="cursor-pointer uppercase bg-[#059669] hover:bg-[#10b981] text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.2)] disabled:opacity-50"
+                                disabled={isSubmitting || selectedRequest.status !== 'pending'}
+                                className="cursor-pointer uppercase bg-[#059669] hover:bg-[#10b981] text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 {isSubmitting ? "Processing..." : <><Check size={18} strokeWidth={4} /> Approve Badge</>}
                             </button>

@@ -102,6 +102,7 @@ export const AuthController = {
                 data: userData
             };
         } catch (error) {
+            console.error("Firebase verifyIdToken error:", error);
             return { status: "error", message: "Authentication Failed" };
         }
     }

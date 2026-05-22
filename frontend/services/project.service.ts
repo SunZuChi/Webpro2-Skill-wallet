@@ -1,4 +1,4 @@
-import { auth } from '../config/firebase';
+import { AuthService } from './auth.service';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
 const API_URL = `${API_BASE}/api/project`;
@@ -14,20 +14,12 @@ export interface ProjectData {
   updated_at?: string;
 }
 
-const getFreshToken = async (): Promise<string | null> => {
-  await auth.authStateReady();
-  if (auth.currentUser) {
-    return await auth.currentUser.getIdToken();
-  }
-  return localStorage.getItem("token");
-};
-
 export const ProjectService = {
   /**
    * อัปโหลดรูปภาพขึ้น Cloudinary ผ่าน Backend
    */
   async uploadImage(file: File): Promise<string> {
-    const token = await getFreshToken();
+    const token = await AuthService.getFreshToken();
     const formData = new FormData();
     formData.append("file", file);
 
@@ -49,7 +41,7 @@ export const ProjectService = {
    */
   async getMyProjects() {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       const response = await fetch(API_URL, {
         method: "GET",
         headers: {
@@ -68,7 +60,7 @@ export const ProjectService = {
    * สร้างโปรเจกต์ใหม่ (ส่งเป็น JSON, cover_image เป็น URL แล้ว)
    */
   async createProject(data: Partial<ProjectData>) {
-    const token = await getFreshToken();
+    const token = await AuthService.getFreshToken();
     const response = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -84,7 +76,7 @@ export const ProjectService = {
    * แก้ไขโปรเจกต์ (ส่งเป็น JSON)
    */
   async updateProject(id: string, data: Partial<ProjectData>) {
-    const token = await getFreshToken();
+    const token = await AuthService.getFreshToken();
     const response = await fetch(`${API_URL}/${id}`, {
       method: "PUT",
       headers: {
@@ -100,7 +92,7 @@ export const ProjectService = {
    * ลบโปรเจกต์
    */
   async deleteProject(id: string) {
-    const token = await getFreshToken();
+    const token = await AuthService.getFreshToken();
     const response = await fetch(`${API_URL}/${id}`, {
       method: "DELETE",
       headers: { "Authorization": `Bearer ${token}` }

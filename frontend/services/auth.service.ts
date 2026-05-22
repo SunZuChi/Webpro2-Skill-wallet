@@ -96,5 +96,22 @@ export const AuthService = {
       console.error("Logout error in AuthService:", error);
       throw error;
     }
+  },
+
+  // ดึง Token ที่สดใหม่เสมอ (ป้องกัน Token หมดอายุ) และอัปเดตลง localStorage/Cookie
+  async getFreshToken(): Promise<string | null> {
+    await auth.authStateReady();
+    if (auth.currentUser) {
+      // getIdToken() จะคืนค่า Token ปัจจุบัน หรือขอใหม่ให้ถ้าใกล้หมดอายุ
+      const idToken = await auth.currentUser.getIdToken();
+      
+      // อัปเดตเก็บตัวล่าสุดไว้
+      localStorage.setItem("token", idToken);
+      document.cookie = `token=${idToken}; path=/; max-age=86400`;
+      
+      return idToken;
+    }
+    // Fallback สำหรับกรณีล็อกอินของอาจารย์ (Test Token) ที่ไม่ได้มาจาก Firebase
+    return localStorage.getItem("token");
   }
 };

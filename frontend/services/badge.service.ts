@@ -1,18 +1,10 @@
-import { auth } from '../config/firebase';
-
-const getFreshToken = async () => {
-  await auth.authStateReady();
-  if (auth.currentUser) {
-    return await auth.currentUser.getIdToken(); // ใช้ cached token (valid 1hr), ไม่ force refresh ทุกครั้ง
-  }
-  return localStorage.getItem("token");
-};
+import { AuthService } from './auth.service';
 
 export const BadgeService = {
   // ดึงข้อมูล Badge ทั้งหมดเพื่อนำมาแสดงใน Modal
   async getAllBadges() {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) throw new Error("No token found");
 
       const response = await fetch("http://localhost:3001/api/badges", {
@@ -32,7 +24,7 @@ export const BadgeService = {
   // Upload ไฟล์ผ่าน Backend (ไม่มีปัญหา CORS)
   async uploadEvidence(file: File) {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) throw new Error("No token found");
 
       const formData = new FormData();
@@ -58,7 +50,7 @@ export const BadgeService = {
   // ส่งคำขอสร้าง Badge ใหม่ไปยัง Collection badge_requests
   async createRequest(requestData: any) {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) throw new Error("No token found");
 
       const response = await fetch("http://localhost:3001/api/badge-requests", {
@@ -78,7 +70,7 @@ export const BadgeService = {
 
   async getMyRequests() {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) throw new Error("No token found");
 
       const response = await fetch("http://localhost:3001/api/badge-requests/my-requests", {

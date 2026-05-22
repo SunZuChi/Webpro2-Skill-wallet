@@ -1,12 +1,4 @@
-import { auth } from '../config/firebase';
-
-const getFreshToken = async () => {
-  await auth.authStateReady();
-  if (auth.currentUser) {
-    return await auth.currentUser.getIdToken();
-  }
-  return localStorage.getItem("token");
-};
+import { AuthService } from './auth.service';
 
 export const FeetbackService = {
   /**
@@ -23,7 +15,7 @@ export const FeetbackService = {
     criteriaStates: Record<string, boolean>
   ) {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) throw new Error("No token found");
 
       const response = await fetch("http://localhost:3001/api/feetback", {

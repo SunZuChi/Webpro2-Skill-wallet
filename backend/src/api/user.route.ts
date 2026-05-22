@@ -96,7 +96,8 @@ export const userRoute = new Elysia({ prefix: '/user' })
                 organization: t.String(),
                 start_year: t.String(),
                 end_year: t.String(),
-                description: t.Optional(t.String())
+                description: t.Optional(t.String()),
+                gpax: t.Optional(t.String())
             }),
             detail: { tags: ['Education'], summary: 'เพิ่มข้อมูลประวัติการศึกษา' }
         })

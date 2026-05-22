@@ -1,14 +1,6 @@
-import { auth } from '../config/firebase';
+import { AuthService } from './auth.service';
 
 const API_BASE = 'http://localhost:3001';
-
-const getFreshToken = async (): Promise<string | null> => {
-  await auth.authStateReady();
-  if (auth.currentUser) {
-    return await auth.currentUser.getIdToken();
-  }
-  return localStorage.getItem('token');
-};
 
 export interface UserProfile {
   id: string;
@@ -29,7 +21,7 @@ export interface UserProfile {
 export const SkillHubService = {
   async getMyProfile(): Promise<UserProfile | null> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) return null;
 
       const response = await fetch(`${API_BASE}/api/user/profile`, {
@@ -51,7 +43,7 @@ export const SkillHubService = {
 
   async updateProfile(profileData: any): Promise<boolean> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) return false;
 
       const response = await fetch(`${API_BASE}/api/user/profile`, {
@@ -73,7 +65,7 @@ export const SkillHubService = {
 
   async updatePinnedBadges(badgeIds: string[]): Promise<boolean> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       if (!token) return false;
 
       const response = await fetch(`${API_BASE}/api/user/pinned-badges`, {
@@ -95,7 +87,7 @@ export const SkillHubService = {
 
   async addTimelineItem(type: 'experience' | 'education', data: any): Promise<boolean> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       const response = await fetch(`${API_BASE}/api/user/${type}`, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -111,7 +103,7 @@ export const SkillHubService = {
 
   async updateTimelineItem(type: 'experience' | 'education', id: string, data: any): Promise<boolean> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       const response = await fetch(`${API_BASE}/api/user/${type}/${id}`, {
         method: 'PATCH',
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
@@ -127,7 +119,7 @@ export const SkillHubService = {
 
   async deleteTimelineItem(type: 'experience' | 'education', id: string): Promise<boolean> {
     try {
-      const token = await getFreshToken();
+      const token = await AuthService.getFreshToken();
       const response = await fetch(`${API_BASE}/api/user/${type}/${id}`, {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${token}` },

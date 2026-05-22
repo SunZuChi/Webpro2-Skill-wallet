@@ -7,7 +7,9 @@ import {
   MapPin, Mail, Phone, User, GraduationCap, Briefcase,
   Code, Medal, FileUp
 } from 'lucide-react';
-import { Sidebar4 } from './sidebar4';
+import { SkillHubService } from '@/services/skill-hub.service';
+import { ProjectService } from '@/services/project.service';
+import { BadgeService } from '@/services/badge.service';
 
 const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
 
@@ -18,32 +20,8 @@ const GithubIcon = ({ size = 18, className = "" }) => (
   </svg>
 );
 
-const USER_REAL_PROFILE = {
-  name: "THANAKORN KARNDEE",
-  title: "Senior Applied Computer Science Student",
-  address: "647/29, Moo 1, Pracha Uthit 49 Alley, Bangkok",
-  phone: "+66 97 939 6470",
-  email: "thanakornkarndee@gmail.com",
-  summary: "Senior Applied Computer Science student with a strong passion for building scalable web applications and intuitive user interfaces. Experienced in React, Node.js, and modern cloud infrastructures.",
-  education: {
-    uni: "King Mongkut's University of Technology Thonburi",
-    degree: "Bachelor of Science in Applied Computer Science",
-    gpax: "3.37",
-    year: "2021 - Present"
-  },
-  projects: [
-    { title: "Jak-Jai Mobile App", tech: "React Native, Node.js", desc: "Designed prototype cross-generational communication app to connect elderly and youth through voice and text sharing." },
-    { title: "Hatyai Condo System", tech: "Next.js, SQL, REST API", desc: "Centralized property management dashboard with real-time tracking of occupancy, leases, and utility billing." },
-    { title: "EcoStay Connect", tech: "React, Tailwind, UI/UX", desc: "Sustainable tourism platform connecting eco-conscious travelers with accommodations to reduce carbon footprints." }
-  ],
-  skills: ["React", "Next.js", "Tailwind CSS", "Node.js", "Python", "SQL", "C++", "Figma"],
-  verifiedBadges: ["Software Architecture", "UI Design Patterns", "Advanced React"]
-};
-
 export default function Preview() {
-  const [isCollapsed, setIsCollapsed] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState(1);
-  // Mobile: show config panel as bottom sheet / drawer
   const [configOpen, setConfigOpen] = useState(false);
   const [config, setConfig] = useState({
     profilePhoto: true,
@@ -54,89 +32,153 @@ export default function Preview() {
     technicalSkills: true
   });
 
+  const [resumeData, setResumeData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [profileRes, projectsRes, badgesRes] = await Promise.all([
+          SkillHubService.getMyProfile(),
+          ProjectService.getMyProjects(),
+          BadgeService.getMyEnrichedRequests()
+        ]);
+
+        let feedbackBadge = null;
+        let verifiedBadgesList: string[] = [];
+        let techSkills = new Set<string>();
+
+        if (badgesRes?.data) {
+          const approved = badgesRes.data.filter((b: any) => b.status === 'approved');
+          verifiedBadgesList = approved.map((b: any) => b.badge_name || b.title);
+
+          const withFeedback = approved.filter((b: any) => b.comment && b.comment.trim() !== "");
+          if (withFeedback.length > 0) {
+            feedbackBadge = withFeedback[Math.floor(Math.random() * withFeedback.length)];
+          }
+        }
+
+        let projectsList = [];
+        if (projectsRes?.data) {
+          projectsList = projectsRes.data.map((p: any) => {
+            if (p.tech_stack) p.tech_stack.forEach((t: string) => techSkills.add(t));
+            return {
+              title: p.title,
+              tech: p.tech_stack?.join(", ") || "",
+              desc: p.description
+            };
+          });
+        }
+
+        const p: any = profileRes?.profile || {};
+        const edu: any = profileRes?.education?.[0] || {};
+
+        setResumeData({
+          name: p.name || "Unknown",
+          title: p.headline || "",
+          address: p.location || "",
+          phone: p.phone || "",
+          email: profileRes?.email || "",
+          summary: p.bio || "",
+          avatar: p.avatar_url || "",
+          education: {
+            uni: edu.organization || "",
+            degree: edu.title || "",
+            gpax: edu.gpax || "",
+            year: edu.start_year ? `${edu.start_year} - ${edu.end_year || 'Present'}` : ""
+          },
+          projects: projectsList,
+          skills: Array.from(techSkills),
+          verifiedBadges: verifiedBadgesList,
+          feedbackBadge: feedbackBadge
+        });
+      } catch (err) {
+        console.error("Failed to load resume data", err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
   const toggleConfig = (key: keyof typeof config) => {
     setConfig(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-full text-white text-sm">Loading resume...</div>;
+  }
+
   return (
-    <div className="flex h-screen overflow-hidden bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white">
+    <div className="flex flex-col h-full text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white relative transition-all duration-300 pt-14 md:pt-0">
 
-      <Sidebar4 isCollapsed={isCollapsed} onToggle={() => setIsCollapsed(!isCollapsed)} />
-
-      {/* MAIN CONTENT */}
-      <main className="flex-1 h-full overflow-hidden flex flex-col relative transition-all duration-300 pt-14 md:pt-0">
-
-        {/* HEADER */}
-        <header className="h-14 md:h-17.5 lg:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
-          <div className="w-full flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-10">
-            <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">Export Verified Resume</h1>
-            <div className="flex items-center gap-2 shrink-0">
-              {/* Config toggle button — mobile only */}
-              <button
-                onClick={() => setConfigOpen(true)}
-                className="lg:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors"
-              >
-                <Settings size={18} />
-              </button>
-              <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 active:scale-95 uppercase tracking-widest">
-                <Download size={16} /> <span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">Export</span>
-              </button>
-            </div>
-            <button className="bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[11px] font-black px-8 py-3 rounded-2xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest">
-              <Download size={16} /> Export PDF
+      {/* HEADER */}
+      <header className="h-14 md:h-17.5 lg:h-22.5 border-b border-white/5 sticky top-0 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center shrink-0">
+        <div className="w-full flex items-center justify-between gap-3 px-4 sm:px-6 lg:px-10">
+          <h1 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight">Export Verified Resume</h1>
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Config toggle button — mobile only */}
+            <button
+              onClick={() => setConfigOpen(true)}
+              className="lg:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors"
+            >
+              <Settings size={18} />
+            </button>
+            <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 active:scale-95 uppercase tracking-widest">
+              <Download size={16} /> <span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">Export</span>
             </button>
           </div>
-        </header>
-
-        {/* WORKSPACE */}
-        <div className="flex flex-1 overflow-hidden">
-
-          {/* CONFIG PANEL — desktop: always visible left column */}
-          <div className="hidden lg:flex w-100 bg-[#0a0a0a] border-r border-white/5 overflow-y-auto custom-scrollbar pl-10 pr-8 py-8 flex-col space-y-10 text-left shrink-0">
-            <ConfigPanelContent
-              selectedTemplate={selectedTemplate}
-              setSelectedTemplate={setSelectedTemplate}
-              config={config}
-              toggleConfig={toggleConfig}
-            />
-          </div>
-
-          {/* CONFIG PANEL — mobile/tablet: bottom sheet drawer */}
-          {configOpen && (
-            <>
-              <div
-                className="lg:hidden fixed inset-0 z-60 bg-black/60 backdrop-blur-sm"
-                onClick={() => setConfigOpen(false)}
-              />
-              <div className="lg:hidden fixed bottom-0 left-0 right-0 z-70 bg-[#0a0a0a] border-t border-white/5 rounded-t-3xl max-h-[80vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
-                {/* Handle */}
-                <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/5 sticky top-0 bg-[#0a0a0a] z-10">
-                  <p className="text-sm font-bold text-white">Resume Settings</p>
-                  <button onClick={() => setConfigOpen(false)} className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors">
-                    <X size={18} />
-                  </button>
-                </div>
-                <div className="p-6 space-y-10">
-                  <ConfigPanelContent
-                    selectedTemplate={selectedTemplate}
-                    setSelectedTemplate={setSelectedTemplate}
-                    config={config}
-                    toggleConfig={toggleConfig}
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* LIVE PREVIEW AREA */}
-          <div className="flex-1 bg-[#050505] overflow-y-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-8 lg:py-12 flex justify-center items-start custom-scrollbar">
-            <div className="w-full max-w-210 shadow-2xl animate-in fade-in zoom-in duration-700 origin-top">
-              <ResumePaper template={selectedTemplate} config={config} />
-            </div>
-          </div>
-
         </div>
-      </main>
+      </header>
+
+      {/* WORKSPACE */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* CONFIG PANEL — desktop: always visible left column */}
+        <div className="hidden lg:flex w-100 bg-[#0a0a0a] border-r border-white/5 overflow-y-auto custom-scrollbar pl-10 pr-8 py-8 flex-col space-y-10 text-left shrink-0">
+          <ConfigPanelContent
+            selectedTemplate={selectedTemplate}
+            setSelectedTemplate={setSelectedTemplate}
+            config={config}
+            toggleConfig={toggleConfig}
+          />
+        </div>
+
+        {/* CONFIG PANEL — mobile/tablet: bottom sheet drawer */}
+        {configOpen && (
+          <>
+            <div
+              className="lg:hidden fixed inset-0 z-60 bg-black/60 backdrop-blur-sm"
+              onClick={() => setConfigOpen(false)}
+            />
+            <div className="lg:hidden fixed bottom-0 left-0 right-0 z-70 bg-[#0a0a0a] border-t border-white/5 rounded-t-3xl max-h-[80vh] overflow-y-auto animate-in slide-in-from-bottom duration-300">
+              {/* Handle */}
+              <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/5 sticky top-0 bg-[#0a0a0a] z-10">
+                <p className="text-sm font-bold text-white">Resume Settings</p>
+                <button onClick={() => setConfigOpen(false)} className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors">
+                  <X size={18} />
+                </button>
+              </div>
+              <div className="p-6 space-y-10">
+                <ConfigPanelContent
+                  selectedTemplate={selectedTemplate}
+                  setSelectedTemplate={setSelectedTemplate}
+                  config={config}
+                  toggleConfig={toggleConfig}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* LIVE PREVIEW AREA */}
+        <div className="flex-1 bg-[#050505] overflow-y-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-8 lg:py-12 flex justify-center items-start custom-scrollbar">
+          <div className="w-full max-w-210 shadow-2xl animate-in fade-in zoom-in duration-700 origin-top">
+            <ResumePaper template={selectedTemplate} config={config} data={resumeData} />
+          </div>
+        </div>
+
+      </div>
 
       <style dangerouslySetInnerHTML={{
         __html: `
@@ -207,8 +249,8 @@ const ConfigPanelContent = ({ selectedTemplate, setSelectedTemplate, config, tog
 );
 
 // ── RESUME PAPER ──
-const ResumePaper = ({ template, config }: { template: number; config: any }) => {
-  const data = USER_REAL_PROFILE;
+const ResumePaper = ({ template, config, data }: { template: number; config: any; data: any }) => {
+  if (!data) return null;
   return (
     <div className="w-full bg-white text-slate-900 p-6 sm:p-10 lg:p-14 flex flex-col font-sans text-left relative">
       <div className="absolute top-6 right-6 opacity-[0.03] rotate-12 pointer-events-none select-none">
@@ -220,16 +262,20 @@ const ResumePaper = ({ template, config }: { template: number; config: any }) =>
         <div className="space-y-2 sm:space-y-4 min-w-0 flex-1">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tighter text-slate-950 uppercase leading-tight">{data.name}</h1>
           <div className="space-y-1 text-slate-500 text-[9px] sm:text-[10px] lg:text-[11px] font-bold uppercase tracking-widest">
-            <p className="flex items-center gap-1.5 sm:gap-2"><MapPin size={10} className="shrink-0" /><span className="truncate">{data.address}</span></p>
-            <div className="flex flex-wrap gap-2 sm:gap-4">
-              <p className="flex items-center gap-1.5"><Phone size={10} className="shrink-0" /> {data.phone}</p>
-              <p className="flex items-center gap-1.5 min-w-0"><Mail size={10} className="shrink-0" /><span className="truncate">{data.email}</span></p>
+            {data.address && <p className="flex items-start gap-1.5 sm:gap-2"><MapPin size={10} className="shrink-0 mt-0.5" /><span className="break-words leading-tight">{data.address}</span></p>}
+            <div className="flex flex-wrap gap-2 sm:gap-4 mt-1.5 sm:mt-0">
+              {data.phone && <p className="flex items-center gap-1.5"><Phone size={10} className="shrink-0" /> {data.phone}</p>}
+              {data.email && <p className="flex items-center gap-1.5 min-w-0"><Mail size={10} className="shrink-0" /><span className="break-all sm:break-words">{data.email}</span></p>}
             </div>
           </div>
         </div>
         {config.profilePhoto && (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-slate-100 rounded-2xl sm:rounded-3xl overflow-hidden shrink-0 shadow-lg">
-            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80" className="w-full h-full object-cover" alt="Profile" />
+          <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-slate-100 rounded-2xl sm:rounded-3xl overflow-hidden shrink-0 shadow-lg flex items-center justify-center">
+            {data.avatar ? (
+              <img src={data.avatar} className="w-full h-full object-cover" alt="Profile" />
+            ) : (
+              <User size={32} className="text-slate-300" />
+            )}
           </div>
         )}
       </header>
@@ -263,7 +309,7 @@ const ResumePaper = ({ template, config }: { template: number; config: any }) =>
                 <Briefcase size={11} /> Featured Projects
               </h3>
               <div className="space-y-3 sm:space-y-6">
-                {data.projects.map((proj, i) => (
+                {data.projects.map((proj: any, i: number) => (
                   <div key={i} className="space-y-1">
                     <div className="flex justify-between items-start gap-2">
                       <h4 className="font-bold text-[11px] sm:text-[13px] text-slate-900 underline decoration-slate-200 underline-offset-4 leading-snug">{proj.title}</h4>
@@ -281,13 +327,21 @@ const ResumePaper = ({ template, config }: { template: number; config: any }) =>
                 <Quote size={11} /> Professor Feedback
               </h3>
               <div className="bg-emerald-50/40 p-3 sm:p-5 rounded-xl sm:rounded-2xl border border-emerald-100">
-                <p className="text-[9px] sm:text-[11px] text-emerald-900 leading-relaxed">
-                  "Thanakorn exhibits superior architectural knowledge in Software track. His Hatyai Condo project shows a deep understanding of REST API scalability and responsive design principles."
-                </p>
-                <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-3">
-                  <CheckCircle2 size={9} className="text-emerald-500 shrink-0" />
-                  <p className="text-[8px] sm:text-[9px] font-black text-emerald-700 uppercase">— Verified by Prof. Wittawin Susutti</p>
-                </div>
+                {data.feedbackBadge ? (
+                  <>
+                    <p className="text-[9px] sm:text-[11px] text-emerald-900 leading-relaxed">
+                      "{data.feedbackBadge.comment}"
+                    </p>
+                    <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+                      <CheckCircle2 size={9} className="text-emerald-500 shrink-0" />
+                      <p className="text-[8px] sm:text-[9px] font-black text-emerald-700 uppercase">— Verified by Prof. {data.feedbackBadge.verifier_name || data.feedbackBadge.prof || 'Professor'}</p>
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-[9px] sm:text-[11px] text-emerald-700/60 leading-relaxed italic text-center py-2">
+                    No verified feedback from professors yet. Request badges to get feedback!
+                  </p>
+                )}
               </div>
             </section>
           )}
@@ -299,7 +353,7 @@ const ResumePaper = ({ template, config }: { template: number; config: any }) =>
                 <Medal size={11} /> Verified Badges
               </h3>
               <div className={`grid gap-1.5 sm:gap-2 ${template === 2 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'}`}>
-                {data.verifiedBadges.map((badge) => (
+                {data.verifiedBadges.map((badge: string) => (
                   <div key={badge} className="flex items-center gap-2 p-2 sm:p-2.5 bg-slate-50 rounded-lg sm:rounded-xl border border-slate-100">
                     <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-[#ff4f40] flex items-center justify-center text-white shrink-0"><ShieldCheck size={10} /></div>
                     <span className="text-[8px] sm:text-[9px] font-black uppercase text-slate-700 leading-tight">{badge}</span>
@@ -314,7 +368,7 @@ const ResumePaper = ({ template, config }: { template: number; config: any }) =>
                 <Code size={11} /> Technical Stack
               </h3>
               <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
-                {data.skills.map(s => (
+                {data.skills.map((s: string) => (
                   <span key={s} className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white text-[7px] sm:text-[9px] font-black uppercase tracking-widest">{s}</span>
                 ))}
               </div>

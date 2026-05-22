@@ -17,6 +17,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 
 export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
   const [badges, setBadges] = useState<any[]>([]);
+  const [approvedBadgeIds, setApprovedBadgeIds] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [evidence, setEvidence] = useState('');
   const [uploadedFiles, setUploadedFiles] = useState<{ id: string; file: File }[]>([]);
@@ -38,6 +39,20 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
       }).catch(err => {
         setBadges([]);
       });
+
+      BadgeService.getMyRequests().then(res => {
+        if (res.status === 'success') {
+          const approvedIds = res.data
+            .filter((req: any) => req.status === 'approved')
+            .map((req: any) => req.badge_id?.toString());
+          setApprovedBadgeIds(approvedIds);
+        } else {
+          setApprovedBadgeIds([]);
+        }
+      }).catch(err => {
+        setApprovedBadgeIds([]);
+      });
+
       // Reset states
       setEvidence('');
       setUploadedFiles([]);
@@ -104,7 +119,7 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   };
 
   const currentCat = getCategoryTheme(activeCategory);
-  const filteredBadges = badges.filter(b => b.category === activeCategory);
+  const filteredBadges = badges.filter(b => b.category === activeCategory && !approvedBadgeIds.includes(b.id?.toString()));
 
   const formatSize = (bytes: number) => {
     if (bytes === 0) return '0 Bytes';

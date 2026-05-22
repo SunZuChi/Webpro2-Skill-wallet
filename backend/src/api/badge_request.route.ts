@@ -28,7 +28,7 @@ export const badgeRequestRoute = new Elysia({ prefix: '/badge-requests' })
                 const stream = cloudinary.uploader.upload_stream(
                     {
                         folder: `badge_evidence/${user.uid}`,
-                        resource_type: "auto",
+                        resource_type: "raw",
                         public_id: file.name,
                         use_filename: true,
                         unique_filename: true

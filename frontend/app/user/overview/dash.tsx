@@ -41,7 +41,7 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
           ]);
           setRequests(data);
           setStats(OverviewService.computeStats(data));
-          
+
           if (profile?.profile?.name) {
             setUserName(profile.profile.name); // ลบ || prev ออกเพื่อให้ใช้ชื่อจาก DB เสมอ
           }
@@ -62,16 +62,12 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
     return () => unsubscribe();
   }, []);
   return (
-    <div className="flex-1 bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full">
+    <div className="flex-1 bg-[#050505] text-white font-lineseed selection:bg-[#ff4f40]/30 selection:text-white w-full pt-14 md:pt-0">
       {/* Header Title */}
       <header className="h-[70px] md:h-[90px] border-b border-white/5 bg-[#050505]/80 backdrop-blur-xl z-40 flex items-center">
         <div className={containerClass}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {/* ปุ่ม Hamburger สำหรับ Mobile (แสดงเมื่อจอเล็ก) */}
-              <button className="md:hidden p-2 text-slate-400"><AlignLeft size={24} /></button>
-              <h1 className="text-xl md:text-2xl font-bold tracking-tight">Overview</h1>
-            </div>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight">Overview</h1>
           </div>
         </div>
       </header>

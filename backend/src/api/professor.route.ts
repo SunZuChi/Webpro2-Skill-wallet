@@ -15,4 +15,16 @@ export const professorRoute = new Elysia({ prefix: '/professor' })
     }, {
         isSignIn: true,
         detail: { tags: ['Professor'], summary: 'ดึงคำขอ Badge ทั้งหมดสำหรับนำไปตรวจ (Professor เท่านั้น)' }
+    })
+    // GET /api/professor/students — ดึงรายชื่อและข้อมูลนักเรียนทั้งหมด (สำหรับ Student Directory)
+    .get('/students', async ({ set }: any) => {
+        try {
+            return await ProfessorController.getAllStudents();
+        } catch (error: any) {
+            set.status = 500;
+            return { status: "error", message: error.message };
+        }
+    }, {
+        isSignIn: true,
+        detail: { tags: ['Professor'], summary: 'ดึงรายชื่อและข้อมูลของนักเรียนทั้งหมด รวมถึงสถิติ Badge' }
     });
