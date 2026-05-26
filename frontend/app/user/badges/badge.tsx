@@ -11,7 +11,7 @@ import {
   User,
 } from 'lucide-react';
 
-import { BadgeService } from '../../../services/badge.service';
+import { useBadges } from './hooks/useBadges';
 import { RequestModal } from './request';
 import { DEFAULT_AVATAR } from '../../../services/auth.service';
 
@@ -31,35 +31,8 @@ const categoryColorClass: Record<string, string> = {
 };
 
 export const BadgePage = () => {
-  const [activeFilter, setActiveFilter] = useState('all');
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [myRequests, setMyRequests] = useState<any[]>([]);
-  const [isDataLoading, setIsDataLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsDataLoading(true);
-      try {
-        const res = await BadgeService.getMyEnrichedRequests();
-        if (res.status === 'success') {
-          setMyRequests(res.data);
-        }
-      } catch (error) {
-        console.error("Error fetching badge data:", error);
-      } finally {
-        setIsDataLoading(false);
-      }
-    };
-
-    if (!showRequestModal) {
-      fetchData();
-    }
-  }, [showRequestModal]);
-
-  const approvedRequests = myRequests.filter(b => b.status === 'approved');
-  const filteredBadges = activeFilter === 'all'
-    ? approvedRequests
-    : approvedRequests.filter(b => b.category === activeFilter);
+  const { activeFilter, setActiveFilter, isDataLoading, filteredBadges } = useBadges(showRequestModal);
 
   return (
     <div className="space-y-6">

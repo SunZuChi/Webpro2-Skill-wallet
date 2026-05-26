@@ -1,29 +1,16 @@
 "use client";
 
 import React, { useState } from 'react';
-import {
-  Settings, AlignLeft, Download, X, Layout, FolderOpen,
-  ShieldCheck, Quote, ChevronRight, CheckCircle2,
-  MapPin, Mail, Phone, User, GraduationCap, Briefcase,
-  Code, Medal, FileUp
-} from 'lucide-react';
-import { SkillHubService } from '@/services/skill-hub.service';
-import { ProjectService } from '@/services/project.service';
-import { BadgeService } from '@/services/badge.service';
-
-const containerClass = "max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-10";
-
-const GithubIcon = ({ size = 18, className = "" }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.28 1.15-.28 2.35 0 3.5-.73 1.02-1.08 2.25-1 3.5 0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4" />
-    <path d="M9 18c-4.51 2-5-2-7-2" />
-  </svg>
-);
+import { Download, X, Settings } from 'lucide-react';
+import { useResumeData } from './hooks/useResumeData';
+import { useResumeExport } from './hooks/useResumeExport';
+import { ConfigPanelContent, type ResumeConfig } from './components/ConfigPanel';
+import { ResumePaper } from './components/ResumePaper';
 
 export default function Preview() {
   const [selectedTemplate, setSelectedTemplate] = useState(1);
   const [configOpen, setConfigOpen] = useState(false);
-  const [config, setConfig] = useState({
+  const [config, setConfig] = useState<ResumeConfig>({
     profilePhoto: true,
     descriptionProfile: true,
     verifiedBadges: true,
@@ -32,76 +19,10 @@ export default function Preview() {
     technicalSkills: true
   });
 
-  const [resumeData, setResumeData] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const { resumeData, isLoading } = useResumeData();
+  const { resumeRef, wrapperRef, isExporting, scale, handleExportPDF } = useResumeExport();
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [profileRes, projectsRes, badgesRes] = await Promise.all([
-          SkillHubService.getMyProfile(),
-          ProjectService.getMyProjects(),
-          BadgeService.getMyEnrichedRequests()
-        ]);
-
-        let feedbackBadge = null;
-        let verifiedBadgesList: string[] = [];
-        let techSkills = new Set<string>();
-
-        if (badgesRes?.data) {
-          const approved = badgesRes.data.filter((b: any) => b.status === 'approved');
-          verifiedBadgesList = approved.map((b: any) => b.badge_name || b.title);
-
-          const withFeedback = approved.filter((b: any) => b.comment && b.comment.trim() !== "");
-          if (withFeedback.length > 0) {
-            feedbackBadge = withFeedback[Math.floor(Math.random() * withFeedback.length)];
-          }
-        }
-
-        let projectsList = [];
-        if (projectsRes?.data) {
-          projectsList = projectsRes.data.map((p: any) => {
-            if (p.tech_stack) p.tech_stack.forEach((t: string) => techSkills.add(t));
-            return {
-              title: p.title,
-              tech: p.tech_stack?.join(", ") || "",
-              desc: p.description
-            };
-          });
-        }
-
-        const p: any = profileRes?.profile || {};
-        const edu: any = profileRes?.education?.[0] || {};
-
-        setResumeData({
-          name: p.name || "Unknown",
-          title: p.headline || "",
-          address: p.location || "",
-          phone: p.phone || "",
-          email: profileRes?.email || "",
-          summary: p.bio || "",
-          avatar: p.avatar_url || "",
-          education: {
-            uni: edu.organization || "",
-            degree: edu.title || "",
-            gpax: edu.gpax || "",
-            year: edu.start_year ? `${edu.start_year} - ${edu.end_year || 'Present'}` : ""
-          },
-          projects: projectsList,
-          skills: Array.from(techSkills),
-          verifiedBadges: verifiedBadgesList,
-          feedbackBadge: feedbackBadge
-        });
-      } catch (err) {
-        console.error("Failed to load resume data", err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const toggleConfig = (key: keyof typeof config) => {
+  const toggleConfig = (key: keyof ResumeConfig) => {
     setConfig(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
@@ -120,12 +41,16 @@ export default function Preview() {
             {/* Config toggle button — mobile only */}
             <button
               onClick={() => setConfigOpen(true)}
-              className="lg:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors"
+              className="lg:hidden p-2.5 rounded-xl bg-white/5 border border-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
             >
               <Settings size={18} />
             </button>
-            <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 active:scale-95 uppercase tracking-widest">
-              <Download size={16} /> <span className="hidden sm:inline">Export PDF</span><span className="sm:hidden">Export</span>
+            <button
+              onClick={handleExportPDF}
+              disabled={isExporting}
+              className={`cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 uppercase tracking-widest ${isExporting ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
+            >
+              <Download size={16} /> <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export PDF'}</span><span className="sm:hidden">{isExporting ? '...' : 'Export'}</span>
             </button>
           </div>
         </div>
@@ -155,7 +80,7 @@ export default function Preview() {
               {/* Handle */}
               <div className="flex items-center justify-between px-6 pt-5 pb-4 border-b border-white/5 sticky top-0 bg-[#0a0a0a] z-10">
                 <p className="text-sm font-bold text-white">Resume Settings</p>
-                <button onClick={() => setConfigOpen(false)} className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors">
+                <button onClick={() => setConfigOpen(false)} className="p-2 hover:bg-white/5 rounded-xl text-slate-400 transition-colors cursor-pointer">
                   <X size={18} />
                 </button>
               </div>
@@ -173,8 +98,20 @@ export default function Preview() {
 
         {/* LIVE PREVIEW AREA */}
         <div className="flex-1 bg-[#050505] overflow-y-auto px-4 sm:px-6 lg:px-10 py-4 sm:py-8 lg:py-12 flex justify-center items-start custom-scrollbar">
-          <div className="w-full max-w-210 shadow-2xl animate-in fade-in zoom-in duration-700 origin-top">
-            <ResumePaper template={selectedTemplate} config={config} data={resumeData} />
+          <div ref={wrapperRef} className="w-full max-w-[840px] flex justify-center relative">
+            <div
+              style={{
+                width: '840px',
+                transform: `scale(${scale})`,
+                transformOrigin: 'top center',
+                marginBottom: `-${(1 - scale) * 1188}px`
+              }}
+              className="shadow-2xl animate-in fade-in zoom-in duration-700 origin-top shrink-0"
+            >
+              <div ref={resumeRef} className="w-full bg-white flex flex-col min-h-[1188px]">
+                {resumeData && <ResumePaper template={selectedTemplate} config={config} data={resumeData} />}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -189,219 +126,3 @@ export default function Preview() {
     </div>
   );
 }
-
-// ── CONFIG PANEL CONTENT (shared between desktop + mobile sheet) ──
-const ConfigPanelContent = ({ selectedTemplate, setSelectedTemplate, config, toggleConfig }: any) => (
-  <>
-    {/* Template Selection */}
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Layout className="text-[#ff4f40]" size={18} />
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Template Style</h3>
-      </div>
-      <div className="grid grid-cols-3 gap-4">
-        {[1, 2, 3].map((i) => (
-          <button
-            key={i}
-            onClick={() => setSelectedTemplate(i)}
-            className={`cursor-pointer aspect-3/4 bg-[#121214] rounded-2xl border-2 transition-all p-3 relative ${selectedTemplate === i ? 'border-[#ff4f40]' : 'border-white/5 hover:border-white/10'}`}
-          >
-            <div className="w-full h-1 bg-white/10 rounded mb-1" />
-            <div className="w-2/3 h-3 bg-white/5 rounded mb-4" />
-            <div className="space-y-1">
-              <div className="w-full h-1 bg-white/3 rounded" />
-              <div className="w-full h-1 bg-white/3 rounded" />
-            </div>
-            {selectedTemplate === i && (
-              <div className="absolute top-2 right-2"><CheckCircle2 size={12} className="text-[#ff4f40]" /></div>
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-
-    {/* Config Toggles */}
-    <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <FolderOpen className="text-[#ff4f40]" size={18} />
-        <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Content Included</h3>
-      </div>
-      <div className="space-y-3">
-        <ConfigToggle label="Profile Photo" sub="Include your avatar image" active={config.profilePhoto} onClick={() => toggleConfig('profilePhoto')} />
-        <ConfigToggle label="About Me Section" sub="Shows career objective" active={config.descriptionProfile} onClick={() => toggleConfig('descriptionProfile')} />
-        <ConfigToggle label="Verified Badges" sub="Shows university credentials" active={config.verifiedBadges} onClick={() => toggleConfig('verifiedBadges')} />
-        <ConfigToggle label="Professor Feedback" sub="Quotes from faculty reviews" active={config.professorFeedback} onClick={() => toggleConfig('professorFeedback')} />
-        <ConfigToggle label="Featured Projects" sub="Shows personal & class work" active={config.personalProjects} onClick={() => toggleConfig('personalProjects')} />
-        <ConfigToggle label="Technical Skills" sub="Verified skills overview" active={config.technicalSkills} onClick={() => toggleConfig('technicalSkills')} />
-      </div>
-    </div>
-
-    <div className="p-6 rounded-4xl bg-emerald-500/5 border border-emerald-500/10 space-y-4">
-      <div className="flex items-center gap-3 text-emerald-500">
-        <ShieldCheck size={18} />
-        <span className="text-[10px] font-black uppercase tracking-widest leading-none">Security Verified</span>
-      </div>
-      <p className="text-[10px] text-slate-500 leading-relaxed uppercase font-bold tracking-tight">
-        Every badge and project in this document has been cryptographically signed by authorized faculty.
-      </p>
-    </div>
-  </>
-);
-
-// ── RESUME PAPER ──
-const ResumePaper = ({ template, config, data }: { template: number; config: any; data: any }) => {
-  if (!data) return null;
-  return (
-    <div className="w-full bg-white text-slate-900 p-6 sm:p-10 lg:p-14 flex flex-col font-sans text-left relative">
-      <div className="absolute top-6 right-6 opacity-[0.03] rotate-12 pointer-events-none select-none">
-        <ShieldCheck size={120} className="sm:w-50 sm:h-50" />
-      </div>
-
-      {/* ── RESUME HEADER ── */}
-      <header className={`flex items-start justify-between border-b-2 border-slate-900 pb-5 sm:pb-8 mb-6 sm:mb-10 gap-4 ${template === 2 ? 'flex-col sm:flex-row' : ''}`}>
-        <div className="space-y-2 sm:space-y-4 min-w-0 flex-1">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tighter text-slate-950 uppercase leading-tight">{data.name}</h1>
-          <div className="space-y-1 text-slate-500 text-[9px] sm:text-[10px] lg:text-[11px] font-bold uppercase tracking-widest">
-            {data.address && <p className="flex items-start gap-1.5 sm:gap-2"><MapPin size={10} className="shrink-0 mt-0.5" /><span className="break-words leading-tight">{data.address}</span></p>}
-            <div className="flex flex-wrap gap-2 sm:gap-4 mt-1.5 sm:mt-0">
-              {data.phone && <p className="flex items-center gap-1.5"><Phone size={10} className="shrink-0" /> {data.phone}</p>}
-              {data.email && <p className="flex items-center gap-1.5 min-w-0"><Mail size={10} className="shrink-0" /><span className="break-all sm:break-words">{data.email}</span></p>}
-            </div>
-          </div>
-        </div>
-        {config.profilePhoto && (
-          <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-slate-100 rounded-2xl sm:rounded-3xl overflow-hidden shrink-0 shadow-lg flex items-center justify-center">
-            {data.avatar ? (
-              <img src={data.avatar} className="w-full h-full object-cover" alt="Profile" />
-            ) : (
-              <User size={32} className="text-slate-300" />
-            )}
-          </div>
-        )}
-      </header>
-      {/* ── RESUME BODY ── */}
-      <div className={`flex-1 flex ${template === 2 ? 'flex-col sm:flex-row gap-6 sm:gap-12' : 'flex-col gap-6 sm:gap-10'}`}>
-        <div className={`${template === 2 ? 'sm:w-2/3' : 'w-full'} space-y-6 sm:space-y-10`}>
-          {config.descriptionProfile && (
-            <section className="space-y-2 sm:space-y-3">
-              <h3 className="text-[9px] sm:text-xs font-black text-[#ff4f40] uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-                <User size={11} /> Profile Summary
-              </h3>
-              <p className="text-[10px] sm:text-[11px] lg:text-[12px] text-slate-600 leading-relaxed font-light">{data.summary}</p>
-            </section>
-          )}
-          <section className="space-y-2 sm:space-y-4">
-            <h3 className="text-[9px] sm:text-xs font-black text-[#ff4f40] uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-              <GraduationCap size={11} /> Education
-            </h3>
-            <div className="space-y-1">
-              <div className="flex justify-between items-start gap-2">
-                <h4 className="font-bold text-[11px] sm:text-[12px] lg:text-[13px] text-slate-900 leading-snug">{data.education.uni}</h4>
-                <span className="text-[8px] sm:text-[10px] font-bold text-slate-400 shrink-0">{data.education.year}</span>
-              </div>
-              <p className="text-[10px] sm:text-[12px] text-slate-600">{data.education.degree}</p>
-              <p className="text-[10px] sm:text-[12px] font-bold text-slate-900 mt-0.5">GPAX: {data.education.gpax}</p>
-            </div>
-          </section>
-          {config.personalProjects && (
-            <section className="space-y-3 sm:space-y-6">
-              <h3 className="text-[9px] sm:text-xs font-black text-[#ff4f40] uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-                <Briefcase size={11} /> Featured Projects
-              </h3>
-              <div className="space-y-3 sm:space-y-6">
-                {data.projects.map((proj: any, i: number) => (
-                  <div key={i} className="space-y-1">
-                    <div className="flex justify-between items-start gap-2">
-                      <h4 className="font-bold text-[11px] sm:text-[13px] text-slate-900 underline decoration-slate-200 underline-offset-4 leading-snug">{proj.title}</h4>
-                      <span className="text-[8px] sm:text-[9px] font-black text-blue-500 uppercase tracking-widest shrink-0 text-right">{proj.tech}</span>
-                    </div>
-                    <p className="text-[9px] sm:text-[11px] text-slate-500 leading-relaxed font-light">{proj.desc}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-          {config.professorFeedback && (
-            <section className="space-y-2 sm:space-y-4">
-              <h3 className="text-[9px] sm:text-xs font-black text-emerald-600 uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-                <Quote size={11} /> Professor Feedback
-              </h3>
-              <div className="bg-emerald-50/40 p-3 sm:p-5 rounded-xl sm:rounded-2xl border border-emerald-100">
-                {data.feedbackBadge ? (
-                  <>
-                    <p className="text-[9px] sm:text-[11px] text-emerald-900 leading-relaxed">
-                      "{data.feedbackBadge.comment}"
-                    </p>
-                    <div className="flex items-center gap-1.5 sm:gap-2 mt-2 sm:mt-3">
-                      <CheckCircle2 size={9} className="text-emerald-500 shrink-0" />
-                      <p className="text-[8px] sm:text-[9px] font-black text-emerald-700 uppercase">— Verified by Prof. {data.feedbackBadge.verifier_name || data.feedbackBadge.prof || 'Professor'}</p>
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-[9px] sm:text-[11px] text-emerald-700/60 leading-relaxed italic text-center py-2">
-                    No verified feedback from professors yet. Request badges to get feedback!
-                  </p>
-                )}
-              </div>
-            </section>
-          )}
-        </div>
-        <div className={`${template === 2 ? 'sm:w-1/3' : 'w-full'} space-y-6 sm:space-y-10`}>
-          {config.verifiedBadges && (
-            <section className="space-y-2 sm:space-y-4">
-              <h3 className="text-[9px] sm:text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-                <Medal size={11} /> Verified Badges
-              </h3>
-              <div className={`grid gap-1.5 sm:gap-2 ${template === 2 ? 'grid-cols-1' : 'grid-cols-2 sm:grid-cols-3'}`}>
-                {data.verifiedBadges.map((badge: string) => (
-                  <div key={badge} className="flex items-center gap-2 p-2 sm:p-2.5 bg-slate-50 rounded-lg sm:rounded-xl border border-slate-100">
-                    <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-[#ff4f40] flex items-center justify-center text-white shrink-0"><ShieldCheck size={10} /></div>
-                    <span className="text-[8px] sm:text-[9px] font-black uppercase text-slate-700 leading-tight">{badge}</span>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
-          {config.technicalSkills && (
-            <section className="space-y-3 sm:space-y-6">
-              <h3 className="text-[9px] sm:text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-b border-slate-100 pb-1.5 sm:pb-2 flex items-center gap-1.5 sm:gap-2">
-                <Code size={11} /> Technical Stack
-              </h3>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1 sm:pt-2">
-                {data.skills.map((s: string) => (
-                  <span key={s} className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-slate-900 text-white text-[7px] sm:text-[9px] font-black uppercase tracking-widest">{s}</span>
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      </div>
-      {/* ── RESUME FOOTER ── */}
-      <footer className="mt-8 sm:mt-auto pt-6 sm:pt-10 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 opacity-50">
-        <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
-          <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em]">Ip&s IT Portfolio & Skill Wallet</span>
-          <div className="hidden sm:block h-4 w-px bg-slate-300" />
-          <span className="text-[8px] sm:text-[10px] font-medium text-slate-500 italic">This document is digitally verified.</span>
-        </div>
-        <div className="text-[7px] sm:text-[9px] font-black uppercase text-blue-600">
-          KMUTT Applied Computer Science
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-const ConfigToggle = ({ label, sub, active, onClick }: any) => (
-  <div className="flex items-center justify-between p-4 rounded-2xl bg-white/2 border border-white/5 hover:border-white/10 transition-all group">
-    <div className="text-left space-y-0.5">
-      <p className="text-sm font-bold text-white group-hover:text-[#ff4f40] transition-colors leading-none">{label}</p>
-      <p className="text-[10px] text-slate-500 font-medium mt-1.5 leading-none">{sub}</p>
-    </div>
-    <button
-      onClick={onClick}
-      className={`w-11 h-6 rounded-full relative transition-all duration-300 shrink-0 ml-3 ${active ? 'bg-[#ff4f40]' : 'bg-[#1a1a1a]'}`}
-    >
-      <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 shadow-md ${active ? 'left-6' : 'left-1'}`} />
-    </button>
-  </div>
-);

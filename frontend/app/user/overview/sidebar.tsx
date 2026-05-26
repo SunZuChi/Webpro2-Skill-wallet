@@ -33,17 +33,26 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   const [profile, setProfile] = React.useState<UserProfile | null>(null);
   const [showLogout, setShowLogout] = React.useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [timestamp, setTimestamp] = useState(Date.now());
 
   React.useEffect(() => {
     const fetchProfile = async () => {
       const data = await SkillHubService.getMyProfile();
-      if (data) setProfile(data);
+      if (data) {
+        setProfile(data);
+        setTimestamp(Date.now());
+      }
     };
     fetchProfile();
+
+    window.addEventListener('profileUpdated', fetchProfile);
+    return () => window.removeEventListener('profileUpdated', fetchProfile);
   }, []);
 
   const userName = profile?.profile?.name || 'Student';
-  const userAvatar = profile?.profile?.avatar_url || DEFAULT_AVATAR;
+  const userAvatar = profile?.profile?.avatar_url 
+    ? `${profile.profile.avatar_url}${profile.profile.avatar_url.includes('?') ? '&' : '?'}t=${timestamp}` 
+    : DEFAULT_AVATAR;
 
   const handleSignOut = async () => {
     try {

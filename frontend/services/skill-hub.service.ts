@@ -30,6 +30,7 @@ export const SkillHubService = {
           Authorization: `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
+        cache: 'no-store'
       });
 
       const data = await response.json();

@@ -1,209 +1,67 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   Clock, 
   ShieldCheck, 
   X,
   MessageSquare,
-  Upload,
-  ChevronDown,
-  FileText,
-  FileArchive,
   Loader2
 } from 'lucide-react';
-import { BadgeService } from '../../../services/badge.service';
-import { auth } from '../../../config/firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import { useBadgeRequest } from './hooks/useBadgeRequest';
+import { FileUploadArea } from './components/FileUploadArea';
+import { BadgeSelector } from './components/BadgeSelector';
 
 export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) => {
-  const [badges, setBadges] = useState<any[]>([]);
-  const [approvedBadgeIds, setApprovedBadgeIds] = useState<string[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [evidence, setEvidence] = useState('');
-  const [uploadedFiles, setUploadedFiles] = useState<{ id: string; file: File }[]>([]);
-  const [badgeDropdownOpen, setBadgeDropdownOpen] = useState(false);
-  const [selectedBadge, setSelectedBadge] = useState<any>(null);
-  const [currentUser, setCurrentUser] = useState<any>(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [activeCategory, setActiveCategory] = useState('SOFTWARE / WEB');
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const {
+    badges,
+    approvedBadgeIds,
+    pendingBadgeIds,
+    submitting,
+    evidence,
+    setEvidence,
+    uploadedFiles,
+    badgeDropdownOpen,
+    setBadgeDropdownOpen,
+    selectedBadge,
+    setSelectedBadge,
+    currentUser,
+    isDragging,
+    activeCategory,
+    setActiveCategory,
+    fileInputRef,
+    addFiles,
+    removeFile,
+    handleDragOver,
+    handleDragLeave,
+    handleDrop,
+    handleSubmit
+  } = useBadgeRequest(isOpen, onClose);
 
-  useEffect(() => {
-    if (isOpen) {
-      BadgeService.getAllBadges().then(res => {
-        if (res.status === 'success') {
-          setBadges(res.data);
-        } else {
-          setBadges([]);
-        }
-      }).catch(err => {
-        setBadges([]);
-      });
-
-      BadgeService.getMyRequests().then(res => {
-        if (res.status === 'success') {
-          const approvedIds = res.data
-            .filter((req: any) => req.status === 'approved')
-            .map((req: any) => req.badge_id?.toString());
-          setApprovedBadgeIds(approvedIds);
-        } else {
-          setApprovedBadgeIds([]);
-        }
-      }).catch(err => {
-        setApprovedBadgeIds([]);
-      });
-
-      // Reset states
-      setEvidence('');
-      setUploadedFiles([]);
-      setSelectedBadge(null);
-      setBadgeDropdownOpen(false);
-      setActiveCategory('SOFTWARE / WEB');
-    }
-
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setCurrentUser({
-          displayName: payload.name || '',
-          uid: payload.user_id || payload.uid || '',
-          email: payload.email || ''
-        });
-      } catch (e) {
-        console.error("Error decoding token for user info:", e);
-      }
-    }
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, [isOpen]);
+  if (!isOpen) return null;
 
   const getCategoryTheme = (category: string) => {
     const cat = (category || '').toUpperCase().trim();
     if (cat === 'SOFTWARE / WEB') {
-      return {
-        label: 'SOFTWARE / WEB',
-        color: 'text-blue-400 border-blue-400/20 bg-blue-400/5',
-        bg: 'bg-blue-400/5'
-      };
+      return { label: 'SOFTWARE / WEB', color: 'text-blue-400 border-blue-400/20 bg-blue-400/5', bg: 'bg-blue-400/5' };
     }
     if (cat === 'DATA / AI') {
-      return {
-        label: 'DATA / AI',
-        color: 'text-rose-400 border-rose-400/20 bg-rose-400/5',
-        bg: 'bg-rose-400/5'
-      };
+      return { label: 'DATA / AI', color: 'text-rose-400 border-rose-400/20 bg-rose-400/5', bg: 'bg-rose-400/5' };
     }
     if (cat === 'GAME / GRAPHICS') {
-      return {
-        label: 'GAME / GRAPHICS',
-        color: 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5',
-        bg: 'bg-emerald-400/5'
-      };
+      return { label: 'GAME / GRAPHICS', color: 'text-emerald-400 border-emerald-400/20 bg-emerald-400/5', bg: 'bg-emerald-400/5' };
     }
     if (cat === 'CYBER / NETWORK') {
-      return {
-        label: 'CYBER / NETWORK',
-        color: 'text-yellow-400 border-yellow-400/20 bg-yellow-400/5',
-        bg: 'bg-yellow-400/5'
-      };
+      return { label: 'CYBER / NETWORK', color: 'text-yellow-400 border-yellow-400/20 bg-yellow-400/5', bg: 'bg-yellow-400/5' };
     }
-    return {
-      label: 'GENERAL',
-      color: 'text-slate-400 border-slate-400/20 bg-slate-400/5',
-      bg: 'bg-slate-400/5'
-    };
+    return { label: 'GENERAL', color: 'text-slate-400 border-slate-400/20 bg-slate-400/5', bg: 'bg-slate-400/5' };
   };
 
   const currentCat = getCategoryTheme(activeCategory);
-  const filteredBadges = badges.filter(b => b.category === activeCategory && !approvedBadgeIds.includes(b.id?.toString()));
-
-  const formatSize = (bytes: number) => {
-    if (bytes === 0) return '0 Bytes';
-    const k = 1024;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
-  };
-
-  const addFiles = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-    const singleFile = {
-      id: Math.random().toString(36).substring(7),
-      file: files[0]
-    };
-    setUploadedFiles([singleFile]);
-  };
-
-  const removeFile = (id: string) => {
-    setUploadedFiles(prev => prev.filter(f => f.id !== id));
-  };
-
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(true);
-  };
-
-  const handleDragLeave = () => {
-    setIsDragging(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragging(false);
-    if (e.dataTransfer.files) {
-      addFiles(e.dataTransfer.files);
-    }
-  };
-
-  const handleSubmit = async () => {
-    if (!selectedBadge) return alert("Please select a badge title first!");
-    if (!evidence) return alert("Please provide evidence or description!");
-
-    setSubmitting(true);
-
-    let evidence_link = "";
-
-    // Upload files sequentially and join their URLs with comma
-    if (uploadedFiles.length > 0) {
-      const urls: string[] = [];
-      for (const item of uploadedFiles) {
-        const uploadRes = await BadgeService.uploadEvidence(item.file);
-        if (uploadRes.status === "success" && uploadRes.url) {
-          urls.push(uploadRes.url);
-        }
-      }
-      evidence_link = urls.join(",");
-    }
-
-    // Calculate max score from criteria_template
-    const max_score = selectedBadge?.criteria_template?.reduce((sum: number, c: any) => sum + (c.max_score || 0), 0) || 0;
-
-    const payload = {
-      badge_id: selectedBadge.id,
-      badge_name: selectedBadge.name,
-      category: selectedBadge.category,
-      description: evidence,
-      evidence_link: evidence_link,
-      criteria: selectedBadge.criteria_template || [],
-      max_score: max_score
-    };
-
-    const res = await BadgeService.createRequest(payload);
-    setSubmitting(false);
-
-    if (res.status === "success") {
-      alert("Badge request submitted successfully!");
-      onClose(); // Close Modal
-    } else {
-      alert("Failed to submit request.");
-    }
-  };
-
-  if (!isOpen) return null;
+  const filteredBadges = badges.filter(b => 
+    b.category === activeCategory && 
+    !approvedBadgeIds.includes(b.id?.toString()) &&
+    !pendingBadgeIds.includes(b.id?.toString())
+  );
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-10">
@@ -249,45 +107,13 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
             </div>
 
             {/* Row 2: Badge Title Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setBadgeDropdownOpen(!badgeDropdownOpen)}
-                className="w-full flex items-center justify-between gap-3 bg-transparent border-b-2 border-white/10 hover:border-[#ff4f40]/50 focus:border-[#ff4f40] outline-none py-2 text-left transition-colors group"
-              >
-                <span className={`text-xl sm:text-3xl font-bold tracking-tight truncate ${selectedBadge ? 'text-white' : 'text-slate-700'}`}>
-                  {selectedBadge ? selectedBadge.name : 'Select Badge Title...'}
-                </span>
-                <ChevronDown
-                  size={24}
-                  className={`shrink-0 text-slate-600 group-hover:text-white transition-all duration-200 ${badgeDropdownOpen ? 'rotate-180' : ''}`}
-                />
-              </button>
-
-              {/* Dropdown list */}
-              {badgeDropdownOpen && (
-                <div className="absolute top-full left-0 right-0 mt-2 bg-[#141416] border border-white/10 rounded-2xl overflow-hidden shadow-2xl z-55 max-h-60 overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-top-2 duration-150">
-                  {filteredBadges.length === 0 ? (
-                    <div className="p-5 text-sm text-slate-500">No badges available for this category.</div>
-                  ) : (
-                    filteredBadges.map((badge, i) => (
-                      <button
-                        key={i}
-                        onClick={() => { setSelectedBadge(badge); setBadgeDropdownOpen(false); }}
-                        className={`w-full text-left px-5 py-3.5 text-sm font-semibold transition-colors flex items-center justify-between group/item border-b border-white/5 last:border-0 ${selectedBadge?.id === badge.id
-                          ? 'text-[#ff4f40] bg-white/5'
-                          : 'text-slate-400 hover:text-white hover:bg-white/5'
-                          }`}
-                      >
-                        <span>{badge.name}</span>
-                        {selectedBadge?.id === badge.id && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#ff4f40]" />
-                        )}
-                      </button>
-                    ))
-                  )}
-                </div>
-              )}
-            </div>
+            <BadgeSelector
+              badgeDropdownOpen={badgeDropdownOpen}
+              setBadgeDropdownOpen={setBadgeDropdownOpen}
+              selectedBadge={selectedBadge}
+              setSelectedBadge={setSelectedBadge}
+              filteredBadges={filteredBadges}
+            />
 
             {/* Row 3: Student Info Pill and Track Badge */}
             <div className="flex flex-wrap items-center gap-2">
@@ -323,59 +149,17 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
                 onChange={(e) => setEvidence(e.target.value)}
               />
 
-              {/* ── UPLOAD AREA (functional) ── */}
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept=".zip,.pdf"
-                className="hidden"
-                onChange={(e) => addFiles(e.target.files)}
+              {/* ── UPLOAD AREA ── */}
+              <FileUploadArea
+                isDragging={isDragging}
+                handleDragOver={handleDragOver}
+                handleDragLeave={handleDragLeave}
+                handleDrop={handleDrop}
+                fileInputRef={fileInputRef}
+                addFiles={addFiles}
+                uploadedFiles={uploadedFiles}
+                removeFile={removeFile}
               />
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                className={`border-2 border-dashed rounded-xl sm:rounded-2xl p-5 sm:p-8 flex flex-col items-center justify-center gap-3 cursor-pointer transition-all group ${isDragging
-                    ? 'border-[#ff4f40]/60 bg-[#ff4f40]/5'
-                    : 'border-white/5 hover:bg-white/2 hover:border-[#ff4f40]/20'
-                  }`}
-              >
-                <div className={`w-10 h-10 sm:w-12 sm:h-12 bg-white/5 rounded-full flex items-center justify-center transition-colors ${isDragging ? 'text-[#ff4f40]' : 'text-slate-500 group-hover:text-[#ff4f40]'}`}>
-                  <Upload size={20} />
-                </div>
-                <div className="text-center">
-                  <p className="font-bold text-xs sm:text-sm text-slate-300">
-                    {isDragging ? 'Drop files here' : 'Upload Project Artifacts (.zip, .pdf)'}
-                  </p>
-                  <p className="text-[10px] text-slate-500 mt-1 uppercase tracking-widest font-bold">Max file size: 50MB</p>
-                </div>
-              </div>
-
-              {/* File list */}
-              {uploadedFiles.length > 0 && (
-                <ul className="flex flex-col gap-2">
-                  {uploadedFiles.map(({ file, id }) => (
-                    <li key={id} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5 border border-white/5">
-                      <div className="text-[#ff4f40]/70 shrink-0">
-                        {file.name.endsWith('.pdf') ? <FileText size={15} /> : <FileArchive size={15} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs text-slate-300 font-semibold truncate text-left">{file.name}</p>
-                        <p className="text-[10px] text-slate-600 mt-0.5 text-left">{formatSize(file.size)}</p>
-                      </div>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); removeFile(id); }}
-                        className="text-slate-600 hover:text-slate-300 transition-colors shrink-0 cursor-pointer"
-                      >
-                        <X size={14} />
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {/* ── END UPLOAD AREA ── */}
-
             </div>
           </section>
 
