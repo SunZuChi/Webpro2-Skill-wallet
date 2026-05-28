@@ -29,33 +29,47 @@ export default function ProfessorLayout({ children }: { children: React.ReactNod
         const fetchProfile = async () => {
             try {
                 const token = await AuthService.getFreshToken();
-                if (!token) return;
+                if (!token) {
+                    router.push('/login');
+                    return;
+                }
                 const res = await fetch("http://localhost:3001/api/auth/me", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const data = await res.json();
+                
                 if (data.status === "success") {
+                    // ตรวจสอบว่าเป็นอาจารย์จริงๆ หรือไม่
+                    if (data.data?.role !== 'verifier') {
+                        router.push('/user/overview');
+                        return;
+                    }
+
                     setProfessor({
                         name: data.data?.profile?.name || "Professor",
                         avatar_url: data.data?.profile?.avatar_url || DEFAULT_AVATAR,
                     });
+                } else {
+                    router.push('/login');
                 }
             } catch (e) {
                 console.error("Failed to fetch professor profile:", e);
+                router.push('/login');
             }
         };
         fetchProfile();
-    }, []);
+    }, [router]);
 
     const professorName = professor?.name || "Professor";
     const professorAvatar = professor?.avatar_url || DEFAULT_AVATAR;
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("userRole");
-        document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        document.cookie = "userRole=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        router.push('/');
+    const handleLogout = async () => {
+        try {
+            await AuthService.logout();
+            router.push('/');
+        } catch (e) {
+            console.error("Logout failed:", e);
+        }
     };
 
     const isActive = (path: string) => pathname === path;

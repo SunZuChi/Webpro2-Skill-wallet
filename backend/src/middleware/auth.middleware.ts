@@ -1,5 +1,8 @@
 import { Elysia } from 'elysia';
 import { auth, db } from '../config/firebase-admin';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'web2promax-secret-key';
 
 // สร้าง Middleware สำหรับตรวจสอบ Token และ Role
 export const authMiddleware = new Elysia({ name: 'auth-middleware' })
@@ -16,17 +19,24 @@ export const authMiddleware = new Elysia({ name: 'auth-middleware' })
             let uid = "";
             let email = "";
 
-            // 1. รองรับ Test Token (สำหรับอาจารย์ที่ล็อกอินผ่าน Secret ID)
+            // 1. รองรับ Test Token (สำหรับระบบ Mock หรือตอน Dev)
             if (idToken.startsWith('test-')) {
                 uid = idToken.replace('test-', '');
             } else {
-                // 2. ตรวจสอบ Firebase Token จริง
-                const decodedToken = await auth.verifyIdToken(idToken);
-                uid = decodedToken.uid;
-                email = decodedToken.email || "";
+                // 2. ลองตรวจสอบ JWT ของเราเองก่อน (สำหรับ Verifier)
+                try {
+                    const decoded = jwt.verify(idToken, JWT_SECRET) as any;
+                    uid = decoded.uid;
+                    email = decoded.email || "";
+                } catch (err) {
+                    // 3. ถ้าไม่ใช่ JWT ของเรา ลองเช็คกับ Firebase Auth (สำหรับ Student)
+                    const decodedToken = await auth.verifyIdToken(idToken);
+                    uid = decodedToken.uid;
+                    email = decodedToken.email || "";
+                }
             }
 
-            // 3. ดึง Role จาก Firestore
+            // 4. ดึง Role จาก Firestore
             const userDoc = await db.collection('users').doc(uid).get();
             const role = userDoc.exists ? userDoc.data()?.role : 'user';
 

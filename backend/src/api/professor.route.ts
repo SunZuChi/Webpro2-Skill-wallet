@@ -13,7 +13,7 @@ export const professorRoute = new Elysia({ prefix: '/professor' })
             return { status: "error", message: error.message };
         }
     }, {
-        isSignIn: true,
+        hasRole: 'verifier',
         detail: { tags: ['Professor'], summary: 'ดึงคำขอ Badge ทั้งหมดสำหรับนำไปตรวจ (Professor เท่านั้น)' }
     })
     // GET /api/professor/students — ดึงรายชื่อและข้อมูลนักเรียนทั้งหมด (สำหรับ Student Directory)
@@ -25,6 +25,6 @@ export const professorRoute = new Elysia({ prefix: '/professor' })
             return { status: "error", message: error.message };
         }
     }, {
-        isSignIn: true,
+        hasRole: 'verifier',
         detail: { tags: ['Professor'], summary: 'ดึงรายชื่อและข้อมูลของนักเรียนทั้งหมด รวมถึงสถิติ Badge' }
     });
