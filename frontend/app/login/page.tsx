@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { Quote, ArrowLeft, Loader2 } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { AuthService } from '../../services/auth.service';
 
@@ -144,7 +145,7 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
             <div className="space-y-2">
               <input
                 type="text"
-                placeholder="Enter your Professor Email"
+                placeholder="Enter your Email"
                 value={emailInput}
                 onChange={(e) => setEmailInput(e.target.value)}
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
@@ -160,7 +161,7 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
                 className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
               />
               <div className="flex justify-end mt-2">
-                <a href="#" className="text-[11px] font-light text-slate-500 hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">forgot password?</a>
+                <Link href="/forgot-password" className="text-[11px] font-light text-slate-500 hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">forgot password?</Link>
               </div>
             </div>
 

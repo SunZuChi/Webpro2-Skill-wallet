@@ -3,7 +3,46 @@ import React from 'react';
 import { Mail, Lock, Quote, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+import { useRouter } from 'next/navigation';
+
 export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
+  const router = useRouter();
+  const [name, setName] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState('');
+
+  const handleContinue = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !email || !password) {
+      setError('Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/otp/send', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, purpose: 'register' }),
+      });
+
+      const data = await response.json();
+      if (data.status === 'success') {
+        sessionStorage.setItem('pendingUser', JSON.stringify({ name, email, password }));
+        router.push(`/otp?email=${encodeURIComponent(email)}&purpose=register`);
+      } else {
+        setError(data.message || 'Failed to send OTP');
+      }
+    } catch (err) {
+      setError('Connection error. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <div className="flex min-h-screen bg-[#050505] font-lineseed antialiased text-white overflow-hidden">
 
@@ -61,35 +100,43 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           </div>
 
           {/* Auth Form */}
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-4" onSubmit={handleContinue}>
             <div className="space-y-2">
               <input
-                type="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 placeholder="Enter your Name"
-                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
+                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20 text-white"
               />
             </div>
             <div className="space-y-2">
               <input
                 type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter your Email"
-                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
+                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20 text-white"
               />
             </div>
 
             <div className="space-y-2 relative">
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 placeholder="Enter your Password"
-                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20"
+                className="w-full bg-[#121214] border border-slate-800/80 rounded-xl px-5 py-4 text-sm focus:outline-none focus:border-[#ff4f40]/50 transition-all placeholder-slate-600 focus:ring-1 focus:ring-[#ff4f40]/20 text-white"
               />
-
-
-
             </div>
 
-            <button className="cursor-pointer w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl">
-              Continue
+            {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+
+            <button 
+              disabled={loading}
+              className="cursor-pointer w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+            >
+              {loading ? <div className="w-5 h-5 border-2 border-black/20 border-t-black rounded-full animate-spin"></div> : "Continue"}
             </button>
           </form>
 
