@@ -10,7 +10,7 @@ function OTPContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') || '';
   const purpose = searchParams.get('purpose') || '';
-  
+
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [loading, setLoading] = useState(false);
@@ -19,7 +19,7 @@ function OTPContent() {
   const handleChange = (index: number, value: string) => {
     // อนุญาตเฉพาะตัวเลข
     if (value && !/^[0-9]+$/.test(value)) return;
-    
+
     const newOtp = [...otp];
     // รองรับการ Paste วางทีเดียว 6 ตัว
     if (value.length > 1) {
@@ -55,10 +55,10 @@ function OTPContent() {
       setError('Please enter all 6 digits.');
       return;
     }
-    
+
     setLoading(true);
     setError('');
-    
+
     try {
       // 1. Verify OTP
       const verifyRes = await fetch("http://localhost:3001/api/auth/otp/verify", {
@@ -79,18 +79,18 @@ function OTPContent() {
         const storedUser = sessionStorage.getItem('pendingUser');
         if (storedUser) {
           const userData = JSON.parse(storedUser);
-          
+
           const regRes = await fetch("http://localhost:3001/api/auth/register/email", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(userData)
           });
           const regData = await regRes.json();
-          
+
           if (regData.status === "success") {
             sessionStorage.removeItem('pendingUser');
             alert("Registration successful! You can now login.");
-            router.push('/login');
+            router.push('/dash');
           } else {
             setError(regData.message || "Registration failed after OTP verification");
           }
@@ -123,7 +123,7 @@ function OTPContent() {
       </button>
 
       <div className="w-full max-w-md bg-[#0a0a0a]/80 backdrop-blur-xl border border-white/5 rounded-3xl p-8 shadow-2xl relative z-10 animate-in fade-in zoom-in-95 duration-500">
-        
+
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-[#ff4f40]/10 rounded-full flex items-center justify-center text-[#ff4f40] border border-[#ff4f40]/20 shadow-[0_0_15px_rgba(255,79,64,0.2)]">
             <ShieldCheck size={32} />

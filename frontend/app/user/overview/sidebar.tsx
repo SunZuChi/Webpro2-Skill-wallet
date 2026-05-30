@@ -50,8 +50,8 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
   }, []);
 
   const userName = profile?.profile?.name || 'Student';
-  const userAvatar = profile?.profile?.avatar_url 
-    ? `${profile.profile.avatar_url}${profile.profile.avatar_url.includes('?') ? '&' : '?'}t=${timestamp}` 
+  const userAvatar = profile?.profile?.avatar_url
+    ? `${profile.profile.avatar_url}${profile.profile.avatar_url.includes('?') ? '&' : '?'}t=${timestamp}`
     : DEFAULT_AVATAR;
 
   const handleSignOut = async () => {
@@ -75,7 +75,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
           </svg>
         </button>
-        <span className="text-base font-bold tracking-tighter">
+        <span className="text-base font-bold tracking-tighter text-[#ffffff]">
           <span className="text-[#ff4f40]">Ip</span>&s
         </span>
         <div className="relative w-8 h-8">
@@ -183,7 +183,7 @@ export const Sidebar = ({ isCollapsed, onToggle }: SidebarProps) => {
             <AlignLeft size={24} />
           </button>
           {!isCollapsed && (
-            <span className="text-xl font-bold tracking-tighter select-none animate-in fade-in duration-300">
+            <span className="text-[#ffffff] text-xl font-bold tracking-tighter select-none animate-in fade-in duration-300">
               <span className="text-[#ff4f40]">Ip</span>&s
             </span>
           )}

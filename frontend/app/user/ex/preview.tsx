@@ -48,7 +48,7 @@ export default function Preview() {
             <button
               onClick={handleExportPDF}
               disabled={isExporting}
-              className={`cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 uppercase tracking-widest ${isExporting ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
+              className={`cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[14px] sm:text-[14px] font-bold px-4 sm:px-8 py-2.5 md:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2  ${isExporting ? 'opacity-70 cursor-not-allowed' : 'active:scale-95'}`}
             >
               <Download size={16} /> <span className="hidden sm:inline">{isExporting ? 'Exporting...' : 'Export PDF'}</span><span className="sm:hidden">{isExporting ? '...' : 'Export'}</span>
             </button>

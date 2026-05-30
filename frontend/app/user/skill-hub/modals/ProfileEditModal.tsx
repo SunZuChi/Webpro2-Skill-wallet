@@ -126,6 +126,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Full Name</label>
             <input
               type="text"
+              placeholder="e.g. Yosaprt Raul"
               maxLength={50}
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -136,6 +137,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Headline</label>
             <input
               type="text"
+              placeholder="e.g. Full Stack Developer"
               maxLength={167}
               value={formData.headline}
               onChange={(e) => setFormData({ ...formData, headline: e.target.value })}
@@ -147,6 +149,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Location</label>
               <input
                 type="text"
+                placeholder="e.g. Bangkok"
                 maxLength={214}
                 value={formData.location}
                 onChange={(e) => setFormData({ ...formData, location: e.target.value })}
@@ -157,6 +160,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Phone</label>
               <input
                 type="tel"
+                placeholder="e.g. xxx-xxx-xxxx"
                 maxLength={10}
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value.replace(/[^0-9]/g, '') })}
@@ -168,6 +172,7 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
             <label className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">Bio</label>
             <textarea
               value={formData.bio}
+              placeholder="Tell about yourself..."
               onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
               className="w-full bg-black border border-white/5 rounded-2xl p-6 text-sm min-h-[120px] focus:border-[#ff4f40]/50 outline-none text-white shadow-inner custom-scrollbar"
             />
@@ -175,13 +180,13 @@ export const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
         </div>
 
         <div className="flex justify-end gap-4 md:gap-6 pt-6 border-t border-white/5">
-          <button onClick={onClose} className="cursor-pointer px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors">
+          <button onClick={onClose} className="cursor-pointer px-6 py-3 text-slate-500 font-bold text-[14px] hover:text-white transition-colors">
             Cancel
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="cursor-pointer bg-white text-black font-extrabold px-8 md:px-10 py-4 rounded-3xl shadow-xl uppercase tracking-widest text-[10px] disabled:opacity-50"
+            className="cursor-pointer bg-[#ff4f40] text-white font-semibold px-8 md:px-10 py-4 rounded-3xl shadow-xl text-[14px] disabled:opacity-50"
           >
             {loading ? 'Updating...' : 'Update Profile'}
           </button>

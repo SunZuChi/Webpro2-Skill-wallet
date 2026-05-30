@@ -46,26 +46,23 @@ export const BadgeSelectModal: React.FC<BadgeSelectModalProps> = ({
                 <div
                   key={badge.id}
                   onClick={() => !isFull && togglePin(badge.id)}
-                  className={`p-6 md:p-8 rounded-[2.5rem] border transition-all relative group cursor-pointer ${
-                    isPinned
-                      ? 'bg-[#ff4f40]/5 border-[#ff4f40]/40 shadow-2xl'
-                      : isFull
+                  className={`p-6 md:p-8 rounded-[2.5rem] border transition-all relative group cursor-pointer ${isPinned
+                    ? 'bg-[#ff4f40]/5 border-[#ff4f40]/40 shadow-2xl'
+                    : isFull
                       ? 'opacity-30 grayscale cursor-not-allowed border-white/5'
                       : 'bg-[#121214] border-white/5 hover:border-white/10'
-                  }`}
+                    }`}
                 >
                   <div className="flex justify-between items-start mb-6 md:mb-8">
                     <div
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden ${
-                        isPinned ? 'bg-[#ff4f40]/20' : 'bg-white/5'
-                      }`}
+                      className={`w-14 h-14 rounded-2xl flex items-center justify-center shadow-inner overflow-hidden ${isPinned ? 'bg-[#ff4f40]/20' : 'bg-white/5'
+                        }`}
                     >
                       <img src={badge.icon} className="w-10 h-10 object-contain" alt="badge icon" />
                     </div>
                     <div
-                      className={`p-2 rounded-xl transition-all ${
-                        isPinned ? 'bg-[#ff4f40] text-white scale-110 shadow-lg' : 'bg-white/5 text-slate-600'
-                      }`}
+                      className={`p-2 rounded-xl transition-all ${isPinned ? 'bg-[#ff4f40] text-white scale-110 shadow-lg' : 'bg-white/5 text-slate-600'
+                        }`}
                     >
                       {isPinned ? <Pin size={16} fill="currentColor" /> : <Plus size={16} />}
                     </div>
@@ -100,7 +97,7 @@ export const BadgeSelectModal: React.FC<BadgeSelectModalProps> = ({
           </span>
           <button
             onClick={onClose}
-            className="bg-white text-black font-extrabold px-8 md:px-12 py-4 rounded-3xl hover:bg-slate-200 transition-all uppercase tracking-widest text-xs shadow-xl transform active:scale-95 cursor-pointer"
+            className="bg-[#ff4f40] text-white font-bold px-8 md:px-12 py-4 rounded-3xl hover: transition-all text-[14px] shadow-xl transform active:scale-95 cursor-pointer"
           >
             Save Selection
           </button>

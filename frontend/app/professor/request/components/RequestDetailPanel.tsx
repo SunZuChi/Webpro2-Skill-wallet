@@ -148,14 +148,14 @@ export const RequestDetailPanel: React.FC<RequestDetailPanelProps> = ({
                         <button
                             onClick={() => handleSubmitFeedback('revisions')}
                             disabled={isSubmitting || selectedRequest.status !== 'pending'}
-                            className="cursor-pointer uppercase bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer  bg-white/5 hover:bg-white/10 border border-white/10 text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[14px] md:text-[14px] shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <RotateCcw size={15} /> Revisions
                         </button>
                         <button
                             onClick={() => handleSubmitFeedback('approved')}
                             disabled={isSubmitting || selectedRequest.status !== 'pending'}
-                            className="cursor-pointer uppercase bg-[#059669] hover:bg-[#10b981] text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[12px] md:text-[14px] tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="cursor-pointer  bg-[#059669] hover:bg-[#10b981] text-white px-6 md:px-10 py-3.5 md:py-4 rounded-2xl font-semibold flex items-center gap-2 md:gap-3 transition-all active:scale-95 text-[14px] md:text-[14px] shadow-[0_10px_30px_rgba(16,185,129,0.2)] disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isSubmitting ? "Processing..." : <><Check size={18} strokeWidth={4} /> Approve Badge</>}
                         </button>
@@ -171,8 +171,8 @@ export const RequestDetailPanel: React.FC<RequestDetailPanelProps> = ({
                         </div>
                     </div>
                     <div className="max-w-2xl space-y-6">
-                        <h2 className="text-5xl font-bold tracking-tight text-white leading-tight">Evaluation Inbox</h2>
-                        <p className="text-lg text-slate-500 leading-relaxed font-light">
+                        <h2 className="text-3xl font-semibold tracking-tight text-white leading-tight">Evaluation Inbox</h2>
+                        <p className="text-md text-slate-500 leading-relaxed font-light">
                             You have <span className="text-[#ff4f40] font-black">{requestsData.filter(r => r.status === 'pending').length} pending submissions</span> waiting for your review today.
                             <br />Select an item from the queue on the left to begin evaluating student credentials.
                         </p>

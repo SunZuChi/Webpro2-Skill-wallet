@@ -84,7 +84,7 @@ export const OverviewPage = ({ onLogout, onViewAll }: { onLogout?: () => void; o
         {/* Top Row: Analytics & Recent List */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-8">
           <MatrixPage requests={requests} />
-          <Achivement requests={stats.recentRequests} loading={loading} />
+          <Achivement requests={requests} loading={loading} />
         </div>
         <FeedbackPage requests={stats.approvedRequests} loading={loading} />
       </div>

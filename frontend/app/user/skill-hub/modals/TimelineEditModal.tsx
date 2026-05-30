@@ -195,14 +195,14 @@ export const TimelineEditModal: React.FC<TimelineEditModalProps> = ({
           <div className="flex gap-4">
             <button
               onClick={onClose}
-              className="px-6 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors cursor-pointer"
+              className="px-6 py-3 text-slate-500 font-bold text-[14px] hover:text-white transition-colors cursor-pointer"
             >
               Cancel
             </button>
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="bg-white text-black font-extrabold px-10 py-4 rounded-[1.5rem] shadow-xl uppercase tracking-widest text-[10px] disabled:opacity-50 cursor-pointer"
+              className="bg-[#ff4f40] text-white font-bold px-10 py-4 rounded-[1.5rem] shadow-xl text-[14px] disabled:opacity-50 cursor-pointer"
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>

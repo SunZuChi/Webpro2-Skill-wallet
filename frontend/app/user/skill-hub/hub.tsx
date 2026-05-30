@@ -69,9 +69,7 @@ export default function App() {
           <div className={CONTAINER_CLASS}>
             <div className="flex items-center justify-between">
               <h1 className="text-xl md:text-2xl font-bold tracking-tight text-white">Skill Hub</h1>
-              <button className="cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[10px] sm:text-[11px] font-bold px-5 sm:px-8 py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 transform active:scale-95 uppercase tracking-widest">
-                <Share2 size={16} /> <span className="hidden sm:inline">Export Portfolio</span><span className="sm:hidden">Export</span>
-              </button>
+
             </div>
           </div>
         </header>

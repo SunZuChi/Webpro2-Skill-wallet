@@ -20,7 +20,8 @@ self.addEventListener('message', async (event: MessageEvent) => {
       });
 
       if (!uploadResponse.ok) {
-        throw new Error(`Upload failed with status ${uploadResponse.status}`);
+        const errorText = await uploadResponse.text();
+        throw new Error(`Upload failed with status ${uploadResponse.status}: ${errorText}`);
       }
 
       const uploadResult = await uploadResponse.json();

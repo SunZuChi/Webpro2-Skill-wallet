@@ -148,9 +148,8 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
             <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
             <div
               onClick={() => !isCompressing && fileInputRef.current?.click()}
-              className={`aspect-video bg-black/50 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center relative group overflow-hidden transition-all ${
-                isCompressing ? 'opacity-50 cursor-not-allowed' : 'hover:border-[#ff4f40]/30 cursor-pointer'
-              }`}
+              className={`aspect-video bg-black/50 border-2 border-dashed border-white/5 rounded-3xl flex items-center justify-center relative group overflow-hidden transition-all ${isCompressing ? 'opacity-50 cursor-not-allowed' : 'hover:border-[#ff4f40]/30 cursor-pointer'
+                }`}
             >
               {isCompressing ? (
                 <div className="flex flex-col items-center gap-3 text-[#ff4f40]">
@@ -223,15 +222,15 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
                 name="title"
                 type="text"
                 maxLength={60}
-                placeholder="Project Title..."
+                placeholder="e.g. Web Application"
                 defaultValue={initialData?.title}
-                className="w-full bg-black/50 border border-white/5 rounded-2xl px-8 py-5 text-xl font-bold focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
+                className="w-full bg-black/50 border border-white/5 rounded-2xl px-8 py-5 text-md font-light focus:border-[#ff4f40]/50 outline-none text-white shadow-inner"
               />
               <textarea
                 name="description"
                 placeholder="Description..."
                 defaultValue={initialData?.description}
-                className="w-full bg-black/50 border border-white/5 rounded-3xl p-8 text-sm min-h-[180px] outline-none focus:border-[#ff4f40]/50 transition-all italic font-light leading-relaxed placeholder:text-slate-800 text-white shadow-inner"
+                className="w-full bg-black/50 border border-white/5 rounded-3xl p-8 text-sm min-h-[180px] outline-none focus:border-[#ff4f40]/50 transition-all font-light leading-relaxed placeholder:text-slate-800 text-white shadow-inner"
               />
             </div>
           </section>
@@ -240,14 +239,14 @@ export const SubmissionModal: React.FC<SubmissionModalProps> = ({
           <button
             type="button"
             onClick={onClose}
-            className="px-8 py-3 text-slate-500 font-bold uppercase tracking-widest text-[10px] hover:text-white transition-colors cursor-pointer"
+            className="px-8 py-3 text-slate-500 font-bold text-[14px] hover:text-white transition-colors cursor-pointer"
           >
-            Discard
+            Cancel
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="bg-[#ff4f40] text-white font-extrabold px-12 py-4 rounded-[1.5rem] shadow-xl uppercase tracking-widest text-[10px] transform active:scale-95 disabled:opacity-50 cursor-pointer"
+            className="bg-[#ff4f40] text-white font-bold px-12 py-4 rounded-[1.5rem] shadow-xl text-[14px] transform active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'Submitting...' : 'Confirm Submission'}
           </button>

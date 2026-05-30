@@ -1,8 +1,8 @@
 "use client";
 import React from 'react';
-import { 
-  Clock, 
-  ShieldCheck, 
+import {
+  Clock,
+  ShieldCheck,
   X,
   MessageSquare,
   Loader2
@@ -57,8 +57,8 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   };
 
   const currentCat = getCategoryTheme(activeCategory);
-  const filteredBadges = badges.filter(b => 
-    b.category === activeCategory && 
+  const filteredBadges = badges.filter(b =>
+    b.category === activeCategory &&
     !approvedBadgeIds.includes(b.id?.toString()) &&
     !pendingBadgeIds.includes(b.id?.toString())
   );
@@ -66,13 +66,13 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 md:p-10">
       <div className="cursor-pointer absolute inset-0 bg-black/95 backdrop-blur-md animate-in fade-in duration-300" onClick={onClose}></div>
-      
+
       <div className="relative w-full max-w-4xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-300">
-        
+
         {/* ── HEADER ── */}
         <div className="p-6 sm:p-10 pb-6 border-b border-white/5 bg-[#0f0f11] shrink-0">
           <div className="flex flex-col space-y-6">
-            
+
             {/* Row 1: Category Tabs and Close Button */}
             <div className="flex justify-between items-center gap-4">
               <div className="flex flex-wrap gap-2">
@@ -86,11 +86,10 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
                         setActiveCategory(cat);
                         setSelectedBadge(null); // Reset selection
                       }}
-                      className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all cursor-pointer ${
-                        isActive
-                          ? `${theme.color} border-current bg-white/5`
-                          : 'text-slate-500 border-white/5 bg-[#141416]/50 hover:text-slate-300 hover:bg-white/5'
-                      }`}
+                      className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider border transition-all cursor-pointer ${isActive
+                        ? `${theme.color} border-current bg-white/5`
+                        : 'text-slate-500 border-white/5 bg-[#141416]/50 hover:text-slate-300 hover:bg-white/5'
+                        }`}
                     >
                       {cat}
                     </button>
@@ -204,14 +203,14 @@ export const RequestModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: ()
         <div className="px-5 sm:px-10 py-4 sm:py-8 border-t border-white/5 bg-[#0f0f11] flex items-center justify-end gap-3 sm:gap-4 shrink-0">
           <button
             onClick={onClose}
-            className="cursor-pointer px-5 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-slate-500 font-bold uppercase tracking-[0.15em] text-[10px] sm:text-xs hover:text-white transition-all"
+            className="cursor-pointer px-5 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-slate-500 font-semibold text-[14px] sm:text-xs hover:text-white transition-all"
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
             disabled={!selectedBadge || submitting}
-            className="cursor-pointer px-7 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-[#ff4f40] disabled:opacity-30 disabled:cursor-not-allowed text-white font-bold uppercase tracking-[0.15em] text-[10px] sm:text-xs hover:bg-[#e53e30] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#ff4f40]/20 active:scale-95"
+            className="cursor-pointer px-7 sm:px-10 py-3 sm:py-4 rounded-xl sm:rounded-2xl bg-[#ff4f40] disabled:opacity-30 disabled:cursor-not-allowed text-white font-semibold text-[14px] sm:text-xs hover:bg-[#e53e30] transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#ff4f40]/20 active:scale-95"
           >
             {submitting ? (
               <>

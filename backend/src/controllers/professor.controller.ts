@@ -71,10 +71,9 @@ export const ProfessorController = {
                     }
                 }
 
-                // Latest verifications (sort by updated_at desc, take top 3)
+                // All verifications (sort by updated_at desc)
                 const latest = [...userRequests]
                     .sort((a, b) => new Date(b.updated_at || b.created_at).getTime() - new Date(a.updated_at || a.created_at).getTime())
-                    .slice(0, 3)
                     .map(req => ({
                         title: req.badge_name,
                         date: new Date(req.updated_at || req.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }),

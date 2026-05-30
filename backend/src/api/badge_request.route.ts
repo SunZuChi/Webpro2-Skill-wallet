@@ -23,12 +23,15 @@ export const badgeRequestRoute = new Elysia({ prefix: '/badge-requests' })
 
             const cloudinary = (await import('../config/cloudinary')).default;
 
+            const isRaw = file.name.match(/\.(zip|rar|7z|doc|docx|xls|xlsx|txt|csv|tar|gz)$/i);
+            const resourceType = isRaw ? "raw" : "auto";
+
             // Cloudinary upload using stream
             const uploadPromise = new Promise((resolve, reject) => {
                 const stream = cloudinary.uploader.upload_stream(
                     {
                         folder: `badge_evidence/${user.uid}`,
-                        resource_type: "raw",
+                        resource_type: resourceType,
                         public_id: file.name,
                         use_filename: true,
                         unique_filename: true

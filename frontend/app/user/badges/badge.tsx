@@ -45,7 +45,7 @@ export const BadgePage = () => {
             <button
               key={cat.id}
               onClick={() => setActiveFilter(cat.id)}
-              className={`cursor-pointer shrink-0 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-extrabold text-[9px] sm:text-[10px] whitespace-nowrap transition-all border ${activeFilter === cat.id
+              className={`cursor-pointer shrink-0 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl font-semibold text-[9px] sm:text-[10px] whitespace-nowrap transition-all border ${activeFilter === cat.id
                 ? cat.color + ' border'
                 : 'bg-white/5 border-white/5 text-slate-500 hover:bg-white/10 hover:text-slate-300'
                 }`}
@@ -65,7 +65,7 @@ export const BadgePage = () => {
         {/* Request button — always visible */}
         <button
           onClick={() => setShowRequestModal(true)}
-          className="shrink-0 cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[9px] sm:text-[11px] font-bold px-4 sm:px-8 py-2.5 sm:py-3 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 active:scale-95 uppercase tracking-widest"
+          className="shrink-0 cursor-pointer bg-[#ff4f40] hover:bg-[#e53e30] text-white text-[14px] sm:text-[14px] font-semibold px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl transition-all shadow-lg shadow-[#ff4f40]/20 flex items-center gap-2 active:scale-95 "
         >
           <Plus size={14} />
           <span className="hidden sm:inline">Request New Badge</span>
@@ -74,7 +74,7 @@ export const BadgePage = () => {
       </div>
 
       {/* ── Badge grid ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 min-h-[400px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
         {!isDataLoading && filteredBadges.map((badge) => (
           <div
             key={badge.id}
