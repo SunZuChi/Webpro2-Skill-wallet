@@ -2,8 +2,8 @@
 import React from 'react';
 import { Mail, Lock, Quote, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-
 import { useRouter } from 'next/navigation';
+import { AuthService } from '../../services/auth.service';
 
 export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void }) => {
   const router = useRouter();
@@ -12,6 +12,34 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
+
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const result = await AuthService.loginWithGoogle();
+
+      if (result.requireRegistration) {
+        // สมัครสมาชิกใหม่ (ส่ง idToken และ Name ไปบันทึกลง Firestore)
+        const regRes = await AuthService.registerStudent(result.idToken, result.name || "User");
+        if (regRes.status === "success") {
+          // เมื่อสมัครเสร็จแล้ว ให้เรียก login อีกครั้งเพื่อเก็บ Token ลงระบบ
+          await AuthService.loginWithGoogle();
+          router.push('/dash');
+        } else {
+          setError(regRes.message || 'Registration failed');
+        }
+      } else if (result.success) {
+        // ถ้าเคยสมัครไว้แล้ว แจ้งเตือนและไม่ต้องเปลี่ยนหน้า
+        setError('This email is already registered.');
+        await AuthService.logout(); // เคลียร์ session ออกเพื่อให้สมัครใหม่ได้
+      }
+    } catch (err: any) {
+      setError(err.message || 'Google sign-up failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleContinue = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +110,12 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
           </div>
 
           {/* Social Login */}
-          <button className="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98]">
+          <button
+            type="button"
+            onClick={handleGoogleSignUp}
+            disabled={loading}
+            className="cursor-pointer w-full flex items-center justify-center gap-3 px-6 py-3.5 border border-slate-800 rounded-full hover:bg-white/5 transition-all mb-8 group active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          >
             <svg width="20" height="20" viewBox="0 0 48 48" className="group-hover:scale-110 transition-transform">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
               <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
@@ -132,7 +165,7 @@ export const SignUpPage = ({ onBackToLanding }: { onBackToLanding: () => void })
 
             {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
 
-            <button 
+            <button
               disabled={loading}
               className="cursor-pointer w-full bg-white text-black font-bold py-4 rounded-full hover:bg-slate-200 transition-all active:scale-[0.98] mt-6 shadow-xl disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
             >

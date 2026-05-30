@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, ShieldCheck } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -15,6 +15,45 @@ function OTPContent() {
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [countdown, setCountdown] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+
+  useEffect(() => {
+    if (countdown > 0 && !canResend) {
+      const timer = setTimeout(() => setCountdown(countdown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (countdown === 0 && !canResend) {
+      setCanResend(true);
+    }
+  }, [countdown, canResend]);
+
+  const handleResend = async () => {
+    if (!canResend || resendLoading) return;
+    
+    setResendLoading(true);
+    setError('');
+    
+    try {
+      const res = await fetch("http://localhost:3001/api/auth/otp/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, purpose })
+      });
+      const data = await res.json();
+      
+      if (data.status === "success") {
+        setCountdown(60);
+        setCanResend(false);
+      } else {
+        setError(data.message || "Failed to resend OTP");
+      }
+    } catch (err: any) {
+      setError("Connection error. Please try again.");
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   const handleChange = (index: number, value: string) => {
     // อนุญาตเฉพาะตัวเลข
@@ -169,9 +208,20 @@ function OTPContent() {
         <div className="mt-8 text-center">
           <p className="text-slate-500 text-sm">
             Didn't receive the code?{' '}
-            <button className="text-white hover:text-[#ff4f40] font-semibold transition-colors cursor-pointer outline-none focus:outline-none">
-              Resend now
-            </button>
+            {canResend ? (
+              <button 
+                type="button"
+                onClick={handleResend}
+                disabled={resendLoading}
+                className="text-white hover:text-[#ff4f40] font-semibold transition-colors cursor-pointer outline-none focus:outline-none disabled:opacity-50"
+              >
+                {resendLoading ? "Resending..." : "Resend now"}
+              </button>
+            ) : (
+              <span className="text-[#ff4f40] font-semibold">
+                Resend in {countdown}s
+              </span>
+            )}
           </p>
         </div>
       </div>

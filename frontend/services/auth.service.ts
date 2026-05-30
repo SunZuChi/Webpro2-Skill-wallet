@@ -34,7 +34,7 @@ export const AuthService = {
         localStorage.setItem("userRole", data.role);
         document.cookie = `token=${idToken}; path=/; max-age=86400`;
         document.cookie = `userRole=${data.role}; path=/; max-age=86400`;
-        
+
         return { success: true, role: data.role, user: data.data };
       }
 
@@ -52,22 +52,22 @@ export const AuthService = {
       try {
         const result = await signInWithEmailAndPassword(auth, email, password || "");
         const idToken = await result.user.getIdToken();
-        
+
         // ส่ง Token ไปตรวจสอบกับ Backend เพื่อเอา Role
         const response = await fetch("http://localhost:3001/api/auth/login-check", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ idToken }),
         });
-        
+
         const data = await response.json();
-        
+
         if (data.status === "success") {
           localStorage.setItem("token", idToken);
           localStorage.setItem("userRole", data.role);
           document.cookie = `token=${idToken}; path=/; max-age=86400`;
           document.cookie = `userRole=${data.role}; path=/; max-age=86400`;
-          
+
           return { success: true, role: data.role, user: data.data };
         }
       } catch (firebaseError: any) {
@@ -88,7 +88,7 @@ export const AuthService = {
       if (data.status === "success") {
         // ใช้ Access Token ที่ได้จาก Backend จริงๆ (แทนของเดิมที่เป็น test-)
         const accessToken = data.accessToken || `test-${data.user_id}`;
-        
+
         localStorage.setItem("token", accessToken);
         if (data.refreshToken) {
           localStorage.setItem("refreshToken", data.refreshToken);
@@ -139,11 +139,11 @@ export const AuthService = {
     if (auth.currentUser) {
       // getIdToken() จะคืนค่า Token ปัจจุบัน หรือขอใหม่ให้ถ้าใกล้หมดอายุ
       const idToken = await auth.currentUser.getIdToken();
-      
+
       // อัปเดตเก็บตัวล่าสุดไว้
       localStorage.setItem("token", idToken);
       document.cookie = `token=${idToken}; path=/; max-age=86400`;
-      
+
       return idToken;
     }
     // Fallback สำหรับกรณีล็อกอินของอาจารย์ (Test Token) ที่ไม่ได้มาจาก Firebase

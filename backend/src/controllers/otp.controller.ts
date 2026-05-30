@@ -4,6 +4,14 @@ import { EmailService } from "../services/email.service";
 export const OtpController = {
     async requestOtp(email: string, purpose: string) {
         try {
+            // ตรวจสอบว่าอีเมลนี้เคยสมัครหรือยัง (ถ้าจุดประสงค์คือการสมัครสมาชิก)
+            if (purpose === 'register') {
+                const userSnapshot = await db.collection("users").where("email", "==", email).limit(1).get();
+                if (!userSnapshot.empty) {
+                    return { status: "error", message: "This email is already registered." };
+                }
+            }
+
             // สร้างเลข 6 หลักแบบสุ่ม
             const otp = Math.floor(100000 + Math.random() * 900000).toString();
             

@@ -42,7 +42,7 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
         handleLoginSuccess(result.role);
       }
     } catch (err: any) {
-      setError(err.message || "Invalid ID or Password.");
+      setError("Incorrect email or password");
     } finally {
       setLoading(false);
     }
@@ -65,7 +65,11 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
         handleLoginSuccess();
       }
     } catch (err: any) {
-      setError(err.message || "Failed to login with Google");
+      if (err.message.includes("popup-closed-by-user") || err.code === "auth/popup-closed-by-user") {
+        setError(""); // ถ้าปิด Popup เอง ไม่ต้องขึ้น Error
+      } else {
+        setError(err.message || "Failed to login with Google");
+      }
     } finally {
       setLoading(false);
     }
@@ -105,12 +109,7 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
           <div className="text-center lg:text-center mb-12">
             <h1 className="text-[42px] font-bold leading-tight tracking-tight text-white">Welcome Back</h1>
           </div>
-          {/* Error Message */}
-          {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-red-400 text-sm text-center">
-              {error}
-            </div>
-          )}
+
 
           {/* Social Login (Google Only) */}
           <button 
@@ -164,6 +163,8 @@ export const LoginPage = ({ onBackToLanding, onLoginSuccess }: { onBackToLanding
                 <Link href="/forgot-password" className="text-[11px] font-light text-slate-500 hover:text-white transition-colors underline decoration-slate-700 underline-offset-4">forgot password?</Link>
               </div>
             </div>
+
+            {error && <p className="text-red-500 text-sm font-medium text-center">{error}</p>}
 
             <button 
               type="submit"
